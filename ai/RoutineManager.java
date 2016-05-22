@@ -36,7 +36,7 @@ public class RoutineManager implements Updatable
 				Debugger.tick("Routine failed");
 				routine.cancelSequence();
 				routine.startSequence();
-				times ++;
+				times ++;// lol
 			}
 			else
 			{
