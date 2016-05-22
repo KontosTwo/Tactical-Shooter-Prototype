@@ -9,9 +9,11 @@ import com.mygdx.debug.Debugger;
 
 public class Sequence implements RoutineSequencialable
 {
-    private RoutineSequencialable currentRoutine;
     private final List<RoutineSequencialable> routine;
     private Queue<RoutineSequencialable> routineQueue;
+    
+    
+    private boolean nextRoutineInstaFail;
     
     /*
      * due to the generic nature of this class, it can find use
@@ -20,9 +22,9 @@ public class Sequence implements RoutineSequencialable
     
 	Sequence(List<? extends RoutineSequencialable> sequence) 
     {
-        this.currentRoutine = null;
         routine = new LinkedList<RoutineSequencialable>(sequence);
         routineQueue = new LinkedList<RoutineSequencialable>();
+        nextRoutineInstaFail = false;
     }
 	static Sequence buildSequence(RoutineSequencialable... rs)
 	{
@@ -38,37 +40,29 @@ public class Sequence implements RoutineSequencialable
 	public void startSequence() 
 	{
 		Debugger.tick("Sequence is starting");
-
 		routineQueue.clear();
         routineQueue.addAll(routine);
-        /*
-         * transverse here. Do not worry about
-         * peek() returning null, start sequence will only
-         * run if the routine has not instasucceeded, 
-         * meaning that routine will contain >1 runnable
-         * routines
-         */
-        	currentRoutine = routineQueue.peek();
-        	currentRoutine.startSequence();
-        
+        transverse();
+    	routineQueue.peek().startSequence();   
 	}
 
 	@Override
 	public void update(float dt) 
 	{
-		if(currentRoutine.sequenceIsComplete())
+		if(routineQueue.peek().sequenceIsComplete())
 		{
-			currentRoutine.completeSequence();
+			routineQueue.peek().completeSequence();
 			routineQueue.poll();
+			transverse();
 			if(!routineQueue.isEmpty())	
 			{
-				currentRoutine = routineQueue.peek();
-				currentRoutine.startSequence();
+				Debugger.tick("transversing");
+				routineQueue.peek().startSequence();
 			}
 		}
 		else
 		{
-			currentRoutine.update( dt);
+			routineQueue.peek().update( dt);
 		}
 	}
 
@@ -87,7 +81,7 @@ public class Sequence implements RoutineSequencialable
 	@Override
 	public void cancelSequence() 
 	{
-		currentRoutine.cancelSequence();
+		routineQueue.peek().cancelSequence();
 	}
 
 	@Override
@@ -102,10 +96,10 @@ public class Sequence implements RoutineSequencialable
 	@Override
 	public boolean failed() 
 	{
-		return currentRoutine.failed();
+		return routineQueue.peek().failed() || nextRoutineInstaFail;
 	}
 	
-	private void transverseSuccess()
+	private void transverse()
 	{
 		/*
 		 * Sifts through all routines in the routineQueue, then determines the first one
@@ -114,15 +108,21 @@ public class Sequence implements RoutineSequencialable
 		 * Must also detect failures
 		 * Also returns the list of remaining routineSeq
 		 */
+		//assert !routineQueue.isEmpty();
 		Iterator <RoutineSequencialable> iterator = routineQueue.iterator();
 		search:
 		while(iterator.hasNext())
 		{
 			RoutineSequencialable i = iterator.next();
-			if(i.succeeded())
+			if(i.instaSucceeded())
 			{
 				iterator.remove();
-			}this has yet to be completed and debugged
+			}
+			else if(i.instaFailed())
+			{
+				nextRoutineInstaFail = true;
+				break search;
+			}
 			else
 			{
 				break search;

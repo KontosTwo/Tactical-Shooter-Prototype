@@ -309,15 +309,15 @@ final class Play extends GameState implements PlayControlSwitchable
 		{
 			em.update(dt);
 			script.update(dt);
-			if(script.sequenceIsComplete())
+			/*if(script.sequenceIsComplete())
 			{
 				/*
 				 * once all the triggers/sequences are compelte in script, increment level and load again
-				 */
+				 *
 				level ++;
 				load(level);
 				script.startSequence();
-			}
+			}*/
 		}
 	}
 

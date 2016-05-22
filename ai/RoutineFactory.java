@@ -68,7 +68,7 @@ abstract public class RoutineFactory
     static RoutineSequencialable createRifleManRoutine(RiflemanRoutineable r)
     {
     	// assemble all routines here. 
-    	Sequence base = Sequence.buildSequence(new InstaSucceed(),new InstaSucceed(),new Wait(20),new InstaSucceed(),new InstaFail(),new InstaSucceed(),new InstaFail());
+    	Sequence base = Sequence.buildSequence(new InstaSucceed(),new Wait(1),Sequence.buildSequence(new InstaSucceed(),new Wait(1),new InstaSucceed()),new InstaSucceed());
     	
     	
     	

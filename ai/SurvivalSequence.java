@@ -134,7 +134,8 @@ import java.util.Queue;
 		search:
 		for(int i = mark; i < survival.size() - 1; i ++)
 		{
-			if(!survival.get(i).upheld())
+			// either upheld() or instaSucceeded()
+			if(!survival.get(i).instaSucceeded())
 			{
 				currentRoutine = i;
 				survivalComplete = false;
