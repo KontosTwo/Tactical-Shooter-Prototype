@@ -24,6 +24,7 @@ public class RoutineManager implements Updatable
 	{
 		if(routineActive && times < 1)
 		{
+			System.out.println("updating");
 			if(routine.succeeded())
 			{
 				Debugger.tick("Routine succeeded");
@@ -36,7 +37,7 @@ public class RoutineManager implements Updatable
 				Debugger.tick("Routine failed");
 				routine.cancelSequence();
 				routine.startSequence();
-				times ++;// lol
+				times ++;
 			}
 			else
 			{

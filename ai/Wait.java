@@ -34,7 +34,7 @@ class Wait implements RoutineSequencialable
 	@Override
 	public boolean sequenceIsComplete() 
 	{
-		return tickCount >= tickQuota;
+		return tickCount + 1 >= tickQuota;
 	}
 	@Override
 	public void completeSequence() 
@@ -49,7 +49,7 @@ class Wait implements RoutineSequencialable
 	@Override
 	public boolean succeeded() 
 	{
-		return tickCount >= tickQuota;
+		return tickCount + 1 >= tickQuota;
 	}
 	@Override
 	public boolean failed() 

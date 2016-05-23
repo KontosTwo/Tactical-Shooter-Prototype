@@ -12,9 +12,7 @@ public class Sequence implements RoutineSequencialable
     private final List<RoutineSequencialable> routine;
     private Queue<RoutineSequencialable> routineQueue;
     
-    
-    private boolean nextRoutineInstaFail;
-    
+     
     /*
      * due to the generic nature of this class, it can find use
      * in other areas such as cutscenes and game scripts
@@ -24,7 +22,6 @@ public class Sequence implements RoutineSequencialable
     {
         routine = new LinkedList<RoutineSequencialable>(sequence);
         routineQueue = new LinkedList<RoutineSequencialable>();
-        nextRoutineInstaFail = false;
     }
 	static Sequence buildSequence(RoutineSequencialable... rs)
 	{
@@ -56,7 +53,6 @@ public class Sequence implements RoutineSequencialable
 			transverse();
 			if(!routineQueue.isEmpty())	
 			{
-				Debugger.tick("transversing");
 				routineQueue.peek().startSequence();
 			}
 		}
@@ -90,13 +86,81 @@ public class Sequence implements RoutineSequencialable
 		/*
 		 * rewrite a way to check if succeeded
 		 */
-		return routineQueue.isEmpty();
+		//Debugger.tick(routineQueue.peek().getClass().getName());
+		if(routineQueue.isEmpty())
+		{
+			return true;
+		}
+		else if(routineQueue.peek().succeeded())
+		{
+			return succeededAfterTransverseInstaSucceeded();
+		}
+		return false;
+	}
+	private boolean succeededAfterTransverseInstaSucceeded()
+	{
+		LinkedList<RoutineSequencialable> copy = new LinkedList<>(routineQueue);
+		copy.poll();
+		Iterator <RoutineSequencialable> iterator = copy.iterator();
+		search:
+		while(iterator.hasNext())
+		{
+			RoutineSequencialable i = iterator.next();
+			if(i.instaSucceeded())
+			{
+				iterator.remove();
+			}
+			else
+			{
+				break search;
+			}
+		}
+		return copy.isEmpty();
 	}
 
 	@Override
 	public boolean failed() 
 	{
-		return routineQueue.peek().failed() || nextRoutineInstaFail;
+		if(routineQueue.isEmpty())
+		{
+			return false;
+		}
+		else if(routineQueue.peek().failed())
+		{
+			return true;
+		}
+		else if(routineQueue.peek().succeeded())
+		{
+			return failedAfterTransverseInstaFailed();
+		}
+		return false;
+	}
+	
+	private boolean failedAfterTransverseInstaFailed()
+	{
+		boolean ret = false;
+		LinkedList<RoutineSequencialable> copy = new LinkedList<>(routineQueue);
+		// get rid of the routine that succeeded
+		copy.poll();
+		search:
+		for(int i = 0; i < copy.size(); i ++)
+		{
+			if(copy.get(i).instaFailed())
+			{
+				// checking that all preceding routines have ALREADY succeeded
+				for(int j = 0; j < i; j++)
+				{
+					if(!copy.get(j).instaSucceeded())
+					{
+						ret = false;
+						break search;
+					}
+				}
+			ret = true;
+			break search;
+			}
+		}
+		return ret;
 	}
 	
 	private void transverse()
@@ -117,11 +181,6 @@ public class Sequence implements RoutineSequencialable
 			if(i.instaSucceeded())
 			{
 				iterator.remove();
-			}
-			else if(i.instaFailed())
-			{
-				nextRoutineInstaFail = true;
-				break search;
 			}
 			else
 			{
@@ -152,7 +211,7 @@ public class Sequence implements RoutineSequencialable
 				// checking that all preceding routines have ALREADY succeeded
 				for(int j = 0; j < i; j++)
 				{
-					if(!routine.get(j).succeeded())
+					if(!routine.get(j).instaSucceeded())
 					{
 						ret = false;
 						break search;
