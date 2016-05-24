@@ -63,5 +63,6 @@ public class RoutineManager implements Updatable
 		routineActive = true;
 		routine = RoutineFactory.createRifleManRoutine(r);
 		routine.startSequence();
+		System.out.println(routine.instaSucceeded());
 	}
 }

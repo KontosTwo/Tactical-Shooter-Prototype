@@ -65,7 +65,15 @@ public class Sequence implements RoutineSequencialable
 	@Override
 	public boolean sequenceIsComplete() 
 	{
-		return routineQueue.isEmpty();
+		if(routineQueue.isEmpty())
+		{
+			return true;
+		}
+		else if(routineQueue.peek().succeeded())
+		{
+			return succeededAfterTransverseInstaSucceeded();
+		}	
+		return false;
 	}
 
 	@Override

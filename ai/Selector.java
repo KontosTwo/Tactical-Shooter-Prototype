@@ -1,112 +1,228 @@
 package com.mygdx.ai;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.mygdx.debug.Debugger;
 import com.mygdx.script.Sequencialable;
 
 
 class Selector implements RoutineSequencialable
 {
-	private RoutineSequencialable currentRoutine;
-    private final List<RoutineSequencialable> routine;
-    private Queue<RoutineSequencialable> routineQueue;
-    
-    /*
-     * due to the generic nature of this class, it can find use
-     * in other areas such as cutscenes and game scripts
-     */
-    
-	Selector(List<? extends RoutineSequencialable> sequence) 
-    {
-        this.currentRoutine = null;
-        routine = new LinkedList<RoutineSequencialable>(sequence);
-        routineQueue = new LinkedList<RoutineSequencialable>();
-    }
-	static Selector buildSelector(RoutineSequencialable... rs)
-	{
-		LinkedList <RoutineSequencialable> routineList = new LinkedList<RoutineSequencialable>();
-		for(int i = 0; i < rs.length; i ++)
+	 private final List<RoutineSequencialable> routine;
+	    private Queue<RoutineSequencialable> routineQueue;
+	    
+	     
+	    /*
+	     * due to the generic nature of this class, it can find use
+	     * in other areas such as cutscenes and game scripts
+	     */
+	    
+		Selector(List<? extends RoutineSequencialable> sequence) 
+	    {
+	        routine = new LinkedList<RoutineSequencialable>(sequence);
+	        routineQueue = new LinkedList<RoutineSequencialable>();
+	    }
+		static Selector buildSequence(RoutineSequencialable... rs)
 		{
-			routineList.add(rs[i]);
-		}
-		return new Selector(routineList);
-	}
-	
-	public void clear()
-	{
-		routine.clear();
-	}
-
-	@Override
-	public void startSequence() 
-	{
-		routineQueue.clear();
-        routineQueue.addAll(routine);
-        currentRoutine = routineQueue.poll();
-        currentRoutine.startSequence();
-	}
-
-	@Override
-	public void update(float dt) 
-	{
-		if(currentRoutine.sequenceIsComplete())
-		{
-			currentRoutine.completeSequence();
-			if(!routineQueue.isEmpty())	
+			LinkedList <RoutineSequencialable> routineList = new LinkedList<RoutineSequencialable>();
+			for(int i = 0; i < rs.length; i ++)
 			{
-				currentRoutine = routineQueue.poll();
-				currentRoutine.startSequence();
+				routineList.add(rs[i]);
+			}
+			return new Selector(routineList);
+		}
+		
+		@Override
+		public void startSequence() 
+		{
+			Debugger.tick("Selector is starting");
+			routineQueue.clear();
+	        routineQueue.addAll(routine);
+	        transverse();
+	    	routineQueue.peek().startSequence();   
+		}
+
+		@Override
+		public void update(float dt) 
+		{
+			if(routineQueue.peek().sequenceIsComplete())
+			{
+				routineQueue.peek().completeSequence();
+				routineQueue.poll();
+				transverse();
+				if(!routineQueue.isEmpty())	
+				{
+					routineQueue.peek().startSequence();
+				}
 			}
 			else
 			{
-				return;
+				routineQueue.peek().update( dt);
 			}
 		}
-		else
+
+		@Override
+		public boolean sequenceIsComplete() 
 		{
-			currentRoutine.update( dt);
+			return routineQueue.isEmpty();
 		}
-	}
 
-	@Override
-	public boolean sequenceIsComplete() 
-	{
-		return routineQueue.isEmpty() && currentRoutine.sequenceIsComplete();
-	}
+		@Override
+		public void completeSequence() 
+		{
+			Debugger.tick("Selector is complete");
+		}
 
-	@Override
-	public void completeSequence() 
-	{
-		currentRoutine.completeSequence();
-	}
+		@Override
+		public void cancelSequence() 
+		{
+			routineQueue.peek().cancelSequence();
+		}
 
-	@Override
-	public void cancelSequence() 
-	{
-		currentRoutine.cancelSequence();
-	}
+		@Override
+		public boolean failed() 
+		{
+			/*
+			 * rewrite a way to check if succeeded
+			 */
+			//Debugger.tick(routineQueue.peek().getClass().getName());
+			if(routineQueue.isEmpty())
+			{
+				return true;
+			}
+			else if(routineQueue.peek().succeeded())
+			{
+				return failedAfterTransverseInstaFailed();
+			}
+			return false;
+		}
+		private boolean failedAfterTransverseInstaFailed()
+		{
+			LinkedList<RoutineSequencialable> copy = new LinkedList<>(routineQueue);
+			copy.poll();
+			Iterator <RoutineSequencialable> iterator = copy.iterator();
+			search:
+			while(iterator.hasNext())
+			{
+				RoutineSequencialable i = iterator.next();
+				if(i.instaSucceeded())
+				{
+					iterator.remove();
+				}
+				else
+				{
+					break search;
+				}
+			}
+			return copy.isEmpty();
+		}
 
-	@Override
-	public boolean succeeded() 
-	{
-		return currentRoutine.succeeded();
-	}
-
-	@Override
-	public boolean failed() 
-	{
-		return routineQueue.isEmpty() && currentRoutine.failed();
-	}
-	@Override
-	public boolean instaSucceeded() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public boolean instaFailed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		@Override
+		public boolean succeeded() 
+		{
+			if(routineQueue.isEmpty())
+			{
+				return false;
+			}
+			else if(routineQueue.peek().succeeded())
+			{
+				return true;
+			}
+			else if(routineQueue.peek().failed())
+			{
+				return succeededAfterTransverseInstaSucceeded();
+			}
+			return false;
+		}
+		
+		private boolean succeededAfterTransverseInstaSucceeded()
+		{
+			boolean ret = false;
+			LinkedList<RoutineSequencialable> copy = new LinkedList<>(routineQueue);
+			// get rid of the routine that succeeded
+			copy.poll();
+			search:
+			for(int i = 0; i < copy.size(); i ++)
+			{
+				if(copy.get(i).instaSucceeded())
+				{
+					// checking that all preceding routines have ALREADY succeeded
+					for(int j = 0; j < i; j++)
+					{
+						if(!copy.get(j).instaFailed())
+						{
+							ret = false;
+							break search;
+						}
+					}
+				ret = true;
+				break search;
+				}
+			}
+			return ret;
+		}
+		
+		private void transverse()
+		{
+			/*
+			 * Sifts through all routines in the routineQueue, then determines the first one
+			 * that has not succeeded to run. Otherwise, it would take one tick to check 
+			 * a routine that has already succeeded instead of instantly moving on to the next one
+			 * Must also detect failures
+			 * Also returns the list of remaining routineSeq
+			 */
+			//assert !routineQueue.isEmpty();
+			Iterator <RoutineSequencialable> iterator = routineQueue.iterator();
+			search:
+			while(iterator.hasNext())
+			{
+				RoutineSequencialable i = iterator.next();
+				if(i.instaFailed())
+				{
+					iterator.remove();
+				}
+				else
+				{
+					break search;
+				}
+			}
+		}
+		public boolean instaFailed()
+		{
+			boolean ret = true;
+			for(RoutineSequencialable r : routine)
+			{
+				if(!r.instaFailed())
+				{
+					ret = false;
+				}
+			}
+			return ret;
+		}
+		public boolean instaSucceeded()
+		{
+			boolean ret = false;
+			search:
+			for(int i = 0; i < routine.size(); i ++)
+			{
+				if(routine.get(i).instaSucceeded())
+				{
+					// checking that all preceding routines have ALREADY succeeded
+					for(int j = 0; j < i; j++)
+					{
+						if(!routine.get(j).instaFailed())
+						{
+							ret = false;
+							break search;
+						}
+					}
+				ret = true;
+				break search;
+				}
+			}
+			return ret;
+		}
 }
