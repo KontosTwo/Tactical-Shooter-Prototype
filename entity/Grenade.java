@@ -1,6 +1,7 @@
 package com.mygdx.entity;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.misc.PrecisePoint;
 
 public class Grenade extends Hitboxable
 {
@@ -15,10 +16,10 @@ public class Grenade extends Hitboxable
 	private static final int timer = 300;
 	private static final int throwHeight = 60;
 	
-	public Grenade(Vector2 center,Vector2 destination) 
+	public Grenade(PrecisePoint center,PrecisePoint destination) 
 	{
-		super(center);
-		this.destination = new Vector2(destination);
+		super(new Vector2());
+		/*this.destination = new Vector2(destination);
 		
 		
 		Vector2 xVelocity = new Vector2(destination.x - center.x,destination.y - center.y);
@@ -40,7 +41,7 @@ public class Grenade extends Hitboxable
 		//speedY = -gravity * movingTime / 2;
 		speedY = ((2*throwHeight)/movingTime) - ((gravity * movingTime)/4);
 		
-		
+		*/
 		
 		// TODO Auto-generated constructor stub
 	}

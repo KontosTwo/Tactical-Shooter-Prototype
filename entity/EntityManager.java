@@ -15,10 +15,11 @@ import com.mygdx.handler.Auxiliarable;
 import com.mygdx.handler.Controllable;
 import com.mygdx.map.GameMap;
 import com.mygdx.misc.Point;
+import com.mygdx.misc.PrecisePoint;
 import com.mygdx.misc.Tuple;
 import com.mygdx.script.Sequencialable;
 
-public class EntityManager implements EntityListener
+public class EntityManager implements HumanoidEffectuator,EntityListener
 {
 	private Array<Entity> entity;
 	private GameMap gameMap;
@@ -36,14 +37,14 @@ public class EntityManager implements EntityListener
 		 sr = shapeRenderer;	 
 	}
 	
-	private Array<Humanoid> getFriendly() // this only means humanoids of epeiros
+	private Array<Soldier> getFriendly() // this only means humanoids of epeiros
 	{
-		Array<Humanoid> ret = new Array<Humanoid>();
+		Array<Soldier> ret = new Array<Soldier>();
 		for(Entity e : entity)
 		{
-			if(e instanceof Humanoid)// this is bad
+			if(e instanceof Soldier)// this is bad
 			{
-				Humanoid h = (Humanoid) e;
+				Soldier h = (Soldier) e;
 				if(h.isFriendly())
 				{
 					ret.add(h);
@@ -113,9 +114,9 @@ public class EntityManager implements EntityListener
 			}
 		}
 	}
-	public Tuple<Boolean,LinkedList<Point>> findPath(int sx, int sy, int tx, int ty)
+	public Tuple<Boolean,LinkedList<Point>> findPath(double sx, double sy, double tx, double ty)
 	{
-		return gameMap.findPath(sx, sy, tx, ty);
+		return gameMap.findPath((int)sx, (int)sy, (int)tx, (int)ty);
 	}
 	public void add(Entity e)
 	{
@@ -157,21 +158,21 @@ public class EntityManager implements EntityListener
 		}
 		return ret;
 	}	
-	private Array<Humanoid> getHumanoid()
+	private Array<Soldier> getHumanoid()
 	{
-		Array<Humanoid> ret = new Array<Humanoid>();
+		Array<Soldier> ret = new Array<Soldier>();
 		for(Entity e : entity)
 		{
-			if(e instanceof Humanoid)// this is bad
+			if(e instanceof Soldier)// this is bad
 			{
-				ret.add((Humanoid)e);
+				ret.add((Soldier)e);
 			}
 		}
 		return ret;
 	}
 	public Controllable createHuman(float x,float y)
 	{
-		Humanoid player = Humanoid.createHuman(new Vector2(x,y));
+		Soldier player = Soldier.createHuman(new Vector2(x,y));
 		//human.setSizeAll(150, 150);
 		add(player);
 		gameMap.addCollidable(player);
@@ -180,7 +181,7 @@ public class EntityManager implements EntityListener
 	}
 	public Auxiliarable createProtector(float x,float y)
 	{
-		Humanoid protector = Humanoid.createProtector(new Vector2(x,y));
+		Soldier protector = Soldier.createProtector(new Vector2(x,y));
 		add(protector);
 		//chanion = protector;
 		return protector;
@@ -188,7 +189,7 @@ public class EntityManager implements EntityListener
 	}
 	public void createRifleman(float x,float y)
 	{
-		Humanoid rifleman = Humanoid.createRifleman(new Vector2(x,y));
+		Soldier rifleman = Soldier.createRifleman(new Vector2(x,y));
 		add(rifleman);
 		//add(new Protector(this, AnimationEnum.MAN, new Vector2(x,y)));
 	}
@@ -207,15 +208,15 @@ public class EntityManager implements EntityListener
 		
 		
 	}
-	public void shoot(double y1,double x1,double height1,double y2,double x2,double z2,Humanoid shooter,double accuracy)
+	public void shoot(double y1,double x1,double height1,double y2,double x2,double z2,Soldier shooter,double accuracy)
 	{
 		// height 1 and height 2 are entity heights independent of the map heights
 		// the final impact's z is far too low and completely inaccurate, but for a good reason. if a hurtboxable containes a point, it's dead. end of story
 		Vector3 impactFinal = new Vector3();
 		double height2 = z2;
 		float prev = 0;
-		Array <Humanoid> allHumanoid = getHumanoid();
-		for(Humanoid gb : allHumanoid)
+		Array <Soldier> allHumanoid = getHumanoid();
+		for(Soldier gb : allHumanoid)
 		{
 			if(gb.hurtboxContains((float)x2, (float)y2))
 			{
@@ -230,7 +231,7 @@ public class EntityManager implements EntityListener
 				
 		
 		Array <Hurtboxable> hurtboxable = new Array <Hurtboxable>();
-		for(Humanoid hb : allHumanoid)
+		for(Soldier hb : allHumanoid)
 		{
 			if(hb.hurtboxOverlaps((float)x1,(float) y1, (float)impactMap.x, (float)impactMap.y) && /*check this, */hb != shooter)
 			{
@@ -264,8 +265,8 @@ public class EntityManager implements EntityListener
 		target.setAnimationSize(5, 5);
 		entity.add(target);	*/
 				
-		Array<Humanoid> test = new Array<Humanoid>();
-		for(Humanoid hb : allHumanoid)
+		Array<Soldier> test = new Array<Soldier>();
+		for(Soldier hb : allHumanoid)
 		{
 			if(hb.hurtboxContains(impactFinal.x, impactFinal.y))
 			{
@@ -287,7 +288,7 @@ public class EntityManager implements EntityListener
 	    }
 	    
 		search:
-		for(Humanoid hb : test)
+		for(Soldier hb : test)
 		{
 			if(hb.getHeight() + 1 >= impactFinal.z && hb != shooter)
 			{
@@ -405,8 +406,8 @@ public class EntityManager implements EntityListener
 	}
 	public Tuple<Boolean,Vector2> findCover(double x,double y,int searchCoverDistance)
 	{
-		Array<Humanoid> otherHumanoid = new Array<Humanoid>();
-		for(Humanoid h : getHumanoid())
+		Array<Soldier> otherHumanoid = new Array<Soldier>();
+		for(Soldier h : getHumanoid())
 		{
 			if(Visible.withinDistance((int)x, (int)y, h, searchCoverDistance))
 			{
@@ -419,16 +420,16 @@ public class EntityManager implements EntityListener
 		}*/
 		return gameMap.findCover( (int)x, (int)y,otherHumanoid, searchCoverDistance);
 	}
-	public double judgeCover(int x1,int y1,int height1,int x2,int y2,int height2)
+	public double judgeCover(double x1,double y1,double height1,double x2,double y2,double height2)
 	{		
 		return gameMap.coverDisparity(y1, x1, height1, y2, x2, height2);
 	}
-	public Tuple<Boolean,Humanoid> seeEnemy(Humanoid humanoid) 
+	public Tuple<Boolean,Soldier> seeEnemy(Soldier humanoid) 
 	{		
-		Tuple<Boolean,Humanoid> ret = new Tuple<Boolean, Humanoid>();
+		Tuple<Boolean,Soldier> ret = new Tuple<Boolean, Soldier>();
 		ret.x = false;
 		search:
-		for(Humanoid h : getFriendly())
+		for(Soldier h : getFriendly())
 		{
 			if(humanoid.see(h))
 			{
@@ -440,7 +441,7 @@ public class EntityManager implements EntityListener
 		return ret;
 	}
 
-	public boolean hitMarkerNear(Humanoid h) 
+	public boolean hitMarkerNear(Soldier h) 
 	{
 		boolean ret = false;
 		for(HitMarker hm : getHitMarker())
@@ -458,29 +459,29 @@ public class EntityManager implements EntityListener
 		entity.removeValue(e, true);
 	}
 	@Override
-	public void grenade(int x1, int y1,int x2,int y2) 
+	public void grenade(double x1, double y1,double x2,double y2) 
 	{
-		entity.add(new Grenade(new Vector2(x1,y1),new Vector2(x2,y2)));
+		entity.add(new Grenade(new PrecisePoint(x1,y1),new PrecisePoint(x2,y2)));
 		
 	}
 	@Override
-	public void scanBattleField(Humanoid h) // only usable by enemies
+	public void scanBattleField(Soldier h) // only usable by enemies
 	{
-		for(Humanoid humanoid : getHumanoid())
+		for(Soldier humanoid : getHumanoid())
 		{
-			if(Humanoid.areEnemies(h, humanoid) && h.see(humanoid))
+			if(Soldier.areEnemies(h, humanoid) && h.see(humanoid))
 			{
 				h.spotEnemy(humanoid);
 			}
 		}
 	}
 	@Override
-	public boolean enemyWithinRange(Vector2 position, Humanoid h, int radius) 
+	public boolean enemyWithinRange(Vector2 position, Soldier h, int radius) 
 	{
 		boolean ret = false;
-		for(Humanoid humanoid : getHumanoid())
+		for(Soldier humanoid : getHumanoid())
 		{
-			if(Humanoid.areEnemies(h, humanoid) && h.distanceFrom(position.x, position.y) < radius)
+			if(Soldier.areEnemies(h, humanoid) && h.distanceFrom(position.x, position.y) < radius)
 			{
 				ret = true;
 			}
@@ -488,13 +489,13 @@ public class EntityManager implements EntityListener
 		return ret;
 	}
 	@Override
-	public void foundObscuredEnemy(Humanoid target, Humanoid sender) 
+	public void foundObscuredEnemy(Soldier target, Soldier sender) 
 	{
-		Array<Humanoid> allHumanoid = getHumanoid();
+		Array<Soldier> allHumanoid = getHumanoid();
 		for(int i = 0; i < allHumanoid.size; i ++)
 		{
-			Humanoid current = allHumanoid.get(i);
-			if(Humanoid.areAllies(sender, current) && sender != current)// second condition makes sure that the two soldiers aren't the same
+			Soldier current = allHumanoid.get(i);
+			if(Soldier.areAllies(sender, current) && sender != current)// second condition makes sure that the two soldiers aren't the same
 			{
 				current.recieveObscuredEnemyMessage(target);// all allies recieve the target that the sender has spotted
 			}

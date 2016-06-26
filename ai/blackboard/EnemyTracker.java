@@ -5,20 +5,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.entity.Humanoid;
+import com.mygdx.entity.Soldier;
 
 final class EnemyTracker
 {
-	private Humanoid owner;
+	private Soldier owner;
 	private boolean inSight;
-	private List<Humanoid> user;
+	private List<Soldier> user;
 	private boolean valid;
 	
-	EnemyTracker(Humanoid tracked,Humanoid tracker)
+	EnemyTracker(Soldier tracked,Soldier tracker)
 	{
 		owner =  tracked;
 		inSight = true;
-		user = new LinkedList<Humanoid>();
+		user = new LinkedList<Soldier>();
 		pendAsUser(tracker);
 		valid = true;
 	}
@@ -38,11 +38,11 @@ final class EnemyTracker
 	{
 		return user.isEmpty();
 	}
-	void pendAsUser(Humanoid h) 
+	void pendAsUser(Soldier h) 
 	{
 		user.add(h);
 	}
-	void userSignOut(Humanoid h) 
+	void userSignOut(Soldier h) 
 	{
 		user.remove(h);
 	}

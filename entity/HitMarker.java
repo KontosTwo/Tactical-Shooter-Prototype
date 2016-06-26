@@ -5,7 +5,7 @@ import com.mygdx.misc.Differentable;
 
 public class HitMarker extends Visible
 {
-	private Differentable <Humanoid> shooter;
+	private Differentable <Soldier> shooter;
 	
 	public HitMarker(Vector2 position,Differentable shooter)
 	{
@@ -28,7 +28,7 @@ public class HitMarker extends Visible
 		}
 	}
 	
-	public boolean recognizeFriendlyFire(Humanoid perciever)
+	public boolean recognizeFriendlyFire(Soldier perciever)
 	{
 		return shooter.sameAs(perciever);
 	}

@@ -219,7 +219,7 @@ final class Play extends GameState implements PlayControlSwitchable
 							break;
 				case MOVE: auxiliary.aMoveTo((int)truePoint.x,(int)truePoint.y);
 							break;
-				case GRENADE: controller.cGrenade((int)truePoint.x, (int)truePoint.y);;
+				case GRENADE: //controller.cGrenade((int)truePoint.x, (int)truePoint.y);;
 							break;
 				default:
 			}

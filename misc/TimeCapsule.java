@@ -6,8 +6,8 @@ public class TimeCapsule<E>
 	 * Stores any object, and notifies when time has passed. 
 	 */
 	private int age;
-	private E capsule;
-	private int waitingTime;
+	private final E capsule;
+	private final int waitingTime;
 	
 	public TimeCapsule(E capsule,int waitingTime)
 	{
@@ -19,11 +19,11 @@ public class TimeCapsule<E>
 	{
 		age ++;
 	}
-	public boolean isRipe()
+	public boolean ready()
 	{
 		return age > waitingTime;
 	}
-	public E retrieveCapsule()
+	public E retrieve()
 	{
 		return capsule;
 	}

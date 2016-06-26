@@ -5,7 +5,7 @@ import com.mygdx.graphic.Animation;
 
 public abstract class Entity 
 {
-	protected static EntityListener entityListener;
+	protected static HumanoidEffectuator entityListener;
 	private boolean removable;
 	private int cycle;
 	
@@ -15,7 +15,7 @@ public abstract class Entity
 	{
 		removable = false;
 	}
-	public static void setEntityListener(EntityListener e)
+	public static void setEntityListener(HumanoidEffectuator e)
 	{
 		entityListener = e;
 	}

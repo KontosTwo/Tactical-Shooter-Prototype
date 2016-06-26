@@ -15,6 +15,7 @@ import java.util.function.ToLongFunction;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.ai.blackboard.EnemyCognizable;
 import com.mygdx.ai.blackboard.EnemyManager;
 import com.mygdx.ai.functional.RoutineManager;
 import com.mygdx.ai.leaf.RiflemanRoutineable;
@@ -25,15 +26,15 @@ import com.mygdx.handler.ControlManagerable;
 import com.mygdx.handler.Controllable;
 import com.mygdx.misc.Differentable;
 import com.mygdx.misc.Point;
+import com.mygdx.misc.PrecisePoint;
 import com.mygdx.misc.TimeCapsule;
 import com.mygdx.misc.Tuple;
 import com.mygdx.script.ScriptManager;
 
-public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,Differentable <Humanoid>,RiflemanRoutineable,ControlManagerable
+public class Soldier extends Hurtboxable implements Controllable, Auxiliarable,
+Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 {
 	// states of the Humanoid. Used in determining which animation to use. 
-	// the prev stats exist so that the humanoid can compare its current state with its previous states. if the two differ, then the animation must update
-	// this system prevents a new animation from being created every second. That would suck 
 	private Direction directionPrev;
 	private State statePrev;
 	private Height heightPrev;
@@ -87,11 +88,11 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 	private int shootProgress;
 	//private int burstProgress;
 	//private int burstAmount;
-	private float flankSuppressiveRatio; // the chance that a humanoid will chose to engage in flanking maneuvers over laying down suppressive fire
-	private float shootGrenadeRatio; // the chance that a humanoid will
+	private double flankSuppressiveRatio; // the chance that a humanoid will chose to engage in flanking maneuvers over laying down suppressive fire
+	private double shootGrenadeRatio; // the chance that a humanoid will
 	///////////////////////////////////////
 	
-	private Humanoid(Vector2 position,Weapon weapon,Armor armor,Identification id,Allegiance a,String debugName)
+	private Soldier(Vector2 position,Weapon weapon,Armor armor,Identification id,Allegiance a,String debugName)
 	{
 		super(position);
 		// initializing the state
@@ -135,36 +136,60 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 		
 		this.allegiance = a;
 	}
-	public static Humanoid createProtector(Vector2 position)
+	public static Soldier createProtector(Vector2 position)
 	{
-		Humanoid ret = new Humanoid(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"protector");
+		Soldier ret = new Soldier(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"protector");
 		return ret;
 	}
-	public static Humanoid createHuman(Vector2 position)
+	public static Soldier createHuman(Vector2 position)
 	{
-		Humanoid ret = new Humanoid(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"human");
+		Soldier ret = new Soldier(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"human");
 		return ret;
 	}
-	public static Humanoid createRifleman(Vector2 position)
+	public static Soldier createRifleman(Vector2 position)
 	{
-		Humanoid ret = new Humanoid(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.dalmati,"rifleman");
+		Soldier ret = new Soldier(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.dalmati,"rifleman");
 		ret.routineManager.startRiflemanRoutine(ret);
 		return ret;
 	}
 	public void update(float dt)
 	{
 		super.update(dt);
-		if(currentHp < 0)
+		checkForAnimationChange();	
+		statePrev = state;
+		directionPrev = direction;
+		if(state.equals(State.reload))
 		{
-			// die
+			reloadProgress ++;
+		}
+		if(state.equals(State.shoot))
+		{
+			shootProgress ++;
+		}		
+		entityListener.scanBattleField(this);
+		enemyManager.update();
+		controlManager.update(dt);
+		routineManager.update(dt);
+		if(controlManager.isActive())
+		{
+
+			if(scriptManager.isActive())
+			{
+				scriptManager.cancelScript();
+			}
+		}
+		else
+		{
+			scriptManager.update(dt);
 		}
 		
-		
+		if(debugName.equals("human"))
+		{
 
-		/*
-		 * this prevents the creation of new animations every tick
-		 * a new animation will be created only if the state is changed
-		 */
+		}
+	}	
+	private void checkForAnimationChange()
+	{
 		boolean switchState = false;
 		if(!statePrev.equals(state))
 		{
@@ -185,83 +210,8 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 		{
 			checkState();
 		}
-		
-		/*if(!statePrev.equals(state) || !directionPrev.equals(direction) || !heightPrev.equals(height))
-		{
-			
-			checkState();
-			System.out.println(height + " " + heightPrev);
-		}*/
-
-		//faceUnit((int)getVelocity().x,(int)getVelocity().y);
-	
-		if(unsteadiness > 0)
-		{
-			unsteadiness --;
-		}
-		
-		
-		
-		
-		// updating both states and directions
-		statePrev = state;
-		directionPrev = direction;
-		
-		
-		
-		if(state.equals(State.reload))
-		{
-			reloadProgress ++;
-		}
-		if(state.equals(State.shoot))
-		{
-			shootProgress ++;
-		}
-		
-		entityListener.scanBattleField(this);
-		enemyManager.update();
-		
-		
-		// managing the interplay between control, scirpt, and routine managers
-		
-
-		
-		controlManager.update(dt);
-		routineManager.update(dt);
-		if(controlManager.isActive())
-		{
-
-			if(scriptManager.isActive())
-			{
-				scriptManager.cancelScript();
-			}
-		}
-		else
-		{
-			scriptManager.update(dt);
-		}
-		
-		if(debugName.equals("human"))
-		{
-			//System.out.println(reloadProgress);
-			if(state.equals(State.shoot))
-			{
-				//System.out.println("shooting");
-				
-			}
-		}
-		
-		/*
-		if(!routineManager.active() && controller)
-		{
-			controlManager.update(dt);
-		}
-		else
-		{
-			routineManager.update();
-		}*/
-	}	
-	public void damage(Humanoid target)// this damage formula is even more unbalanced than ur mum
+	}
+	public void damage(Soldier target)// this damage formula is even more unbalanced than ur mum
 	{
 		int attack = this.weapon.damage;
 		int defense = target.armor.armor;
@@ -289,15 +239,15 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 		return this.allegiance.equals(Allegiance.epeirot); // this should become more generalized
 	}
 	@Override
-	public boolean sameAs(Humanoid comparer) 
+	public boolean sameAs(Soldier comparer) 
 	{
 		return this.allegiance.equals(comparer.allegiance);
 	}
-	public static boolean areEnemies(Humanoid a,Humanoid b)
+	public static boolean areEnemies(Soldier a,Soldier b)
 	{
 		return !a.allegiance.equals(b.allegiance);// will not work properly if there are more than 3 allegiances
 	}
-	public static boolean areAllies(Humanoid a,Humanoid b)
+	public static boolean areAllies(Soldier a,Soldier b)
 	{
 		return a.allegiance.equals(b.allegiance);// will not work properly if there are more than 3 allegiances
 	}
@@ -307,11 +257,11 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 	{
 		return  Math.abs(ht.getPosition().x - this.center.x) < SHOTSENSINGDISTANCE && Math.abs(ht.getPosition().y - this.center.y) < SHOTSENSINGDISTANCE;
 	}
-	public void recieveObscuredEnemyMessage(Humanoid target)
+	public void recieveObscuredEnemyMessage(PrecisePoint location)
 	{
-		enemyManager.recieveObscuredEnemyMessage(target);
+		enemyManager.delayedNotifyEnemyAt(location);
 	}
-	public void spotEnemy(Humanoid h)// will not add the new EnemyMarker if too close to existing one
+	public void spotEnemy(Soldier h)// will not add the new EnemyMarker if too close to existing one
 	{
 		enemyManager.spotEnemy(h);		
 	}
@@ -818,7 +768,7 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 	{
 		entityListener.grenade((int)center.x, (int)center.y,(int)x,(int)y);
 	}
-	public boolean see(Humanoid h)
+	public boolean see(Soldier h)
 	{
 		int difference = Direction.getDif(getDirection((int)h.center.x,(int)h.center.y), this.direction);
 		return (difference <= 1 || difference == 7) && entityListener.see(center.y,center.x,getHeight(), h.center.y,h.center.x,h.getHeight());
@@ -829,7 +779,7 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 		return (difference <= 1 || difference == 7) && entityListener.see(center.y,center.x,getHeight(), center.y,center.x,0);
 	}
 	
-	private Tuple<Boolean,Humanoid> seeEnemy()
+	private Tuple<Boolean,Soldier> seeEnemy()
 	{
 		return entityListener.seeEnemy(this);
 	}
@@ -838,17 +788,17 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 		return entityListener.hitMarkerNear(this);
 	}
 
-	private boolean seePeripheral(Humanoid h)
+	private boolean seePeripheral(Soldier h)
 	{
 		int difference = Direction.getDif(getDirection((int)h.center.x,(int)h.center.y), this.direction);
 		return (difference == 1);
 	}
-	private boolean seeBino(Humanoid h)
+	private boolean seeBino(Soldier h)
 	{
 		int difference = Direction.getDif(getDirection((int)h.center.x,(int)h.center.y), this.direction);
 		return (difference == 0 || difference == 7);
 	}
-	private boolean seeTerrain(Humanoid h)
+	private boolean seeTerrain(Soldier h)
 	{
 		return entityListener.see(center.y,center.x,getHeight(), h.center.y,h.center.x,h.getHeight());
 	}
@@ -867,11 +817,11 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 	{
 		return entityListener.findCover(center.x,center.y,SEARCHCOVERDISTANCE);
 	}
-	private boolean judgeCover(Humanoid foe)
+	private boolean judgeCover(Soldier foe)
 	{
 		return entityListener.judgeCover((int)this.center.x,(int)this.center.y,(int)this.getHeight(),(int)foe.center.x,(int)foe.center.y,(int)foe.getHeight()) > COVERTHRESHOLD;
 	}
-	private boolean judgeCover(Humanoid foe,int x,int y)
+	private boolean judgeCover(Soldier foe,int x,int y)
 	{
 		return entityListener.judgeCover(x,y,(int)this.getHeight(),(int)foe.center.x,(int)foe.center.y,(int)foe.getHeight()) > COVERTHRESHOLD;
 		// this has yet to consider the fact that the the cover location can be appropriate whether the humanoid is crawling, crouching, or standing
@@ -957,5 +907,20 @@ public class Humanoid extends Hurtboxable implements Controllable, Auxiliarable,
 	public String toString()
 	{
 		return debugName;
+	}
+	@Override
+	public boolean see(double x, double y, double z) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public double proximityFrom(double x, double y) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public boolean verifyEnemyMarkerAt(double x, double y) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

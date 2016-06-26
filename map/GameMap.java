@@ -27,7 +27,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.entity.Entity;
 import com.mygdx.entity.Hitboxable;
-import com.mygdx.entity.Humanoid;
+import com.mygdx.entity.Soldier;
 import com.mygdx.entity.Visible;
 import com.mygdx.graphic.MapRenderer;
 import com.mygdx.misc.Point;
@@ -953,7 +953,7 @@ public class GameMap
 		y /= tileSize;
 		return x < 0 || x > map.get(0).size || y < 0 || y > map.size;
 	}
-	public Tuple<Boolean,Vector2> findCover(int x,int y,Array<Humanoid> otherHumanoid,int searchCoverDistance)
+	public Tuple<Boolean,Vector2> findCover(int x,int y,Array<Soldier> otherHumanoid,int searchCoverDistance)
 	{
 		Tuple<Boolean,Vector2> ret = new Tuple<Boolean,Vector2>();
 		PriorityQueue<Point> allPoint = new PriorityQueue<Point>(new PointComparator(x,y));
@@ -961,7 +961,7 @@ public class GameMap
 		int posY = y/tileSize;
 		// everything is tile coords
 		ArrayList <Point> takenPoint = new ArrayList <Point>();
-		for(Humanoid h : otherHumanoid)
+		for(Soldier h : otherHumanoid)
 		{
 			takenPoint.add(new Point((int)h.getTileX(tileSize),(int)h.getTileY(tileSize)));
 		}

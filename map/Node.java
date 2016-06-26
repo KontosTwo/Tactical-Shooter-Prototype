@@ -19,7 +19,6 @@ class Node
 		g = 0;
 		h = 0;
 	}
-	
 	public boolean matches(int x,int y)
 	{
 		return this.x == x && this.y == y;

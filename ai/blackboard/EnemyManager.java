@@ -3,115 +3,101 @@ package com.mygdx.ai.blackboard;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.entity.Humanoid;
+import com.mygdx.entity.Soldier;
+import com.mygdx.misc.PrecisePoint;
 import com.mygdx.misc.TimeCapsule;
 import com.mygdx.misc.Tuple;
 
 public final class EnemyManager
 {
-	/*
-	 * this class managed all the enemies that a humanoid class is aware of
-	 * the humanoid class will access both recognizedEnemies, which are enemies that are not visible
-	 * due to hiding behind obstacles, and sightedEnemies, which are visible enemies, and act upon them
-	 * both the arrays recognizedEnemy and sightedEnemy will add and drop enemy humanoids based on the methods
-	 * defined below
-	 */
-	private LinkedList<EnemyMarker> recognizedEnemy;		
-	private Array<EnemyTracker> sightedEnemy;
+	private List<EnemyMarker> recognizedEnemy;		
+	private List<EnemyTracker> sightedEnemy;
 	
-	private static final int ENEMYREVEALRADIUS = 50; // radius of your EnemyMarker when the enemy sees it. If the distance between you or chanion and that enemyMArker is beyond that range, then the enemy gets rid of that EnemyMarker
-	//private static final int ENEMYMARKERRADIUS = 60; // the "radius" of each enemyMArker. EAch enemyMArker is entitled to this much space. No toher enemyMarker can be in this space. This is used for many checks and stuff
-	private static final int MAXENEMYGUESSES = 5;// this exists to prevent you from abusing the whole "duplicate yourself needlessly to make the enemy feel grossly outnumbered"  trick, you bastard
-	private static final int TIMETONOTIFYALLIES = 50;// time for a soldier to notify other soldiers of an enemy
-	private Humanoid soldier;
+	private static final int ENEMYREVEALRADIUS = 50; 
+	private static final int ENEMYMARKERRADIUS = 60; 
+	private static final int MAXENEMYGUESSES = 5;
+	private static final int TIMETONOTIFYALLIES = 50;
+	private final EnemyCognizable soldier;
 	
 	private EnemyTracker targetVisible;
 	private EnemyMarker targetObscured;
 
-	private Array<TimeCapsule<Tuple<Humanoid,Vector2>>> enemyMarkerMessage;// list of notifications of newly discovered enemies
+	private List<TimeCapsule<PrecisePoint>> enemyMarkerMessage;// list of notifications of newly discovered enemies
 	// the tuple exists so that both a shallow copy of the humanoid and a deep copy of the position is retained
 	
-	public EnemyManager(Humanoid soldier)
+	public EnemyManager(EnemyCognizable soldier)
 	{
-		recognizedEnemy = new LinkedList<EnemyMarker>();
-		sightedEnemy = new Array<EnemyTracker>();
+		recognizedEnemy = new LinkedList<>();
+		sightedEnemy = new LinkedList<>();
 		this.soldier = soldier;
-		enemyMarkerMessage = new Array<TimeCapsule<Tuple<Humanoid,Vector2>>>();
+		enemyMarkerMessage = new LinkedList<>();
 	}
-	private void recieveObscuredEnemyMessage(Markable target)// recieve a message that an enemyMarker is at location X
+	public void spotEnemy(TrackableEnemy enemy)
 	{
-		enemyMarkerMessage.add(new TimeCapsule<Tuple<Humanoid,Vector2>>(new Tuple<Humanoid,Vector2>(target,new Vector2(target.center)),TIMETONOTIFYALLIES));// the new Vector makes a deep copy of the position
+		checkToAddToSighted(enemy);
 	}
-	private boolean trackerInMind()
+	private void checkToAddToSighted(TrackableEnemy enemy)// We don't have to add in an enemyTracker every time the enemytracker moves. since we already have a reference to the enemyrtacker's position, that's all we need
 	{
-		return !(sightedEnemy.size == 0);
-	}
-	private Trackable acquireEnemyTracker() // must be called after trackerInMind
-	{
-		EnemyTracker closest = null;
-		double distanceMin = Integer.MAX_VALUE;// near guarentee that SOMETHING is returned
-		for(EnemyTracker et : sightedEnemy)
+		boolean duplicateFound = false;
+		search:
+		for(EnemyTracker enemyTracker : sightedEnemy)// this prevents making copies of enemies already being tracked
 		{
-			double distanceFrom = soldier.distanceFrom(et.owner.center.x, et.owner.center.y);
-			if(distanceFrom < distanceMin)
+			if(enemyTracker. == enemy)
 			{
-				distanceMin = distanceFrom;
-				closest = et;
+				duplicateFound = true;
+				break search;
 			}
 		}
-		return closest;
-	}
-	private boolean markerInMind()
-	{
-		return !(recognizedEnemy.size() == 0);
-	}
-	private Targetable acquireEnemyMarker() // must be called after markerInMind
-	{
-		EnemyMarker closest = null;
-		double distanceMin = Integer.MAX_VALUE;// near guarentee that SOMETHING is returned
-		for(EnemyMarker em : recognizedEnemy)
+		if(!duplicateFound)// an existing enemyMarker can move around. If this new one's memory address does not match any existing ones, then it's assumed to have instantly come into view. Gameplay-wise, you reared your head
 		{
-			double distanceFrom = soldier.distanceFrom(em.owner.center.x, em.owner.center.y);
-			if(distanceFrom < distanceMin)
+			sightedEnemy.add(new EnemyTracker(h,soldier));
+			search:
+			for(int i = 0; i < recognizedEnemy.size(); i ++)
 			{
-				distanceMin = distanceFrom;
-				closest = em;
+				EnemyMarker current = recognizedEnemy.get(i);
+				if(current.assumedCloseTo(h))// remove one of the enemyMarkers that are near the sighted enemy. Remember, this only happens when the you appear out of nowhere. Running into an existing enemyMarker won't make it disappear. 
+				{
+					current.userSignOut(soldier);
+					// now the soldier will notify all comrades that the enemyMArker near the sightedEnemy is invalid
+					current.discoveredAndRevealed();						
+					break search;// only allows one nearby enemyMarker to be removed
+				}
 			}
 		}
-		return closest;
 	}
-	private void spotEnemy(Humanoid h)
+	public void delayedNotifyEnemyAt(PrecisePoint location)
 	{
-		// condition to make sure that no duplicates are made
-		checkToAddToSighted(h);
+		enemyMarkerMessage.add(new TimeCapsule<PrecisePoint>(new PrecisePoint(location),TIMETONOTIFYALLIES));
 	}
-	private boolean coveredAgainstUnseenEnemy()
+	public boolean coveredAgainstUnseenEnemy()
 	{
 		boolean ret = true;
 		// searches through all visible "allied" and see if they are favorably positioned against them
 		for(EnemyMarker e : recognizedEnemy)
 		{
-			if(!Humanoid.this.coveredAgainst(standHeight,e.position.x,e.position.y))// this needs verification
+			if(!Soldier.this.coveredAgainst(standHeight,e.position.x,e.position.y))// this needs verification
 			{
 				ret = false;
 			}
 		}
 		return ret;
 	}
-	private boolean coveredAgainstSeenEnemy()
+	public boolean coveredAgainstSeenEnemy()
 	{
 		boolean ret = true;
 		// searches through all visible "allied" and see if they are favorably positioned against them
 		for(EnemyTracker e : sightedEnemy)
 		{
-			if(!Humanoid.this.coveredAgainst(standHeight,e.owner.center.x,e.owner.center.y))// this needs edit
+			if(!Soldier.this.coveredAgainst(standHeight,e.owner.center.x,e.owner.center.y))// this needs edit
 			{
 				ret = false;
 			}
@@ -205,18 +191,18 @@ public final class EnemyManager
 		/////////////////////////////////////////
 		
 		// once a message if fully recieved, add it and then remove it
-		Iterator <TimeCapsule<Tuple<Humanoid,Vector2>>> iterator3 = enemyMarkerMessage.iterator();
+		Iterator <TimeCapsule<Tuple<Soldier,Vector2>>> iterator3 = enemyMarkerMessage.iterator();
 		while(iterator3.hasNext())
 		{
-			TimeCapsule<Tuple<Humanoid,Vector2>> current = iterator3.next();
-			if(current.isRipe())
+			TimeCapsule<Tuple<Soldier,Vector2>> current = iterator3.next();
+			if(current.ready())
 			{
 				/*for(int i = 0; i < 3; i ++)
 				{
 					System.out.println("CHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKING");
 				}
 				System.out.println(recognizedEnemy);*/
-				checkToAddToRecognized(current.retrieveCapsule().x,current.retrieveCapsule().y);
+				checkToAddToRecognized(current.retrieve().x,current.retrieve().y);
 				//System.out.println(recognizedEnemy);
 				/*
 				 * 
@@ -235,7 +221,7 @@ public final class EnemyManager
 		//if(soldier.debugName.equals("rifleman"))
 		//System.out.println(soldier.toString() + sightedEnemy);
 	}
-	private void checkToAddToRecognized(Humanoid h)
+	private void checkToAddToRecognized(Soldier h)
 	{
 		for(EnemyMarker em : recognizedEnemy)
 		{
@@ -246,7 +232,7 @@ public final class EnemyManager
 		}
 		recognizedEnemy.addFirst(new EnemyMarker(h,soldier));
 	}
-	private void checkToAddToRecognized(Humanoid h,Vector2 delayedCenter)// in case a delayed centr is needed
+	private void checkToAddToRecognized(Soldier h,Vector2 delayedCenter)// in case a delayed centr is needed
 	{
 		for(EnemyMarker em : recognizedEnemy)
 		{
@@ -259,50 +245,5 @@ public final class EnemyManager
 		recognizedEnemy.addFirst(new EnemyMarker(h,soldier,delayedCenter));
 
 	}
-	private void checkToAddToSighted(Humanoid h)// We don't have to add in an enemyTracker every time the enemytracker moves. since we already have a reference to the enemyrtacker's position, that's all we need
-	{
-		boolean duplicateFound = false;
-		search:
-		for(EnemyTracker et : sightedEnemy)// this prevents making copies of enemies already being tracked
-		{
-			if(h == et.owner)
-			{
-				duplicateFound = true;
-				break search;
-			}
-		}
-		if(!duplicateFound)// an existing enemyMarker can move around. If this new one's memory address does not match any existing ones, then it's assumed to have instantly come into view. Gameplay-wise, you reared your head
-		{
-			sightedEnemy.add(new EnemyTracker(h,soldier));
-			search:
-			for(int i = 0; i < recognizedEnemy.size(); i ++)
-			{
-				EnemyMarker current = recognizedEnemy.get(i);
-				if(current.assumedCloseTo(h))// remove one of the enemyMarkers that are near the sighted enemy. Remember, this only happens when the you appear out of nowhere. Running into an existing enemyMarker won't make it disappear. 
-				{
-					current.userSignOut(soldier);
-					// now the soldier will notify all comrades that the enemyMArker near the sightedEnemy is invalid
-					current.discoveredAndRevealed();						
-					break search;// only allows one nearby enemyMarker to be removed
-				}
-			}
-		}
-	}
-	private boolean enemyInMind()
-	{
-		return (recognizedEnemy.size() != 0);
-	}
-	private Targetable selectEnemyUnknown() // onyl call when enemyInMind() is true
-	{
-		EnemyMarker ret;
-		PriorityQueue<EnemyMarker> pq = new PriorityQueue<EnemyMarker>(new EnemyMarkerComparator());
-		pq.addAll(recognizedEnemy); // make sure that this ensures order
-		// first whichever enemy is visible
-		
-		// if not, choose nearest enemyMarker to engage
-		EnemyMarker chosen = pq.peek();
-		return chosen;
-	}
-	
 	
 }
