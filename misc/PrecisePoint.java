@@ -2,10 +2,24 @@ package com.mygdx.misc;
 
 public class PrecisePoint 
 {
-	public double x;
-	public double y;
+	/*
+	 * precise coordinates
+	 * useful for indication an entity's location
+	 */
+	public float x;
+	public float y;
 	
+	public PrecisePoint(float x,float y)
+	{
+		this.x = x;
+		this.y = y;
+	}
 	public PrecisePoint(double x,double y)
+	{
+		this.x = (float)x;
+		this.y = (float)y;
+	}
+	public void set(float x,float y)
 	{
 		this.x = x;
 		this.y = y;

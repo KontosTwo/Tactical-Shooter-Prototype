@@ -16,6 +16,7 @@ import com.mygdx.camera.CameraHoggable;
 import com.mygdx.graphic.Animation;
 import com.mygdx.map.GameMap;
 import com.mygdx.misc.Box;
+import com.mygdx.misc.MyVector2;
 import com.mygdx.misc.Point;
 
 
@@ -212,9 +213,9 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		c.position.set((center.x + lead.x)/2,(center.y + lead.y)/2,0);
 		//c.lookAt(center.x,center.y,0);
 	}*/
-	public Vector2 provideCenterCamera()
+	public MyVector2 provideCenterCamera()
 	{
-		return new Vector2(center);
+		return new MyVector2(center.x,center.y);
 	}
 
 	public void resetAnimation()

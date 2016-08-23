@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.misc.Box;
 
-public class Animation 
+public class Animation // this is sorta a third party library
 {
 	private TextureRegionDrawable[] frame;
 	private float time;
@@ -19,6 +19,13 @@ public class Animation
 	{
 		setAnimation(frame,delay);	
 		looped = false;
+	}
+	public void dispose()
+	{
+		for(int i = 0; i < frame.length; i ++)
+		{
+			frame[i].getRegion().getTexture().dispose();
+		}
 	}
 	public Animation(Array<TextureRegionDrawable> frame,float delay) 
 	{

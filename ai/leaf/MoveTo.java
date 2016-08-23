@@ -20,15 +20,15 @@ import com.mygdx.script.Sequencialable;
 	 * from point A to point B, PathTo must exist to ensure that point A and point B are valid starting and ending points
 	 * always succeeds
 	 */
-	private double destX;
-	private double destY;
+	private float destX;
+	private float destY;
 	private final MoveToable actor;
 	
 	MoveTo(MoveToable m)
 	{
 		this.actor = m;
 	}
-	void designateDestination(double x,double y)
+	void designateDestination(float x,float y)
 	{
 		destX = x;
 		destY = y;

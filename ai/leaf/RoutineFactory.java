@@ -54,7 +54,7 @@ abstract public class RoutineFactory
     	BurstShoot burst = new BurstShoot(aa,shoot);
     	return burst;
      }
-     static BurstShoot createBurstShoot(RiflemanRoutineable aa,double x,double y,double z)
+     static BurstShoot createBurstShoot(RiflemanRoutineable aa,float x,float y,float z)
      {
       	Shoot shoot = new Shoot(aa);
     	BurstShoot burst = new BurstShoot(aa,shoot);
@@ -70,12 +70,10 @@ abstract public class RoutineFactory
     	 return new Wait(tick);
      }
      
-    
     static RoutineSequencialable createMandatoryRoutine(RoutineSequencialable r)
     {
     	return new RoutineSequencialable()
     	{
-
 			@Override
 			public void startSequence() 
 			{
@@ -146,7 +144,7 @@ abstract public class RoutineFactory
 	   	 ret.designateDestination(x, y);
 	   	 return ret;
     }
-    public static Sequencialable createBurstShootSeq(double x,double y,double z,RiflemanRoutineable aa)
+    public static Sequencialable createBurstShootSeq(float x,float y,float z,RiflemanRoutineable aa)
     {
     	BurstShoot burstShoot = new BurstShoot(aa,createShoot(aa));
     	burstShoot.designateTarget(x, y,z);

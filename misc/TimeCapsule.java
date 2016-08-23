@@ -4,6 +4,7 @@ public class TimeCapsule<E>
 {
 	/*
 	 * Stores any object, and notifies when time has passed. 
+	 * retrieve
 	 */
 	private int age;
 	private final E capsule;

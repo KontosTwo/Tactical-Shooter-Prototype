@@ -2,6 +2,10 @@ package com.mygdx.misc;
 
 public class Point 
 {
+	/*
+	 * integer coordinates
+	 * useful for designating map coordinates
+	 */
 	private int x;
 	private int y;
 	

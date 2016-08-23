@@ -1,7 +1,6 @@
 package com.mygdx.entity;
 
 
-import com.mygdx.graphic.Animation;
 
 public abstract class Entity 
 {

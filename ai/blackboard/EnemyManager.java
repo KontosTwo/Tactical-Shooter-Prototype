@@ -19,7 +19,7 @@ import com.mygdx.misc.Tuple;
 
 public final class EnemyManager
 {
-	private List<EnemyMarker> recognizedEnemy;		
+	/*private List<EnemyMarker> recognizedEnemy;		
 	private List<EnemyTracker> sightedEnemy;
 	
 	private static final int ENEMYREVEALRADIUS = 50; 
@@ -123,8 +123,8 @@ public final class EnemyManager
 			EnemyTracker et = sightedEnemy.get(i);
 			if(!soldier.see(et.owner))
 			{
-				/*if(soldier.allegiance.equals(Allegiance.dalmati))
-					System.out.println(soldier.verifyGroundOf(et.owner.center));*/
+				if(soldier.allegiance.equals(Allegiance.dalmati))
+					System.out.println(soldier.verifyGroundOf(et.owner.center));
 
 				// make sure that no duplicates
 				checkToAddToRecognized(et.owner);
@@ -197,14 +197,14 @@ public final class EnemyManager
 			TimeCapsule<Tuple<Soldier,Vector2>> current = iterator3.next();
 			if(current.ready())
 			{
-				/*for(int i = 0; i < 3; i ++)
+				for(int i = 0; i < 3; i ++)
 				{
 					System.out.println("CHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKINGCHECKING");
 				}
-				System.out.println(recognizedEnemy);*/
+				System.out.println(recognizedEnemy);
 				checkToAddToRecognized(current.retrieve().x,current.retrieve().y);
 				//System.out.println(recognizedEnemy);
-				/*
+				
 				 * 
 				 * 
 				 * 
@@ -213,7 +213,7 @@ public final class EnemyManager
 				 * 
 				 * 
 				 * f
-				 */
+				 
 				iterator3.remove();
 			}
 		}	
@@ -245,5 +245,5 @@ public final class EnemyManager
 		recognizedEnemy.addFirst(new EnemyMarker(h,soldier,delayedCenter));
 
 	}
-	
+	*/
 }

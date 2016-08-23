@@ -3,23 +3,25 @@ package com.mygdx.camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.misc.MyVector2;
+import com.mygdx.misc.PrecisePoint;
 
 public class Camera extends OrthographicCamera
 {
-	private CameraHoggable attentionWhore;
-	private Vector2 lead;
+	private CameraHoggable cameraHog;
+	private PrecisePoint lead;
 	private State state;
-	private int speed;
-	private Vector2 velocityUnit;
-	private Vector2 waypoint;
+	private byte speed;
+	private MyVector2 velocityUnit;
+	private PrecisePoint waypoint;
 	
 	public Camera()
 	{
 		super();
 		state = State.IDLE;
-		velocityUnit = new Vector2(0,0);
-		waypoint = new Vector2();
-		lead = new Vector2();
+		velocityUnit = new MyVector2(0,0);
+		waypoint = new PrecisePoint();
+		lead = new PrecisePoint();
 	}
 	public Camera(int x,int y)
 	{
@@ -33,17 +35,17 @@ public class Camera extends OrthographicCamera
 			case IDLE:
 					break;
 			case FOCUSED:
-					Vector2 focusPoint = attentionWhore.provideCenterCamera();
+					MyVector2 focusPoint = cameraHog.provideCenterCamera();
 					
 					
 					//unproject(lead);
-					this.position.x = (focusPoint.x + lead.x)/2;		
-					this.position.y= (focusPoint.y + lead.y)/2;
+					this.position.x = (focusPoint.getX() + lead.x)/2;		
+					this.position.y= (focusPoint.getY() + lead.y)/2;
 					break;
 			case TRANSLATE:
 					if(stillPan())
 					{
-						position.add(velocityUnit.x * speed,velocityUnit.y * speed,0);
+						position.add(velocityUnit.getX() * speed,velocityUnit.getY() * speed,0);
 					}
 					else
 					{
@@ -57,10 +59,10 @@ public class Camera extends OrthographicCamera
 	}
 	public void focus(CameraHoggable ch)
 	{
-		attentionWhore = ch;
+		cameraHog = ch;
 		state = State.FOCUSED;
 	}
-	public void focus2(Vector2 lead)
+	public void focusOnLead(PrecisePoint lead)
 	{
 		this.lead = lead;
 	}
@@ -72,7 +74,7 @@ public class Camera extends OrthographicCamera
 	{
 		position.set(x,y,0);
 	}
-	public void panTo(int x,int y,int speed)
+	public void panTo(int x,int y,byte speed)
 	{
 		state = State.TRANSLATE;
 		this.speed = speed;
@@ -91,10 +93,11 @@ public class Camera extends OrthographicCamera
 	}
 	private boolean stillPan()
 	{
-		double futurex = position.x + (velocityUnit.x*speed);
-		double futurey = position.y + (velocityUnit.y*speed);
+		double futurex = position.x + (velocityUnit.getX()*speed);
+		double futurey = position.y + (velocityUnit.getY()*speed);
 		
-		return (sameSign(waypoint.x - futurex,waypoint.x - position.x) && sameSign(waypoint.y - futurey,waypoint.y - position.y));
+		return (sameSign(waypoint.x - futurex,waypoint.x - position.x)
+				&& sameSign(waypoint.y - futurey,waypoint.y - position.y));
 	}
 	private boolean sameSign(double x1,double x2)// potential problem if either is 0
 	{

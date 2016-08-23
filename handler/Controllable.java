@@ -9,7 +9,7 @@ public interface Controllable extends CameraHoggable
 	public void cMoveLeft(boolean b);
 	public void cMoveUp(boolean b);
 	public void cMoveDown(boolean b);
-	public void cShoot(double x,double y,double z);
+	public void cShoot(float x,float y,float z);
 	public void cReload();
 	public void cFace(double x,double y);
 	public void cStand();

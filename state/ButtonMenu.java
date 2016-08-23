@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.entity.Button;
 import com.mygdx.entity.EntityManager;
-import com.mygdx.graphic.Animation;
 
 class ButtonMenu extends Button
 {

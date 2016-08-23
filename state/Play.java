@@ -17,6 +17,7 @@ import com.mygdx.entity.EntityManager;
 import com.mygdx.graphic.MapRenderer;
 import com.mygdx.handler.Auxiliarable;
 import com.mygdx.handler.Controllable;
+import com.mygdx.misc.PrecisePoint;
 import com.mygdx.script.Script;
 import com.mygdx.script.Sequencialable;
 import com.mygdx.sound.SoundRepository;
@@ -25,7 +26,7 @@ final class Play extends GameState implements PlayControlSwitchable
 {
 	private Level level;
 	
-	private Vector2 mousePosition;	
+	private PrecisePoint mousePosition;	
 	
 	private Controllable controller;
 	private Auxiliarable auxiliary;
@@ -70,9 +71,9 @@ final class Play extends GameState implements PlayControlSwitchable
 		MapRenderer mr = new MapRenderer();
 		
 		cam.focus(controller);
-		mousePosition = new Vector2();
+		mousePosition = new PrecisePoint();
 		cam.zoom = .7f;
-		cam.focus2(mousePosition);
+		cam.focusOnLead(mousePosition);
 		
 		level = new Level(entityManager,mr);
 		

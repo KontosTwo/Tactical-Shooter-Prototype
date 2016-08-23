@@ -44,6 +44,7 @@ public class GameMap
 	private static final String INFILETERRAINID = "map";
 	private static final String INFILEOBSTACLEID = "obstacle";
 	private static final String INFILERAMPID = "ramp";
+	private static final String MAPENTITYID = "doodad";
 	
 	private static final int  MAXHEIGHT = 300;
 	

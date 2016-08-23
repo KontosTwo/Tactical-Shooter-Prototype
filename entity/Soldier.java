@@ -114,7 +114,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 		
 		// the encapsulation classes
 		routineManager = new RoutineManager();
-		enemyManager = new EnemyManager(this);
+		//enemyManager = new EnemyManager(this);
 		scriptManager = new ScriptManager();
 		controlManager = new ControlManager(this);
 		/////////////////
@@ -167,7 +167,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 			shootProgress ++;
 		}		
 		entityListener.scanBattleField(this);
-		enemyManager.update();
+		//enemyManager.update();
 		controlManager.update(dt);
 		routineManager.update(dt);
 		if(controlManager.isActive())
@@ -259,11 +259,11 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 	}
 	public void recieveObscuredEnemyMessage(PrecisePoint location)
 	{
-		enemyManager.delayedNotifyEnemyAt(location);
+		//enemyManager.delayedNotifyEnemyAt(location);
 	}
 	public void spotEnemy(Soldier h)// will not add the new EnemyMarker if too close to existing one
 	{
-		enemyManager.spotEnemy(h);		
+		//enemyManager.spotEnemy(h);		
 	}
 	
 	public boolean isEnemyDebug()
@@ -527,7 +527,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 		controlManager.pendDown(b);
 	}
 	@Override
-	public void cShoot(double x,double y,double z) 
+	public void cShoot(float x,float y,float z) 
 	{			
 		scriptManager.pushSequence(RoutineFactory.createBurstShootSeq(x, y, z, this));				
 	}

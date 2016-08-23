@@ -3,6 +3,7 @@ package com.mygdx.entity;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,6 +23,12 @@ import com.mygdx.script.Sequencialable;
 public class EntityManager implements HumanoidEffectuator,EntityListener
 {
 	private Array<Entity> entity;
+	
+	private Soldier player;
+	private Soldier auxiliary;
+	private List<Soldier> enemy;
+
+	
 	private GameMap gameMap;
 	private State state;
 	private int cycle;
@@ -462,7 +469,6 @@ public class EntityManager implements HumanoidEffectuator,EntityListener
 	public void grenade(double x1, double y1,double x2,double y2) 
 	{
 		entity.add(new Grenade(new PrecisePoint(x1,y1),new PrecisePoint(x2,y2)));
-		
 	}
 	@Override
 	public void scanBattleField(Soldier h) // only usable by enemies
@@ -497,7 +503,21 @@ public class EntityManager implements HumanoidEffectuator,EntityListener
 			Soldier current = allHumanoid.get(i);
 			if(Soldier.areAllies(sender, current) && sender != current)// second condition makes sure that the two soldiers aren't the same
 			{
-				current.recieveObscuredEnemyMessage(target);// all allies recieve the target that the sender has spotted
+				
+				/*
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 */
+				
+				//current.recieveObscuredEnemyMessage(target);// all allies recieve the target that the sender has spotted
 			}
 		}
 	}

@@ -9,9 +9,9 @@ class BurstShoot implements RoutineSequencialable
 	private final Repeater repeater;
 	private final Shoot shoot;
 	private final BurstShootable actor;
-	private double x;
-	private double y;
-	private double z;
+	private float x;
+	private float y;
+	private float z;
 	
 	BurstShoot(BurstShootable actor,Shoot shoot)
 	{
@@ -19,7 +19,7 @@ class BurstShoot implements RoutineSequencialable
 		this.actor = actor;
 		this.shoot = shoot;
 	}
-	void designateTarget(double x,double y,double z)
+	void designateTarget(float x,float y,float z)
 	{
 		this.x = x;
 		this.y = y;
