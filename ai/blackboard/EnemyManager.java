@@ -12,7 +12,7 @@ import java.util.function.ToLongFunction;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.entity.Soldier;
+import com.mygdx.entity.soldier.SoldierBattle;
 import com.mygdx.misc.PrecisePoint;
 import com.mygdx.misc.TimeCapsule;
 import com.mygdx.misc.Tuple;

@@ -3,10 +3,11 @@ package com.mygdx.camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.graphic.animation.Animator.CameraBoundaryProvider;
 import com.mygdx.misc.MyVector2;
 import com.mygdx.misc.PrecisePoint;
 
-public class Camera extends OrthographicCamera
+public class Camera extends OrthographicCamera implements CameraBoundaryProvider
 {
 	private CameraHoggable cameraHog;
 	private PrecisePoint lead;
@@ -14,6 +15,7 @@ public class Camera extends OrthographicCamera
 	private byte speed;
 	private MyVector2 velocityUnit;
 	private PrecisePoint waypoint;
+	private Vector3 CameraBoundaryProviderHelper;
 	
 	public Camera()
 	{
@@ -22,8 +24,9 @@ public class Camera extends OrthographicCamera
 		velocityUnit = new MyVector2(0,0);
 		waypoint = new PrecisePoint();
 		lead = new PrecisePoint();
+		CameraBoundaryProviderHelper = new Vector3();
 	}
-	public Camera(int x,int y)
+	public Camera(float x,float y)
 	{
 		super(x,y);
 	}
@@ -35,12 +38,12 @@ public class Camera extends OrthographicCamera
 			case IDLE:
 					break;
 			case FOCUSED:
-					MyVector2 focusPoint = cameraHog.provideCenterCamera();
+					PrecisePoint focusPoint = cameraHog.provideCenterCamera();
 					
 					
 					//unproject(lead);
-					this.position.x = (focusPoint.getX() + lead.x)/2;		
-					this.position.y= (focusPoint.getY() + lead.y)/2;
+					this.position.x = (focusPoint.x + lead.x)/2;		
+					this.position.y= (focusPoint.y + lead.y)/2;
 					break;
 			case TRANSLATE:
 					if(stillPan())
@@ -101,6 +104,33 @@ public class Camera extends OrthographicCamera
 	}
 	private boolean sameSign(double x1,double x2)// potential problem if either is 0
 	{
-		return x1*x2 > 0;
+		if(x1 == 0 && x2 == 0)
+		{
+			return true;
+		}
+		else
+		{
+			return x1*x2 > 0;
+		}
+	}
+	@Override
+	public float getLeftBoundary() {
+		CameraBoundaryProviderHelper.x = 0;
+		return unproject(CameraBoundaryProviderHelper).x;
+	}
+	@Override
+	public float getRightBoundary() {
+		CameraBoundaryProviderHelper.x = viewportWidth;
+		return unproject(CameraBoundaryProviderHelper).x;
+	}
+	@Override
+	public float getTopBoundary() {
+		CameraBoundaryProviderHelper.y = 0;
+		return unproject(CameraBoundaryProviderHelper).y;
+	}
+	@Override
+	public float getBottomBoundary() {
+		CameraBoundaryProviderHelper.y = viewportHeight;
+		return unproject(CameraBoundaryProviderHelper).y;
 	}
 }

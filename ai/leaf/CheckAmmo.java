@@ -1,7 +1,5 @@
 package com.mygdx.ai.leaf;
 
-import java.util.function.BinaryOperator;
-
 import com.mygdx.ai.functional.RoutineSurvivalable;
 
 class CheckAmmo implements RoutineSurvivalable

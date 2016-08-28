@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.camera.Camera;
 import com.mygdx.debug.Debugger;
-import com.mygdx.graphic.BatchRepo;
+import com.mygdx.graphic.animation.BatchRepo;
 
 
 
@@ -38,8 +38,10 @@ public class Game implements ApplicationListener,GameModeSwitchable
 		
 	public void create() 
 	{
-		sb = new SpriteBatch(); // spritebatch must be instantiated in create()
+		//sb = new SpriteBatch(); // spritebatch must be instantiated in create()
+		
 		BatchRepo.createBatch();
+		sb = BatchRepo.createNightShader();
 		cam = new Camera(); // so does Camera
 		cam.setToOrtho(false, Game.V_WIDTH, Game.V_HEIGHT);
 		viewport = new FitViewport(V_WIDTH,V_HEIGHT,cam);

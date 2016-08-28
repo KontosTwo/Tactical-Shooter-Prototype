@@ -2,6 +2,7 @@ package com.mygdx.handler;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.camera.CameraHoggable;
+import com.mygdx.misc.PrecisePoint;
 
 public interface Controllable extends CameraHoggable
 {
@@ -19,7 +20,7 @@ public interface Controllable extends CameraHoggable
 	
 	public void initiateControllable();// this is to allow the controller to execute whatever tasks needed
 		
-	public Vector2 provideCenter();
+	public PrecisePoint provideCenterForDebugger();
 
 	// debugging purposes
 }

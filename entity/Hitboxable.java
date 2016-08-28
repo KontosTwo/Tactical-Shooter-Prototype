@@ -5,13 +5,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.misc.Box;
+import com.mygdx.misc.PrecisePoint;
 
 public abstract class Hitboxable extends Visible
 {
 	private Box hitbox;
 	private static final float FORCEFIELD = 1f;
 	
-	public Hitboxable(Vector2 center) 
+	public Hitboxable(PrecisePoint center) 
 	{
 		super(center);
 		hitbox = new Box(100,100,this.center);

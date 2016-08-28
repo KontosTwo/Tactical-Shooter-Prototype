@@ -13,40 +13,41 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.camera.Camera;
 import com.mygdx.camera.CameraHoggable;
-import com.mygdx.graphic.Animation;
+import com.mygdx.graphic.animation.Animation;
 import com.mygdx.map.GameMap;
 import com.mygdx.misc.Box;
 import com.mygdx.misc.MyVector2;
 import com.mygdx.misc.Point;
+import com.mygdx.misc.PrecisePoint;
 
 
 public abstract class  Visible extends Entity implements Comparable <Visible>, CameraHoggable
 {
 	private Animation animation;
-	protected Vector2 center; // may not be initialized in time
-	protected Vector2 centerOld;
+	protected PrecisePoint center; // may not be initialized in time
+	protected PrecisePoint centerOld;
 	private Box animationBox;
-	private Vector2 velocity;
+	private MyVector2 velocity;
 	
 	private float speed;
-	private Vector2 unitVelocity;
-	private Vector2 unitVelocityInput;
+	private MyVector2 unitVelocity;
+	private MyVector2 unitVelocityInput;
 	
 	private static int tileSizeGraphic;// pixel per graphics tile
 	
 	
-	public Visible(Vector2 center)// dealy should be by itself
+	public Visible(PrecisePoint center)// dealy should be by itself
 	{
 		super();
 		
 		
-		this.center = new Vector2(center);
-		centerOld = new Vector2(center);
+		this.center = new PrecisePoint(center);
+		centerOld = new PrecisePoint(center);
 		animationBox = new Box(100,100,this.center);
-		velocity = new Vector2();
+		velocity = new MyVector2();
 		speed = 0;
-		unitVelocity = new Vector2();
-		unitVelocityInput = new Vector2();
+		unitVelocity = new MyVector2();
+		unitVelocityInput = new MyVector2();
 		tileSizeGraphic = 0;
 	}
 	public static void supplyTileSizeGraphic(int num)
@@ -132,7 +133,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		super.update(dt);
 		animation.update(dt);
 		centerOld.set(center);
-		velocity.set((unitVelocity.x + unitVelocityInput.x) * speed,(unitVelocity.y + unitVelocityInput.y) * speed);
+		velocity.set((unitVelocity.getX() + unitVelocityInput.getX()) * speed,(unitVelocity.getY() + unitVelocityInput.getY()) * speed);
 		center.add(velocity);
 	}
 	protected boolean animationBoxContains(int x,int y)
@@ -140,9 +141,9 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		return animationBox.contains(x, y);
 	}
 
-	public Vector2 getCenter()
+	public PrecisePoint getCenter()
 	{
-		return new Vector2(center);
+		return new PrecisePoint(center);
 	}
 	public boolean overLapsAnimeBox(int x1,int y1,int x2,int y2)
 	{
@@ -188,8 +189,8 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		int hash = 1;
         hash = (int)(hash * 17 + center.x);
         hash = (int)(hash * 31 + center.y);// should change
-        hash = (int)(hash * 5 + velocity.x);
-        hash = (int)(hash * 11 + velocity.y);
+        hash = (int)(hash * 5 + velocity.getX());
+        hash = (int)(hash * 11 + velocity.getY());
         return hash;
 	}
 	public boolean equals(Object aThat) 
@@ -213,9 +214,9 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		c.position.set((center.x + lead.x)/2,(center.y + lead.y)/2,0);
 		//c.lookAt(center.x,center.y,0);
 	}*/
-	public MyVector2 provideCenterCamera()
+	public PrecisePoint provideCenterCamera()
 	{
-		return new MyVector2(center.x,center.y);
+		return new PrecisePoint(center.x,center.y);
 	}
 
 	public void resetAnimation()
@@ -248,16 +249,16 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	}
 	protected boolean willCross(float x1,float y1,float x2,float y2,Box hitbox)
 	{
-		return hitbox.overLaps(x1 - velocity.x, y1 - velocity.y, x2 - velocity.x, y2 - velocity.y);
+		return hitbox.overLaps(x1 - velocity.getX(), y1 - velocity.getY(), x2 - velocity.getX(), y2 - velocity.getY());
 	}
-	protected Vector2 getVelocity()
+	protected MyVector2 getVelocity()
 	{
-		return new Vector2(velocity);
+		return new MyVector2(velocity);
 	}
 	protected boolean reachTarget(double x,double y)
 	{
-		double futurex = center.x + (unitVelocity.x*speed);
-		double futurey = center.y + (unitVelocity.y*speed);
+		double futurex = center.x + (unitVelocity.getX()*speed);
+		double futurey = center.y + (unitVelocity.getY()*speed);
 		return !(sameSign(x - futurex,x - center.x) && sameSign(y - futurey,y - center.y));
 	}
 	private boolean sameSign(double x1,double x2)// potential problem if either is 0
@@ -403,7 +404,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	{
 		private Doodad(float x,float y, String animationName)
 		{
-			super(new Vector2(x,y));
+			super(new PrecisePoint(x,y));
 			updateAnimation(animationName);
 			setAnimationBoxSizeToPixel();// if tileSize or graphictileSize are ever changed, this must go away
 			doodadify();

@@ -18,7 +18,7 @@ public class Grenade extends Hitboxable
 	
 	public Grenade(PrecisePoint center,PrecisePoint destination) 
 	{
-		super(new Vector2());
+		super(center);
 		/*this.destination = new Vector2(destination);
 		
 		

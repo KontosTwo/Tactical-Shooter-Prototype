@@ -1,24 +1,18 @@
-package com.mygdx.graphic;
+package com.mygdx.graphic.animation;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
+
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.misc.Box;
 
-public class Animation // this is sorta a third party library
+public final class Animation // this is sorta a third party library
 {
 	private TextureRegionDrawable[] frame;
-	private float time;
 	private float delay;// default delay seems to be 1/12f
-	private int currentFrame;
-	private int timesPlayed;
-	private boolean looped;
 
 	public Animation(TextureRegionDrawable[] frame,float delay) 
 	{
 		setAnimation(frame,delay);	
-		looped = false;
 	}
 	public void dispose()
 	{
@@ -113,5 +107,58 @@ public class Animation // this is sorta a third party library
 	public void setToAnimationSize(Box animationBox)// must be the animation box
 	{
 		animationBox.setSize((int)frame[0].getMinWidth(),(int)frame[0].getMinHeight());
+	}
+	
+	class AnimationTicker
+	{
+		private final short frameAmount;
+		private short currentFrame;
+		private int time;
+		private final float tickerDelay;
+		private boolean looped;
+		private short timesPlayed;
+		
+		AnimationTicker()
+		{
+			frameAmount = (short) frame.length;
+			currentFrame = 0;
+			tickerDelay = delay;
+			looped = false;
+			timesPlayed = 0;
+			time = 0;
+		}
+		
+		void update(float dt)
+		{
+			if(tickerDelay <=0)
+			{
+				return;
+			}
+			time +=dt;
+			while(time >= tickerDelay)
+			{
+				step();
+			}
+		}
+		private void step()
+		{
+			time -= tickerDelay;
+			currentFrame++;
+			if(looped = true)
+			{
+				looped = false;
+			}
+			if(currentFrame == frameAmount)
+			{
+				currentFrame = 0;
+				timesPlayed ++;
+				looped = true;
+			}
+		}
+		
+		int getFrameNumber()
+		{
+			return currentFrame;
+		}
 	}
 }

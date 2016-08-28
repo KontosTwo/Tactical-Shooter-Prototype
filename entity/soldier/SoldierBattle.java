@@ -1,25 +1,16 @@
-package com.mygdx.entity;
+package com.mygdx.entity.soldier;
 
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.mygdx.ai.blackboard.EnemyCognizable;
 import com.mygdx.ai.blackboard.EnemyManager;
 import com.mygdx.ai.functional.RoutineManager;
 import com.mygdx.ai.leaf.RiflemanRoutineable;
 import com.mygdx.ai.leaf.RoutineFactory;
+import com.mygdx.entity.HitMarker;
+import com.mygdx.entity.Hurtboxable;
 import com.mygdx.handler.Auxiliarable;
 import com.mygdx.handler.ControlManager;
 import com.mygdx.handler.ControlManagerable;
@@ -27,12 +18,11 @@ import com.mygdx.handler.Controllable;
 import com.mygdx.misc.Differentable;
 import com.mygdx.misc.Point;
 import com.mygdx.misc.PrecisePoint;
-import com.mygdx.misc.TimeCapsule;
 import com.mygdx.misc.Tuple;
 import com.mygdx.script.ScriptManager;
 
-public class Soldier extends Hurtboxable implements Controllable, Auxiliarable,
-Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
+public class SoldierBattle extends Hurtboxable implements Controllable, Auxiliarable,
+Differentable <SoldierBattle>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 {
 	// states of the Humanoid. Used in determining which animation to use. 
 	private Direction directionPrev;
@@ -92,7 +82,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 	private double shootGrenadeRatio; // the chance that a humanoid will
 	///////////////////////////////////////
 	
-	private Soldier(Vector2 position,Weapon weapon,Armor armor,Identification id,Allegiance a,String debugName)
+	private SoldierBattle(PrecisePoint position,Weapon weapon,Armor armor,Identification id,Allegiance a,String debugName)
 	{
 		super(position);
 		// initializing the state
@@ -136,19 +126,19 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 		
 		this.allegiance = a;
 	}
-	public static Soldier createProtector(Vector2 position)
+	public static SoldierBattle createProtector(PrecisePoint position)
 	{
-		Soldier ret = new Soldier(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"protector");
+		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"protector");
 		return ret;
 	}
-	public static Soldier createHuman(Vector2 position)
+	public static SoldierBattle createHuman(PrecisePoint position)
 	{
-		Soldier ret = new Soldier(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"human");
+		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"human");
 		return ret;
 	}
-	public static Soldier createRifleman(Vector2 position)
+	public static SoldierBattle createRifleman(PrecisePoint position)
 	{
-		Soldier ret = new Soldier(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.dalmati,"rifleman");
+		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.dalmati,"rifleman");
 		ret.routineManager.startRiflemanRoutine(ret);
 		return ret;
 	}
@@ -211,7 +201,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 			checkState();
 		}
 	}
-	public void damage(Soldier target)// this damage formula is even more unbalanced than ur mum
+	public void damage(SoldierBattle target)// this damage formula is even more unbalanced than ur mum
 	{
 		int attack = this.weapon.damage;
 		int defense = target.armor.armor;
@@ -239,15 +229,15 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 		return this.allegiance.equals(Allegiance.epeirot); // this should become more generalized
 	}
 	@Override
-	public boolean sameAs(Soldier comparer) 
+	public boolean sameAs(SoldierBattle comparer) 
 	{
 		return this.allegiance.equals(comparer.allegiance);
 	}
-	public static boolean areEnemies(Soldier a,Soldier b)
+	public static boolean areEnemies(SoldierBattle a,SoldierBattle b)
 	{
 		return !a.allegiance.equals(b.allegiance);// will not work properly if there are more than 3 allegiances
 	}
-	public static boolean areAllies(Soldier a,Soldier b)
+	public static boolean areAllies(SoldierBattle a,SoldierBattle b)
 	{
 		return a.allegiance.equals(b.allegiance);// will not work properly if there are more than 3 allegiances
 	}
@@ -261,7 +251,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 	{
 		//enemyManager.delayedNotifyEnemyAt(location);
 	}
-	public void spotEnemy(Soldier h)// will not add the new EnemyMarker if too close to existing one
+	public void spotEnemy(SoldierBattle h)// will not add the new EnemyMarker if too close to existing one
 	{
 		//enemyManager.spotEnemy(h);		
 	}
@@ -562,9 +552,9 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 		grenade(x,y);
 	}
 	@Override
-	public Vector2 provideCenter() 
+	public PrecisePoint provideCenterForDebugger() 
 	{
-		return new Vector2(this.center);
+		return new PrecisePoint(this.center);
 	}
 	/////////////
 	
@@ -582,7 +572,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 	@Override
 	public void aFollow(Controllable c) 
 	{
-		scriptManager.pushSequence(RoutineFactory.createPathToSeq(c.provideCenter().x, c.provideCenter().y, this));
+		scriptManager.pushSequence(RoutineFactory.createPathToSeq(c.provideCenterForDebugger().x, c.provideCenterForDebugger().y, this));
 	}
 	@Override
 	public void aTurn(double x,double y) 
@@ -768,7 +758,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 	{
 		entityListener.grenade((int)center.x, (int)center.y,(int)x,(int)y);
 	}
-	public boolean see(Soldier h)
+	public boolean see(SoldierBattle h)
 	{
 		int difference = Direction.getDif(getDirection((int)h.center.x,(int)h.center.y), this.direction);
 		return (difference <= 1 || difference == 7) && entityListener.see(center.y,center.x,getHeight(), h.center.y,h.center.x,h.getHeight());
@@ -779,7 +769,7 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 		return (difference <= 1 || difference == 7) && entityListener.see(center.y,center.x,getHeight(), center.y,center.x,0);
 	}
 	
-	private Tuple<Boolean,Soldier> seeEnemy()
+	private Tuple<Boolean,SoldierBattle> seeEnemy()
 	{
 		return entityListener.seeEnemy(this);
 	}
@@ -788,17 +778,17 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 		return entityListener.hitMarkerNear(this);
 	}
 
-	private boolean seePeripheral(Soldier h)
+	private boolean seePeripheral(SoldierBattle h)
 	{
 		int difference = Direction.getDif(getDirection((int)h.center.x,(int)h.center.y), this.direction);
 		return (difference == 1);
 	}
-	private boolean seeBino(Soldier h)
+	private boolean seeBino(SoldierBattle h)
 	{
 		int difference = Direction.getDif(getDirection((int)h.center.x,(int)h.center.y), this.direction);
 		return (difference == 0 || difference == 7);
 	}
-	private boolean seeTerrain(Soldier h)
+	private boolean seeTerrain(SoldierBattle h)
 	{
 		return entityListener.see(center.y,center.x,getHeight(), h.center.y,h.center.x,h.getHeight());
 	}
@@ -817,11 +807,11 @@ Differentable <Soldier>,RiflemanRoutineable,ControlManagerable,EnemyCognizable
 	{
 		return entityListener.findCover(center.x,center.y,SEARCHCOVERDISTANCE);
 	}
-	private boolean judgeCover(Soldier foe)
+	private boolean judgeCover(SoldierBattle foe)
 	{
 		return entityListener.judgeCover((int)this.center.x,(int)this.center.y,(int)this.getHeight(),(int)foe.center.x,(int)foe.center.y,(int)foe.getHeight()) > COVERTHRESHOLD;
 	}
-	private boolean judgeCover(Soldier foe,int x,int y)
+	private boolean judgeCover(SoldierBattle foe,int x,int y)
 	{
 		return entityListener.judgeCover(x,y,(int)this.getHeight(),(int)foe.center.x,(int)foe.center.y,(int)foe.getHeight()) > COVERTHRESHOLD;
 		// this has yet to consider the fact that the the cover location can be appropriate whether the humanoid is crawling, crouching, or standing

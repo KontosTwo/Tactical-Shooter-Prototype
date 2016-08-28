@@ -7,13 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.entity.Button;
 import com.mygdx.entity.EntityManager;
+import com.mygdx.misc.PrecisePoint;
 
 class ButtonMenu extends Button
 {
 	private GameModeAction gameMode;
 	private static GameModeSwitchable gms;
 	
-	private ButtonMenu(Vector2 center,String animation,GameModeAction gameMode,GameModeSwitchable g) 
+	private ButtonMenu(PrecisePoint center,String animation,GameModeAction gameMode,GameModeSwitchable g) 
 	{
 		super(center,animation);
 		this.gameMode = gameMode;	
@@ -35,7 +36,7 @@ class ButtonMenu extends Button
 	{
 		super.update(dt);
 	}
-	static ButtonMenu ShrekButton(Vector2 position, GameModeAction gameMode)
+	static ButtonMenu ShrekButton(PrecisePoint position, GameModeAction gameMode)
 	{
 		return new ButtonMenu(position,"SHREK",gameMode,gms);
 	}

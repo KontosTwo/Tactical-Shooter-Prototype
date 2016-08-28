@@ -13,9 +13,9 @@ public class Box
 	private int width;
 	private int offsetX;
 	private int offsetY;
-	private Vector2 center;
+	private PrecisePoint center;
 	
-	public Box(int x,int y,Vector2 center)
+	public Box(int x,int y,PrecisePoint center)
 	{
 		width = x;
 		height = y;
@@ -100,7 +100,7 @@ public class Box
 		}
 		return ret;
 	}
-	public Box newBox(Vector2 center)
+	public Box newBox(PrecisePoint center)
 	{
 		return new Box(width,height,center);
 	}

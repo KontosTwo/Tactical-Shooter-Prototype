@@ -60,4 +60,8 @@ public class MyVector2
 	{
 		return vector.y;
 	}
+	public void setZero()
+	{
+		vector.setZero();
+	}
 }

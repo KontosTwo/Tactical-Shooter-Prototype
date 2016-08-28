@@ -1,4 +1,4 @@
-package com.mygdx.graphic;
+package com.mygdx.graphic.animation;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -12,14 +12,14 @@ public class BatchRepo
 		if(nightBatch == null)
 		{
 			nightBatch = new SpriteBatch();
-			nightBatch.setColor(.5f,.5f,.5f, 1);
+			nightBatch.setColor(.2f,.2f,.6f, 1);
 		}
 		if(dayBatch == null)
 		{
 			dayBatch = new SpriteBatch();
 		}
 	}	
-	static SpriteBatch createNightShader()
+	public static SpriteBatch createNightShader()
 	{
 		return nightBatch;
 	}

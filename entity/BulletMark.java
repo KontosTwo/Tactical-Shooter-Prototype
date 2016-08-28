@@ -1,6 +1,6 @@
 package com.mygdx.entity;
 
-import com.badlogic.gdx.math.Vector2;
+import com.mygdx.misc.PrecisePoint;
 
 public class BulletMark extends Visible
 {
@@ -10,7 +10,7 @@ public class BulletMark extends Visible
 	
 	public BulletMark(int x,int y)
 	{
-		super(new Vector2(x,y));
+		super(new PrecisePoint(x,y));
 		timeLeft = existTime;
 	}
 	

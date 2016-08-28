@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.graphic.animation.BatchRepo;
 
 public class MapRenderer extends OrthogonalTiledMapRenderer
 {
@@ -19,7 +20,7 @@ public class MapRenderer extends OrthogonalTiledMapRenderer
 	
 	public MapRenderer()
 	{
-		super(null);
+		super(null,BatchRepo.createNightShader());
 		front = new LinkedList <TiledMapTileLayer>();
 		back = new LinkedList <TiledMapTileLayer>();
 	}

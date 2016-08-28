@@ -19,10 +19,20 @@ public class PrecisePoint
 		this.x = (float)x;
 		this.y = (float)y;
 	}
+	public void add(MyVector2 vector)
+	{
+		this.x += vector.getX();
+		this.y += vector.getY();
+	}
 	public void set(float x,float y)
 	{
 		this.x = x;
 		this.y = y;
+	}
+	public void set(PrecisePoint p)
+	{
+		this.x = p.x;
+		this.y = p.y;
 	}
 	public PrecisePoint()
 	{

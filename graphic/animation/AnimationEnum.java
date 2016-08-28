@@ -1,4 +1,4 @@
-package com.mygdx.graphic;
+package com.mygdx.graphic.animation;
 
 public class AnimationEnum 
 {
