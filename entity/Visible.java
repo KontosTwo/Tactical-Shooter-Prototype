@@ -13,9 +13,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.camera.Camera;
 import com.mygdx.camera.CameraHoggable;
-import com.mygdx.graphic.animation.Animation;
+import com.mygdx.graphic.animation.AnimationData;
 import com.mygdx.map.GameMap;
-import com.mygdx.misc.Box;
+import com.mygdx.misc.MovableBox;
 import com.mygdx.misc.MyVector2;
 import com.mygdx.misc.Point;
 import com.mygdx.misc.PrecisePoint;
@@ -23,10 +23,10 @@ import com.mygdx.misc.PrecisePoint;
 
 public abstract class  Visible extends Entity implements Comparable <Visible>, CameraHoggable
 {
-	private Animation animation;
+	private AnimationData animation;
 	protected PrecisePoint center; // may not be initialized in time
 	protected PrecisePoint centerOld;
-	private Box animationBox;
+	private MovableBox animationBox;
 	private MyVector2 velocity;
 	
 	private float speed;
@@ -43,7 +43,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		
 		this.center = new PrecisePoint(center);
 		centerOld = new PrecisePoint(center);
-		animationBox = new Box(100,100,this.center);
+		animationBox = new MovableBox(100,100,this.center);
 		velocity = new MyVector2();
 		speed = 0;
 		unitVelocity = new MyVector2();
@@ -124,10 +124,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		animation.getFrame().draw(sb, animationBox.getLeft(),animationBox.getBot(),animationBox.getWidth(),animationBox.getHeight());
 		sb.end();
 	}
-	protected void renderNode(SpriteBatch sb)
-	{
-		
-	}
+
 	public void update(float dt)
 	{
 		super.update(dt);
@@ -247,7 +244,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	{
 		animationBox.setOffset(x, y);
 	}
-	protected boolean willCross(float x1,float y1,float x2,float y2,Box hitbox)
+	protected boolean willCross(float x1,float y1,float x2,float y2,MovableBox hitbox)
 	{
 		return hitbox.overLaps(x1 - velocity.getX(), y1 - velocity.getY(), x2 - velocity.getX(), y2 - velocity.getY());
 	}
@@ -368,7 +365,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		
 		;
 		
-		private final Animation animation;
+		private final AnimationData animation;
 		
 		private AnimationDepot(String path,int width,int height,float delay)// might want more functions for this
 		{
@@ -384,13 +381,13 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 					counter++;
 				}
 			}
-			animation = new Animation(value,delay);
+			animation = new AnimationData(value,delay);
 		}
 		
 		
-		private Animation getAnimation()
+		private AnimationData getAnimation()
 		{
-			return new Animation(animation);
+			return new AnimationData(animation);
 			//return animation; // object creation is expensive
 		}
 	}

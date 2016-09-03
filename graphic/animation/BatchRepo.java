@@ -2,7 +2,7 @@ package com.mygdx.graphic.animation;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class BatchRepo 
+public final class BatchRepo 
 {
 	private static SpriteBatch nightBatch;
 	private static SpriteBatch dayBatch;

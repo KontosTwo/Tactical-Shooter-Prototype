@@ -1,164 +1,162 @@
 package com.mygdx.graphic.animation;
 
 
+import java.util.Collection;
+import java.util.HashMap;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Array;
-import com.mygdx.misc.Box;
+import com.mygdx.misc.MovableBox;
 
-public final class Animation // this is sorta a third party library
+	
+final class Animation
 {
-	private TextureRegionDrawable[] frame;
-	private float delay;// default delay seems to be 1/12f
+	private final AnimationData animationReference;
+	private final short frameAmount;
+	private short currentFrame;
+	private int time;
+	private final float tickerDelay;
+	private boolean looped;
+	private short timesPlayed;
+	
+	/*
+	 * This is an object pool. Because TextureRegionDrawable
+	 * uses native resources, an object pool is necessary to
+	 * minimize RAM usage. 
+	 */
+	private final static HashMap<String,AnimationData> existingAnimationData; 
 
-	public Animation(TextureRegionDrawable[] frame,float delay) 
+	
+	Animation(String filePath)
 	{
-		setAnimation(frame,delay);	
-	}
-	public void dispose()
-	{
-		for(int i = 0; i < frame.length; i ++)
-		{
-			frame[i].getRegion().getTexture().dispose();
-		}
-	}
-	public Animation(Array<TextureRegionDrawable> frame,float delay) 
-	{
-		setAnimation(frame,delay);	
+		AnimationData data = AnimationData.getAnimationData(filePath);
+		animationReference = data;
+		frameAmount = (short) data.frame.length;
+		currentFrame = 0;
+		tickerDelay = data.delay;
 		looped = false;
-	}
-	public Animation(Animation animation)
-	{
-		setAnimation(animation);
-		looped = false;
-	}
-	public void setAnimation(TextureRegionDrawable[] frames,float delay)
-	{
-		this.frame = frames;
-		this.delay = delay;
-		time = 0;
-		currentFrame = 0;
 		timesPlayed = 0;
-	}
-	public void setAnimation(Array<TextureRegionDrawable> frames,float delay)
-	{
-		this.frame = frames.toArray();
-		this.delay = delay;
 		time = 0;
-		currentFrame = 0;
-		timesPlayed = 0;
-	}
-	public void reset()
-	{
-		currentFrame = 0;
-	}
-	private void setAnimation(Animation animation)
-	{
-		frame = new TextureRegionDrawable[animation.frame.length];
-		for(int i = 0; i < frame.length; i ++)
-		{
-			frame[i] = new TextureRegionDrawable(animation.frame[i]);
-		}
-		this.delay = animation.delay;
 	}
 	
-	public void update(float dt)
+	void update(float dt)
 	{
-		if(delay <=0)
+		if(tickerDelay <=0)
 		{
 			return;
 		}
 		time +=dt;
-		while(time >= delay)
+		while(time >= tickerDelay)
 		{
 			step();
 		}
 	}
-	private void step()
-	{
-		time -= delay;
+	
+	private void step(){
+		time -= tickerDelay;
 		currentFrame++;
-		if(looped = true)
-		{
+		if(looped = true){
 			looped = false;
 		}
-		if(currentFrame == frame.length)
-		{
+		if(currentFrame == frameAmount){
 			currentFrame = 0;
 			timesPlayed ++;
 			looped = true;
 		}
 	}
-	public boolean complete()
+	
+	void render(SpriteBatch sb,float bottomRightX,float bottomRightY,float width,float height)
 	{
-		return looped;
-	}
-	public TextureRegionDrawable getFrame()
-	{
-		return frame[currentFrame];
-	}
-	public int getTimesPlayed()
-	{
-		return timesPlayed;
-	}
-	public boolean equals(Object o)
-	{
-		return frame.equals(((Animation)o).frame);
-	}
-	public void setToAnimationSize(Box animationBox)// must be the animation box
-	{
-		animationBox.setSize((int)frame[0].getMinWidth(),(int)frame[0].getMinHeight());
+		animationReference.frame[currentFrame].draw(sb, bottomRightX, bottomRightY, width, height);
 	}
 	
-	class AnimationTicker
+	void reset(){
+		currentFrame = 0;
+	}
+	
+	boolean complete(){
+		return looped;
+	}
+
+	
+	static
 	{
-		private final short frameAmount;
-		private short currentFrame;
-		private int time;
-		private final float tickerDelay;
-		private boolean looped;
-		private short timesPlayed;
-		
-		AnimationTicker()
+		existingAnimationData = new HashMap<>();
+	}
+	/**
+	 * Call this whenever starting a new level
+	 * in order to conserve resources
+	 */
+	public static void clearExistingAnimation()
+	{
+		Collection<AnimationData> animation = existingAnimationData.values();
+		animation.forEach(a -> a.dispose());
+		existingAnimationData.clear();
+	}
+	
+	
+	
+	private static final class AnimationData 
+	{
+		private  TextureRegionDrawable[] frame;
+		private  float delay;// default delay seems to be 1/12f
+
+		private AnimationData(String filePath)
 		{
-			frameAmount = (short) frame.length;
-			currentFrame = 0;
-			tickerDelay = delay;
-			looped = false;
-			timesPlayed = 0;
-			time = 0;
+			String dataFilePath = filePath.
+			
+			
+			Texture texture = new Texture(Gdx.files.internal(filePath));
+			TextureRegion[][] textureRegion = TextureRegion.split(texture,texture.getWidth()/width,texture.getHeight()/height); // must be fixed
+			TextureRegionDrawable[] value = new TextureRegionDrawable[filePath*height];
+			int counter = 0;
+			for(TextureRegion[] t : textureRegion)
+			{
+				for(TextureRegion ti : t)
+				{
+					value[counter] = new TextureRegionDrawable(ti);
+					counter++;
+				}
+			}
+			
 		}
-		
-		void update(float dt)
+		private void dispose()
 		{
-			if(tickerDelay <=0)
+			for(int i = 0; i < frame.length; i ++)
 			{
-				return;
-			}
-			time +=dt;
-			while(time >= tickerDelay)
-			{
-				step();
+				frame[i].getRegion().getTexture().dispose();
 			}
 		}
-		private void step()
+		static AnimationData getAnimationData(String filePath)
 		{
-			time -= tickerDelay;
-			currentFrame++;
-			if(looped = true)
-			{
-				looped = false;
-			}
-			if(currentFrame == frameAmount)
-			{
-				currentFrame = 0;
-				timesPlayed ++;
-				looped = true;
-			}
+			return loadAnimationData(filePath);
 		}
-		
-		int getFrameNumber()
+		private static AnimationData loadAnimationData(String filePath)
 		{
-			return currentFrame;
+			AnimationData animationData;
+			// if the requested animation has already been created, load it
+			if(existingAnimationData.containsKey(filePath))
+			{
+				animationData = existingAnimationData.get(filePath);
+				System.out.println("animation already exists!");
+			}
+			// otherwise, create a new one
+			else
+			{
+				animationData = createAnimationData(filePath);
+			}
+			return animationData;	
+		}
+		private static AnimationData createAnimationData(String filePath)
+		{
+			// upon creation, store in hashmap for later retrieval
+			AnimationData animation = new AnimationData(filePath);
+			existingAnimationData.put(filePath, animation);
+			return animation;
 		}
 	}
 }
+

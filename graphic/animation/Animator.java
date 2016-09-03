@@ -3,10 +3,12 @@ package com.mygdx.graphic.animation;
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.graphic.animation.Animation.AnimationTicker;
-import com.mygdx.misc.Box;
-
-public class Animator 
+import com.mygdx.misc.MovableBox;
+/**
+ * Controls the rendering and characteristics of an animation
+ *
+ */
+public final class Animator 
 {
 	public interface CameraBoundaryProvider
 	{
@@ -16,30 +18,18 @@ public class Animator
 		public float getBottomBoundary();
 	}
 	
-	private Animation animation;
 	private SpriteBatch spritebatch;
 	private CameraBoundaryProvider cameraBoundaryProvider;
-	private Box animationDimensions;
-	private AnimationTicker animationTicker;
+	private final MovableBox animationDimensions;
+	private Animation animation;
 	private boolean animationActive;
 	
-	
-	private static HashMap<String,Animation> existingAnimation; 
-	
-	static
-	{
-		existingAnimation = new HashMap<>();
-	}
-	
-	public Animator(CameraBoundaryProvider cbp)
+	public Animator(CameraBoundaryProvider cbp,PointTracker pointTracker)
 	{
 		cameraBoundaryProvider = cbp;
 	}
 	
-	public static void clearExistingAnimation()
-	{
-		existingAnimation.clear();
-	}
+	
 	public static Animator dayAnimator()
 	{
 		return new Animator(BatchRepo.createDayShader());
@@ -72,47 +62,16 @@ public class Animator
 			animationDimensions.getBot() < 
 			cameraBoundaryProvider.getTopBoundary())
 		{
-			
+			animation.render(spritebatch, 
+					animationDimensions.getLeft(),
+					animationDimensions.getBot(),
+					animationDimensions.getWidth(),
+					animationDimensions.getHeight());
 		}
 	}
 	
-	public void updateAnimationDoodad(String name)
+	public void updateAnimation(String filePath)
 	{
-		/*
-		 * build the file locaiton here specific to
-		 * Doodad
-		 */
-		loadAnimation(name);
-	}
-	public void updateAnimationSoldier(String name)
-	{
-		/*
-		 * 
-		 */
-		loadAnimation(name);
-	}
-/*	public void updateAnimation(String name)
-	{
-		For soldiers
-	}*/
-	
-	private void loadAnimation(String filePath)
-	{
-		// obtaining an animation for this animator.
-		// if the animation already exists, it is extracted
-		// if not, a new animation is created
-		if(existingAnimation.containsKey(filePath))
-		{
-			animation = existingAnimation.get(filePath);
-		}
-		else
-		{
-			animation = createAnimation(filePath);
-		}
-		
-	}
-	private Animation createAnimation(String filePath)
-	{
-		return null;
+		animation = new Animation(filePath);
 	}
 }

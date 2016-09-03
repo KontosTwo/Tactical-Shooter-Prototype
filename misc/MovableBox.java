@@ -2,7 +2,7 @@ package com.mygdx.misc;
 
 import com.badlogic.gdx.math.Vector2;
 
-public class Box  
+public final class MovableBox  
 {
 	/*
 	 * a rectangle that is shifted as its center shifts
@@ -13,13 +13,13 @@ public class Box
 	private int width;
 	private int offsetX;
 	private int offsetY;
-	private PrecisePoint center;
+	private PointTracker center;
 	
-	public Box(int x,int y,PrecisePoint center)
+	public MovableBox(int x,int y,PrecisePoint center)
 	{
 		width = x;
 		height = y;
-		this.center = center;
+		this.center = new PointTracker(center);
 	}
 	public void setOffset(int x,int y)
 	{
@@ -37,19 +37,19 @@ public class Box
 	}
 	public int getLeft()
 	{
-		return (int) (center.x + offsetX - width/2);
+		return (int) (center.getX() + offsetX - width/2);
 	}
 	public int getRight()
 	{
-		return (int) (center.x + offsetX + width/2);
+		return (int) (center.getX() + offsetX + width/2);
 	}
 	public int getBot()
 	{
-		return (int) (center.y + offsetY - height/2);
+		return (int) (center.getY() + offsetY - height/2);
 	}
 	public int getTop()
 	{
-		return (int) (center.y + offsetX + height/2);
+		return (int) (center.getY() + offsetX + height/2);
 	}
 	public int getWidth()
 	{
@@ -100,9 +100,9 @@ public class Box
 		}
 		return ret;
 	}
-	public Box newBox(PrecisePoint center)
+	public MovableBox newBox(PrecisePoint center)
 	{
-		return new Box(width,height,center);
+		return new MovableBox(width,height,center);
 	}
 	public boolean intersectAgain(int x1,int y1,int x2,int y2)
 	{
@@ -137,4 +137,24 @@ public class Box
 		}
 		return intersect;
 	}
+	
+	private final static class  PointTracker 
+	{
+		private final PrecisePoint center;
+		
+		PointTracker(PrecisePoint c)
+		{
+			center = c;
+		}
+		
+		float getX()
+		{
+			return center.x;
+		}
+		float getY()
+		{
+			return center.y;
+		}
+	}
+
 }
