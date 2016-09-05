@@ -21,7 +21,7 @@ import com.mygdx.misc.PrecisePoint;
 import com.mygdx.misc.Tuple;
 import com.mygdx.script.Sequencialable;
 
-public class EntityManager implements HumanoidEffectuator,EntityListener
+public class EntityManager implements HumanoidEffectuator
 {
 	private Array<Entity> entity;
 	
@@ -102,12 +102,12 @@ public class EntityManager implements HumanoidEffectuator,EntityListener
 			}
 		}	
 	}
-	public void render(SpriteBatch sb)
+	public void render()
 	{
 		PriorityQueue<Visible> visible = getVisible();
 		while(!visible.isEmpty())
 		{
-			visible.poll().render(sb);
+			visible.poll().render();
 		}
 		
 	}

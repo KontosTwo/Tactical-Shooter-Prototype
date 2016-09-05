@@ -13,7 +13,7 @@ public class HitMarker extends Visible
 	{
 		super(position);
 		this.shooter = shooter;
-		updateAnimation("hitmarker");
+		updateAnimation("animation\\environment\\Hitmarker.png","animation\\data\\Hitmarker.txt");
 		setAnimationSize(10,10);
 	}
 	public PrecisePoint getPosition()

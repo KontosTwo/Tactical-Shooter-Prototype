@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.misc.PrecisePoint;
 
-public abstract class Button extends Tangible implements Clickable
+/*public abstract class Button extends Tangible implements Clickable
 {
 
 	public Button( PrecisePoint center,String animation) 
@@ -29,4 +29,4 @@ public abstract class Button extends Tangible implements Clickable
 	{
 		super.update(dt);
 	}
-}
+}*/

@@ -5,11 +5,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.mygdx.entity.Button;
 import com.mygdx.entity.EntityManager;
 import com.mygdx.misc.PrecisePoint;
 
-class ButtonMenu extends Button
+/*class ButtonMenu extends Button
 {
 	private GameModeAction gameMode;
 	private static GameModeSwitchable gms;
@@ -40,4 +39,4 @@ class ButtonMenu extends Button
 	{
 		return new ButtonMenu(position,"SHREK",gameMode,gms);
 	}
-}
+}*/

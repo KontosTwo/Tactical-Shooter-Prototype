@@ -13,13 +13,14 @@ public final class MovableBox
 	private int width;
 	private int offsetX;
 	private int offsetY;
-	private PointTracker center;
+	private PrecisePoint center;
 	
-	public MovableBox(int x,int y,PrecisePoint center)
+	public MovableBox(int 
+			x,int y,PrecisePoint center)
 	{
 		width = x;
 		height = y;
-		this.center = new PointTracker(center);
+		this.center = center;
 	}
 	public void setOffset(int x,int y)
 	{
@@ -37,19 +38,19 @@ public final class MovableBox
 	}
 	public int getLeft()
 	{
-		return (int) (center.getX() + offsetX - width/2);
+		return (int) (center.x + offsetX - width/2);
 	}
 	public int getRight()
 	{
-		return (int) (center.getX() + offsetX + width/2);
+		return (int) (center.x + offsetX + width/2);
 	}
 	public int getBot()
 	{
-		return (int) (center.getY() + offsetY - height/2);
+		return (int) (center.y + offsetY - height/2);
 	}
 	public int getTop()
 	{
-		return (int) (center.getY() + offsetX + height/2);
+		return (int) (center.y + offsetX + height/2);
 	}
 	public int getWidth()
 	{
@@ -156,5 +157,4 @@ public final class MovableBox
 			return center.y;
 		}
 	}
-
 }

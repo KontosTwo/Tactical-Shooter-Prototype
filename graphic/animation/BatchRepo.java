@@ -23,11 +23,11 @@ public final class BatchRepo
 	{
 		return nightBatch;
 	}
-	static SpriteBatch createDayShader()
+	static SpriteBatch getDayShader()
 	{
 		return dayBatch;
 	}
-	static SpriteBatch createTransparentShader()
+	static SpriteBatch getTransparentShader()
 	{
 		return dayBatch;
 	}

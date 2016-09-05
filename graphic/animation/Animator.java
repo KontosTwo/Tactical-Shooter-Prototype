@@ -3,7 +3,9 @@ package com.mygdx.graphic.animation;
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.entity.Visible;
 import com.mygdx.misc.MovableBox;
+import com.mygdx.misc.PrecisePoint;
 /**
  * Controls the rendering and characteristics of an animation
  *
@@ -19,36 +21,29 @@ public final class Animator
 	}
 	
 	private SpriteBatch spritebatch;
-	private CameraBoundaryProvider cameraBoundaryProvider;
+	private static CameraBoundaryProvider cameraBoundaryProvider;
 	private final MovableBox animationDimensions;
 	private Animation animation;
-	private boolean animationActive;
 	
-	public Animator(CameraBoundaryProvider cbp,PointTracker pointTracker)
+	private static final int defaultWidth = 100;
+	private static final int defaultHeight = 100;
+	
+	public static void setBoundaries(CameraBoundaryProvider cbp)
 	{
 		cameraBoundaryProvider = cbp;
 	}
 	
-	
-	public static Animator dayAnimator()
+	public Animator(final PrecisePoint center)
 	{
-		return new Animator(BatchRepo.createDayShader());
-	}
-	public static Animator nightAnimator()
-	{
-		return new Animator(BatchRepo.createNightShader());
-	}
-	public static Animator transparentAnimator()
-	{
-		return new Animator(BatchRepo.createTransparentShader());
+		animationDimensions = new MovableBox(defaultWidth,defaultHeight,center);
+		spritebatch = BatchRepo.getDayShader();
 	}
 	
-	private Animator(SpriteBatch sb)
+	public void update(float dt)
 	{
-		
+		animation.update(dt);
 	}
-	
-	public void render(float x,float y)
+	public void render()
 	{
 		if(animationDimensions.getLeft() < 
 			cameraBoundaryProvider.getRightBoundary() &&
@@ -62,16 +57,31 @@ public final class Animator
 			animationDimensions.getBot() < 
 			cameraBoundaryProvider.getTopBoundary())
 		{
+			spritebatch.begin();
 			animation.render(spritebatch, 
 					animationDimensions.getLeft(),
 					animationDimensions.getBot(),
 					animationDimensions.getWidth(),
 					animationDimensions.getHeight());
+			spritebatch.end();
 		}
 	}
-	
-	public void updateAnimation(String filePath)
+	public boolean animationIsComplete()
 	{
-		animation = new Animation(filePath);
+		return animation.complete();
 	}
+	public void updateAnimation(String filePath,String dataPath)
+	{
+		animation = new Animation(filePath,dataPath);
+	}
+	public boolean equals(Object o)
+	{
+		Animator other = (Animator)o;
+		if (this == other) return true;
+	    if (!(other instanceof Animator)) return false;
+	    
+	    return
+	      this.animation.equals(other.animation);
+	}
+	
 }

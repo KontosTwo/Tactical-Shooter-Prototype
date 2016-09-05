@@ -45,7 +45,7 @@ public class Game implements ApplicationListener,GameModeSwitchable
 		cam = new Camera(); // so does Camera
 		cam.setToOrtho(false, Game.V_WIDTH, Game.V_HEIGHT);
 		viewport = new FitViewport(V_WIDTH,V_HEIGHT,cam);
-		ButtonMenu.setGame(this);
+		//ButtonMenu.setGame(this);
 		state = new Stack<GameState>();
 		state.push(getPlay());
 		previousAction = GameModeAction.MENU;

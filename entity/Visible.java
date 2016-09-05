@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.camera.Camera;
 import com.mygdx.camera.CameraHoggable;
-import com.mygdx.graphic.animation.AnimationData;
+import com.mygdx.graphic.animation.Animator;
 import com.mygdx.map.GameMap;
 import com.mygdx.misc.MovableBox;
 import com.mygdx.misc.MyVector2;
@@ -23,7 +23,7 @@ import com.mygdx.misc.PrecisePoint;
 
 public abstract class  Visible extends Entity implements Comparable <Visible>, CameraHoggable
 {
-	private AnimationData animation;
+	private Animator animator;
 	protected PrecisePoint center; // may not be initialized in time
 	protected PrecisePoint centerOld;
 	private MovableBox animationBox;
@@ -49,6 +49,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		unitVelocity = new MyVector2();
 		unitVelocityInput = new MyVector2();
 		tileSizeGraphic = 0;
+		animator = new Animator(center);
 	}
 	public static void supplyTileSizeGraphic(int num)
 	{
@@ -59,16 +60,13 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	{
 		this.speed = speed;
 	}
-	protected boolean animationComplete()
-	{
-		return animation.complete();
-	}
+
 	protected void setAnimationBoxSizeToPixel() /*
 	 this will actually affect how doodadify works. Since doodadify relies on the height, and seAnimationBoxSizeToPixel affects height, the order of calling this and 
 	 doodadify matters
 	*/
 	{
-		animation.setToAnimationSize(animationBox);
+		//animation.setToAnimationSize(animationBox);
 	}
 	
 	/*public boolean isMoving()
@@ -114,21 +112,23 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	{
 		animationBox.setSize((int)x, (int)y);
 	}
-	protected void updateAnimation(String path) 
+	protected void updateAnimation(String animePath,String dataPath) 
 	{		
-		animation = AnimationDepot.valueOf(path).getAnimation();// no resizing ever done
+		animator.updateAnimation(animePath, dataPath);
 	}
-	public void render(SpriteBatch sb)
+	public void render()
 	{
-		sb.begin();
-		animation.getFrame().draw(sb, animationBox.getLeft(),animationBox.getBot(),animationBox.getWidth(),animationBox.getHeight());
-		sb.end();
+		animator.render();
+	}
+	protected boolean animationComplete()
+	{
+		return animator.animationIsComplete();
 	}
 
 	public void update(float dt)
 	{
 		super.update(dt);
-		animation.update(dt);
+		animator.update(dt);
 		centerOld.set(center);
 		velocity.set((unitVelocity.getX() + unitVelocityInput.getX()) * speed,(unitVelocity.getY() + unitVelocityInput.getY()) * speed);
 		center.add(velocity);
@@ -200,7 +200,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	     return
 	       ( Math.abs(this.center.x - that.center.x) < 0.000001 ) &&
 	       ( Math.abs(this.center.y - that.center.y) < 0.000001  ) &&
-	       ( this.animation.equals(that.animation));
+	       ( this.animator.equals(that.animator));
 	 }
 	public Vector2 getTileLoc(int tileWidth)
 	{
@@ -216,10 +216,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		return new PrecisePoint(center.x,center.y);
 	}
 
-	public void resetAnimation()
-	{
-		animation.reset();
-	}
+	
 	/*public boolean sameTileAs(int x,int y)
 	{
 		return entityListener.sameTile((int)this.center.x, (int)this.center.y, x, y);
@@ -266,7 +263,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	{
 		animationBox.centerToBottomCenter();
 	}
-	
+	/*
 	private enum AnimationDepot 
 	{
 		//testing
@@ -294,14 +291,14 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		protectorstillstandleft("animation/protector/standing/chanionstandleft.png",1,4,1/4f),
 		protectorstillstandupleft("animation/protector/standing/chanionstandupleft.png",1,4,1/4f),
 
-		/*protectorstillstandup("animation/protector/standing/chanionstandup.png",1,4,1/6f),
+		protectorstillstandup("animation/protector/standing/chanionstandup.png",1,4,1/6f),
 		protectorstillstandupright("animation/protector/standing/chanionstandupright.png",1,4,1/6f),
 		protectorstillstandright("animation/protector/standing/chanionstandright.png",1,4,1/6f),
 		protectorstillstanddownright("animation/protector/standing/chanionstanddownright.png",1,4,1/6f),
 		protectorstillstanddown("animation/protector/standing/chanionstanddown.png",1,4,1/6f),
 		protectorstillstanddownleft("animation/protector/standing/chanionstanddownleft.png",1,4,1/6f),
 		protectorstillstandleft("animation/protector/standing/chanionstandleft.png",1,4,1/6f),
-		protectorstillstandupleft("animation/protector/standing/chanionstandupleft.png",1,4,1/6f),*/
+		protectorstillstandupleft("animation/protector/standing/chanionstandupleft.png",1,4,1/6f),
 		
 		protectormovestandup("animation/protector/walking/chanionrunup.png",1,6,1/6f),
 		protectormovestandupright("animation/protector/walking/chanionrunupright.png",1,6,1/6f),
@@ -312,14 +309,14 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		protectormovestandleft("animation/protector/walking/chanionrunleft.png",1,6,1/6f),
 		protectormovestandupleft("animation/protector/walking/chanionrunupleft.png",1,6,1/6f),
 		
-		/*protectormovelayup("ProtectorWalk.png",1,6,1/8f),
+		protectormovelayup("ProtectorWalk.png",1,6,1/8f),
 		protectormovelayupright("ProtectorWalk.png",1,6,1/8f),
 		protectormovelayright("ProtectorWalk.png",1,6,1/8f),
 		protectormovelaydownright("ProtectorWalk.png",1,6,1/8f),
 		protectormovelaydown("ProtectorWalk.png",1,6,1/8f),
 		protectormovelaydownleft("ProtectorWalk.png",1,6,1/8f),
 		protectormovelayleft("ProtectorWalk.png",1,6,1/8f),
-		protectormovelayupleft("ProtectorWalk.png",1,6,1/8f),*/
+		protectormovelayupleft("ProtectorWalk.png",1,6,1/8f),
 		
 		protectorshootstandup("animation/protector/shooting/chanionshootstandup.png",1,4,1/32f),
 		protectorshootstandupright("animation/protector/shooting/chanionshootstandupright.png",1,4,1/32f),
@@ -341,7 +338,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		
 		
 		
-		/*protectorstilllayup("chanionwalkdownleft.png",1,8,1/8f),
+		protectorstilllayup("chanionwalkdownleft.png",1,8,1/8f),
 		protectorstilllayupright("chanionwalkdownleft.png",1,8,1/8f),
 		protectorstilllayright("chanionwalkleft.png",1,8,1/8f),
 		protectorstilllaydownright("chanionwalkdownleft.png",1,8,1/8f),
@@ -357,7 +354,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		protectorshootcrouchdown("chanionwalkdownleft.png",1,8,1/8f),
 		protectorshootcrouchdownleft("chanionwalkdownleft.png",1,8,1/8f),
 		protectorshootcrouchleft("chanionwalkleft.png",1,8,1/8f),
-		protectorshootcrouchupleft("chanionwalkdownleft.png",1,8,1/8f),*/
+		protectorshootcrouchupleft("chanionwalkdownleft.png",1,8,1/8f),
 		
 		protectorreload("ProtectorWalk.png",1,6,1/8f),
 		protectordie("ProtectorWalk.png",1,6,1/8f),
@@ -391,13 +388,22 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 			//return animation; // object creation is expensive
 		}
 	}
+	*/
 	public static Visible createDoodad(String name,float x,float y)
 	{
-		Visible ret = new Doodad(x,y,name);
-		
-		return ret;
+		//Visible ret = new Doodad(x,y,name);
+		/*
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * this returns null
+		 */
+		return null;
 	}
-	private static class Doodad extends Visible
+	/*private static class Doodad extends Visible
 	{
 		private Doodad(float x,float y, String animationName)
 		{
@@ -407,6 +413,6 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 			doodadify();
 						
 		}
-	}
+	}*/
 
 }

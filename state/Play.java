@@ -15,6 +15,7 @@ import com.mygdx.camera.Camera;
 import com.mygdx.entity.Entity;
 import com.mygdx.entity.EntityManager;
 import com.mygdx.graphic.MapRenderer;
+import com.mygdx.graphic.animation.Animator;
 import com.mygdx.handler.Auxiliarable;
 import com.mygdx.handler.Controllable;
 import com.mygdx.misc.PrecisePoint;
@@ -75,6 +76,8 @@ final class Play extends GameState implements PlayControlSwitchable
 		cam.zoom = .7f;
 		cam.focusOnLead(mousePosition);
 		
+		Animator.setBoundaries(cam);
+		
 		level = new Level(entityManager,mr);
 		
 		Music music = SoundRepository.GiftOfThistle.getMusic();
@@ -92,7 +95,7 @@ final class Play extends GameState implements PlayControlSwitchable
 	public void render() 
 	{
 		super.render();
-		level.render(sb, cam);
+		level.render(cam);
 	}
 	public void update(float dt)
 	{
@@ -299,11 +302,11 @@ final class Play extends GameState implements PlayControlSwitchable
 			em.loadLevel(level, mr);
 			script.loadScript(level);
 		}
-		private void render(SpriteBatch sb,Camera cam)
+		private void render(Camera cam)
 		{
 			mr.setView(cam);
 			mr.renderBack();
-			em.render(sb);
+			em.render();
 			mr.renderFront();		
 		}
 		private void update(float dt)

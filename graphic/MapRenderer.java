@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.graphic.animation.BatchRepo;
 
-public class MapRenderer extends OrthogonalTiledMapRenderer
+public final class MapRenderer extends OrthogonalTiledMapRenderer
 {
 	private LinkedList <TiledMapTileLayer> front;
 	private LinkedList <TiledMapTileLayer> back;

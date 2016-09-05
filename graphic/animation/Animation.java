@@ -1,18 +1,22 @@
 package com.mygdx.graphic.animation;
 
 
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.misc.MovableBox;
 
 	
-final class Animation
+public final class Animation
 {
 	private final AnimationData animationReference;
 	private final short frameAmount;
@@ -22,17 +26,9 @@ final class Animation
 	private boolean looped;
 	private short timesPlayed;
 	
-	/*
-	 * This is an object pool. Because TextureRegionDrawable
-	 * uses native resources, an object pool is necessary to
-	 * minimize RAM usage. 
-	 */
-	private final static HashMap<String,AnimationData> existingAnimationData; 
-
-	
-	Animation(String filePath)
+	Animation(String filePath,String dataPath)
 	{
-		AnimationData data = AnimationData.getAnimationData(filePath);
+		AnimationData data = AnimationData.getAnimationData(filePath,dataPath);
 		animationReference = data;
 		frameAmount = (short) data.frame.length;
 		currentFrame = 0;
@@ -80,49 +76,79 @@ final class Animation
 	boolean complete(){
 		return looped;
 	}
+	public boolean equals(Object o)
+	{
+		Animation other = (Animation)o;
+		if (this == other) return true;
+	    if (!(other instanceof Animation)) return false;
+	    
+	    return
+	      this.animationReference.equals(other.animationReference);
+	}
 
 	
-	static
-	{
-		existingAnimationData = new HashMap<>();
-	}
-	/**
-	 * Call this whenever starting a new level
-	 * in order to conserve resources
-	 */
-	public static void clearExistingAnimation()
-	{
-		Collection<AnimationData> animation = existingAnimationData.values();
-		animation.forEach(a -> a.dispose());
-		existingAnimationData.clear();
+	public static void clearExistingAnimation(){
+		AnimationData.clearExistingAnimation();
 	}
 	
 	
 	
 	private static final class AnimationData 
 	{
-		private  TextureRegionDrawable[] frame;
-		private  float delay;// default delay seems to be 1/12f
-
-		private AnimationData(String filePath)
+		private final TextureRegionDrawable[] frame;
+		private final float delay;// default delay seems to be 1/12f
+		
+		/*
+		 * This is an object pool. Because TextureRegionDrawable
+		 * uses native resources, an object pool is necessary to
+		 * minimize RAM usage. 
+		 */
+		private final static HashMap<String,AnimationData> existingAnimationData; 
+		
+		static
 		{
-			String dataFilePath = filePath.
-			
-			
+			existingAnimationData = new HashMap<>();
+		}
+		/**
+		 * Call this whenever starting a new level
+		 * in order to conserve resources
+		 */
+		private static void clearExistingAnimation()
+		{
+			Collection<AnimationData> animation = existingAnimationData.values();
+			animation.forEach(a -> a.dispose());
+			existingAnimationData.clear();
+		}
+		
+		private AnimationData(String filePath,String dataPath)
+		{
 			Texture texture = new Texture(Gdx.files.internal(filePath));
+			Scanner scanner = null;
+			
+			try {
+				scanner = new Scanner(Gdx.files.internal(dataPath).file());
+			} catch (FileNotFoundException e) {
+				System.err.print("The data file for the animation located at " + "\"" + filePath + "\" was not found");
+			}
+			
+			delay = scanner.nextFloat();
+			int width = scanner.nextInt();
+			int height = scanner.nextInt();
+					
 			TextureRegion[][] textureRegion = TextureRegion.split(texture,texture.getWidth()/width,texture.getHeight()/height); // must be fixed
-			TextureRegionDrawable[] value = new TextureRegionDrawable[filePath*height];
+			TextureRegionDrawable[] textureRegionDrawable = new TextureRegionDrawable[width*height];
 			int counter = 0;
 			for(TextureRegion[] t : textureRegion)
 			{
 				for(TextureRegion ti : t)
 				{
-					value[counter] = new TextureRegionDrawable(ti);
+					textureRegionDrawable[counter] = new TextureRegionDrawable(ti);
 					counter++;
 				}
 			}
-			
+			frame = textureRegionDrawable;
 		}
+		
 		private void dispose()
 		{
 			for(int i = 0; i < frame.length; i ++)
@@ -130,11 +156,12 @@ final class Animation
 				frame[i].getRegion().getTexture().dispose();
 			}
 		}
-		static AnimationData getAnimationData(String filePath)
+		
+		private static AnimationData getAnimationData(String filePath,String dataPath)
 		{
-			return loadAnimationData(filePath);
+			return loadAnimationData(filePath,dataPath);
 		}
-		private static AnimationData loadAnimationData(String filePath)
+		private static AnimationData loadAnimationData(String filePath,String dataPath)
 		{
 			AnimationData animationData;
 			// if the requested animation has already been created, load it
@@ -146,16 +173,26 @@ final class Animation
 			// otherwise, create a new one
 			else
 			{
-				animationData = createAnimationData(filePath);
+				animationData = createAnimationData(filePath,dataPath);
 			}
 			return animationData;	
 		}
-		private static AnimationData createAnimationData(String filePath)
+		private static AnimationData createAnimationData(String filePath,String dataPath)
 		{
 			// upon creation, store in hashmap for later retrieval
-			AnimationData animation = new AnimationData(filePath);
+			AnimationData animation = new AnimationData(filePath,dataPath);
 			existingAnimationData.put(filePath, animation);
 			return animation;
+		}
+		
+		public boolean equals(Object o)
+		{
+			AnimationData other = (AnimationData)o;
+			if (this == other) return true;
+		    if (!(other instanceof AnimationData)) return false;
+		    
+		    return
+		      Arrays.equals(this.frame, other.frame);
 		}
 	}
 }

@@ -14,7 +14,7 @@ class Menu extends GameState
 	{
 		super(sb,cam,gms);
 		em = new EntityManager();
-		em.add(ButtonMenu.ShrekButton(new PrecisePoint(100,100), GameModeAction.PLAY));
+		//em.add(ButtonMenu.ShrekButton(new PrecisePoint(100,100), GameModeAction.PLAY));
 	}
 	@Override
 	public void dispose() 

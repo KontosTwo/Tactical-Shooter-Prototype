@@ -128,17 +128,17 @@ Differentable <SoldierBattle>,RiflemanRoutineable,ControlManagerable,EnemyCogniz
 	}
 	public static SoldierBattle createProtector(PrecisePoint position)
 	{
-		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"protector");
+		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.auxiliary,Allegiance.epeirot,"protector");
 		return ret;
 	}
 	public static SoldierBattle createHuman(PrecisePoint position)
 	{
-		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.epeirot,"human");
+		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.auxiliary,Allegiance.epeirot,"human");
 		return ret;
 	}
 	public static SoldierBattle createRifleman(PrecisePoint position)
 	{
-		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.protector,Allegiance.dalmati,"rifleman");
+		SoldierBattle ret = new SoldierBattle(position,Weapon.TSOKOS,Armor.FEDARMOR,Identification.auxiliary,Allegiance.dalmati,"rifleman");
 		ret.routineManager.startRiflemanRoutine(ret);
 		return ret;
 	}
@@ -292,8 +292,8 @@ Differentable <SoldierBattle>,RiflemanRoutineable,ControlManagerable,EnemyCogniz
 	}
 	private enum Identification
 	{
-		human,
-		protector,
+		player,
+		auxiliary,
 		rifleman,
 		shotgunner,
 		machinegunner,
@@ -878,7 +878,9 @@ Differentable <SoldierBattle>,RiflemanRoutineable,ControlManagerable,EnemyCogniz
 	}
 	private void checkState()
 	{
-		String path = "";
+		StringBuilder animePath = new StringBuilder();
+		StringBuilder dataPath = new StringBuilder();
+
 		// unidirectional
 		if(state.equals(State.move) && height.equals(Height.crouch))
 		{
@@ -886,13 +888,26 @@ Differentable <SoldierBattle>,RiflemanRoutineable,ControlManagerable,EnemyCogniz
 		}
 		if(state.equals(State.reload) || state.equals(State.dead))
 		{
-			path = id.toString().concat(state.toString());
+			//animePath = id.toString().concat(state.toString());
 		}
 		else
 		{
-			path = id.toString().concat(state.toString().concat(height.toString().concat(direction.toString())));
+			animePath.append("animation/soldier/");
+			animePath.append(id.toString());
+			animePath.append("/");
+			animePath.append(state.toString());
+			animePath.append("/");
+			animePath.append(height.toString());
+			animePath.append("/");
+			animePath.append(direction.toString());
+			animePath.append(".png");
+			dataPath.append("animation/data/soldier");
+			dataPath.append(state.toString());
+			dataPath.append(height.toString());
+			dataPath.append(".txt");
+
 		}		
-		updateAnimation(path);
+		updateAnimation(animePath.toString(),dataPath.toString());
 	}	
 	public String toString()
 	{
