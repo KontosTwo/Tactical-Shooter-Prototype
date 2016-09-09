@@ -1,8 +1,8 @@
 package com.mygdx.entity;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.misc.MovableBox;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.PrecisePoint;
 
 public abstract class Hurtboxable extends Hitboxable
 {

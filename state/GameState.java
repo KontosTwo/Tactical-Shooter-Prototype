@@ -17,14 +17,14 @@ abstract class GameState implements InputProcessor
 	 * Credit is a gamestate, because all it does is scroll down the credits
 	 * Gamestate can be 
 	 */
-	protected SpriteBatch sb;
+	//protected SpriteBatch sb;
 	protected Camera cam;
 	//protected EntityManager entityManager;
 	protected GameModeSwitchable gms;
 	
-	public GameState(SpriteBatch sb,Camera cam,GameModeSwitchable gms) 
+	public GameState(Camera cam,GameModeSwitchable gms) 
 	{
-		this.sb = sb;
+		//this.sb = sb;
 		this.cam = cam;
 		this.gms = gms;
 		Gdx.input.setInputProcessor(this);
@@ -37,7 +37,7 @@ abstract class GameState implements InputProcessor
 	{
 		//This used to be gl30 until it had to be downgraded due to gl30 returning null. Some backends may be missing
 		Gdx.gl20.glClear(GL30.GL_COLOR_BUFFER_BIT);
-		sb.setProjectionMatrix(cam.combined);
+		//sb.setProjectionMatrix(cam.combined);
 	}
 	
 	public abstract void dispose();

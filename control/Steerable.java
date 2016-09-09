@@ -1,6 +1,6 @@
-package com.mygdx.handler;
+package com.mygdx.control;
 
-public interface ControlManagerable 
+public interface Steerable 
 {
 	/*
 	 * implemented by actors who use ControlManager to

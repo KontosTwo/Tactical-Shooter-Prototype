@@ -3,9 +3,9 @@ package com.mygdx.camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.graphic.animation.Animator.CameraBoundaryProvider;
+import com.mygdx.graphic.Animator.CameraBoundaryProvider;
 import com.mygdx.misc.MyVector2;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.PrecisePoint;
 
 public class Camera extends OrthographicCamera implements CameraBoundaryProvider
 {

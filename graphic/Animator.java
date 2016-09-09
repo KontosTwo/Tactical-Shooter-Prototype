@@ -1,11 +1,10 @@
-package com.mygdx.graphic.animation;
+package com.mygdx.graphic;
 
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.entity.Visible;
-import com.mygdx.misc.MovableBox;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.PrecisePoint;
 /**
  * Controls the rendering and characteristics of an animation
  *
@@ -33,10 +32,10 @@ public final class Animator
 		cameraBoundaryProvider = cbp;
 	}
 	
-	public Animator(final PrecisePoint center)
+	public Animator(PrecisePoint center)
 	{
 		animationDimensions = new MovableBox(defaultWidth,defaultHeight,center);
-		spritebatch = BatchRepo.getDayShader();
+		spritebatch = BatchCoordinator.getNightShader();
 	}
 	
 	public void update(float dt)
@@ -57,13 +56,11 @@ public final class Animator
 			animationDimensions.getBot() < 
 			cameraBoundaryProvider.getTopBoundary())
 		{
-			spritebatch.begin();
 			animation.render(spritebatch, 
 					animationDimensions.getLeft(),
 					animationDimensions.getBot(),
 					animationDimensions.getWidth(),
 					animationDimensions.getHeight());
-			spritebatch.end();
 		}
 	}
 	public boolean animationIsComplete()
@@ -73,6 +70,18 @@ public final class Animator
 	public void updateAnimation(String filePath,String dataPath)
 	{
 		animation = new Animation(filePath,dataPath);
+	}
+	public void doodadify()
+	{
+		animationDimensions.centerToBottomCenter();
+	}
+	public void setOffset(int x,int y)
+	{
+		animationDimensions.setOffset(x, y);
+	}
+	public void setDimensions(int x,int y)
+	{
+		animationDimensions.setSize(x, y);
 	}
 	public boolean equals(Object o)
 	{

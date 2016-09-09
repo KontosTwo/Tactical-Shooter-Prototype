@@ -1,6 +1,7 @@
-package com.mygdx.graphic.animation;
+package com.mygdx.graphic;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,12 +9,14 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.misc.MovableBox;
+import com.mygdx.graphic.BatchCoordinator.RenderRequest;
+import com.mygdx.physics.MovableBox;
 
 	
 public final class Animation
@@ -21,8 +24,8 @@ public final class Animation
 	private final AnimationData animationReference;
 	private final short frameAmount;
 	private short currentFrame;
-	private int time;
-	private final float tickerDelay;
+	private float time;
+	private float tickerDelay;
 	private boolean looped;
 	private short timesPlayed;
 	
@@ -66,7 +69,9 @@ public final class Animation
 	
 	void render(SpriteBatch sb,float bottomRightX,float bottomRightY,float width,float height)
 	{
-		animationReference.frame[currentFrame].draw(sb, bottomRightX, bottomRightY, width, height);
+		BatchCoordinator.sendRenderRequest(sb, 
+				() -> animationReference.frame[currentFrame].draw(sb, bottomRightX, bottomRightY, width, height)
+		);
 	}
 	
 	void reset(){
@@ -123,17 +128,23 @@ public final class Animation
 		private AnimationData(String filePath,String dataPath)
 		{
 			Texture texture = new Texture(Gdx.files.internal(filePath));
-			Scanner scanner = null;
 			
-			try {
-				scanner = new Scanner(Gdx.files.internal(dataPath).file());
-			} catch (FileNotFoundException e) {
-				System.err.print("The data file for the animation located at " + "\"" + filePath + "\" was not found");
+			String[] data = Gdx.files.internal(dataPath).readString().split("\\s");
+			int width = 0;
+			int height = 0;
+			
+			
+			float delayNonFinal = 0;
+			try{
+				delayNonFinal = Float.parseFloat(data[0]);
+				System.out.println(delayNonFinal);
+				width = Integer.parseInt(data[1]);
+				height = Integer.parseInt(data[2]);
+			}catch(IndexOutOfBoundsException e){
+				System.err.print("The data file at " + dataPath + " was configured incorrectly");
 			}
 			
-			delay = scanner.nextFloat();
-			int width = scanner.nextInt();
-			int height = scanner.nextInt();
+			delay = delayNonFinal;
 					
 			TextureRegion[][] textureRegion = TextureRegion.split(texture,texture.getWidth()/width,texture.getHeight()/height); // must be fixed
 			TextureRegionDrawable[] textureRegionDrawable = new TextureRegionDrawable[width*height];
@@ -168,7 +179,6 @@ public final class Animation
 			if(existingAnimationData.containsKey(filePath))
 			{
 				animationData = existingAnimationData.get(filePath);
-				System.out.println("animation already exists!");
 			}
 			// otherwise, create a new one
 			else

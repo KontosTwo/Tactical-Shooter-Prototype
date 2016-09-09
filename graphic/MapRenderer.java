@@ -6,12 +6,13 @@ import java.util.Stack;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.graphic.animation.BatchRepo;
 
 public final class MapRenderer extends OrthogonalTiledMapRenderer
 {
@@ -20,7 +21,7 @@ public final class MapRenderer extends OrthogonalTiledMapRenderer
 	
 	public MapRenderer()
 	{
-		super(null,BatchRepo.createNightShader());
+		super(null,BatchCoordinator.getNightShader());
 		front = new LinkedList <TiledMapTileLayer>();
 		back = new LinkedList <TiledMapTileLayer>();
 	}
@@ -31,13 +32,15 @@ public final class MapRenderer extends OrthogonalTiledMapRenderer
 	}
 	public void renderFront()
 	{
-		beginRender();
-		Iterator <TiledMapTileLayer>iterator = front.iterator();
-		while(iterator.hasNext())
+		BatchCoordinator.sendRenderRequest((SpriteBatch)batch, () ->
 		{
-			renderTileLayer(iterator.next());
-		}
-		endRender();			
+			AnimatedTiledMapTile.updateAnimationBaseTime();
+			Iterator <TiledMapTileLayer>iterator = front.iterator();
+			while(iterator.hasNext())
+			{
+				renderTileLayer(iterator.next());
+			}
+		});
 	}
 	
 	public void renderMiddle()
@@ -47,13 +50,15 @@ public final class MapRenderer extends OrthogonalTiledMapRenderer
 	
 	public void renderBack()
 	{
-		beginRender();
-		Iterator <TiledMapTileLayer>iterator = back.iterator();
-		while(iterator.hasNext())
+		BatchCoordinator.sendRenderRequest((SpriteBatch)batch, () ->
 		{
-			renderTileLayer(iterator.next());
-		}
-		endRender();
+			AnimatedTiledMapTile.updateAnimationBaseTime();
+			Iterator <TiledMapTileLayer>iterator = back.iterator();
+			while(iterator.hasNext())
+			{
+				renderTileLayer(iterator.next());
+			}
+		});
 	}
 	
 	/*public void loadMap(TiledMap tiledMap)

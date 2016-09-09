@@ -1,19 +1,18 @@
 package com.mygdx.entity;
 
-import com.badlogic.gdx.math.Vector2;
-import com.mygdx.entity.soldier.SoldierBattle;
+import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.misc.Differentable;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.PrecisePoint;
 
 public class HitMarker extends Visible
 {
-	private Differentable <SoldierBattle> shooter;
+	private Differentable <SoldierBattleConcrete> shooter;
 	
 	public HitMarker(PrecisePoint position,Differentable shooter)
 	{
 		super(position);
 		this.shooter = shooter;
-		updateAnimation("animation\\environment\\Hitmarker.png","animation\\data\\Hitmarker.txt");
+		updateAnimation("animation/environment/Hitmarker.png","animation/data/Hitmarker.txt");
 		setAnimationSize(10,10);
 	}
 	public PrecisePoint getPosition()
@@ -30,7 +29,7 @@ public class HitMarker extends Visible
 		}
 	}
 	
-	public boolean recognizeFriendlyFire(SoldierBattle perciever)
+	public boolean recognizeFriendlyFire(SoldierBattleConcrete perciever)
 	{
 		return shooter.sameAs(perciever);
 	}

@@ -11,23 +11,23 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.entity.soldier.SoldierBattle;
+import com.mygdx.control.Auxiliarable;
+import com.mygdx.control.PlayerControllable;
+import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.graphic.MapRenderer;
-import com.mygdx.handler.Auxiliarable;
-import com.mygdx.handler.Controllable;
 import com.mygdx.map.GameMap;
 import com.mygdx.misc.Point;
-import com.mygdx.misc.PrecisePoint;
 import com.mygdx.misc.Tuple;
+import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.Sequencialable;
 
 public class EntityManager implements HumanoidEffectuator
 {
 	private Array<Entity> entity;
 	
-	private SoldierBattle player;
-	private SoldierBattle auxiliary;
-	private List<SoldierBattle> enemy;
+	private SoldierBattleConcrete player;
+	private SoldierBattleConcrete auxiliary;
+	private List<SoldierBattleConcrete> enemy;
 
 	
 	private GameMap gameMap;
@@ -45,14 +45,14 @@ public class EntityManager implements HumanoidEffectuator
 		 sr = shapeRenderer;	 
 	}
 	
-	private Array<SoldierBattle> getFriendly() // this only means humanoids of epeiros
+	private Array<SoldierBattleConcrete> getFriendly() // this only means humanoids of epeiros
 	{
-		Array<SoldierBattle> ret = new Array<SoldierBattle>();
+		Array<SoldierBattleConcrete> ret = new Array<SoldierBattleConcrete>();
 		for(Entity e : entity)
 		{
-			if(e instanceof SoldierBattle)// this is bad
+			if(e instanceof SoldierBattleConcrete)// this is bad
 			{
-				SoldierBattle h = (SoldierBattle) e;
+				SoldierBattleConcrete h = (SoldierBattleConcrete) e;
 				if(h.isFriendly())
 				{
 					ret.add(h);
@@ -166,21 +166,21 @@ public class EntityManager implements HumanoidEffectuator
 		}
 		return ret;
 	}	
-	private Array<SoldierBattle> getHumanoid()
+	private Array<SoldierBattleConcrete> getHumanoid()
 	{
-		Array<SoldierBattle> ret = new Array<SoldierBattle>();
+		Array<SoldierBattleConcrete> ret = new Array<SoldierBattleConcrete>();
 		for(Entity e : entity)
 		{
-			if(e instanceof SoldierBattle)// this is bad
+			if(e instanceof SoldierBattleConcrete)// this is bad
 			{
-				ret.add((SoldierBattle)e);
+				ret.add((SoldierBattleConcrete)e);
 			}
 		}
 		return ret;
 	}
-	public Controllable createHuman(float x,float y)
+	public PlayerControllable createHuman(float x,float y)
 	{
-		SoldierBattle player = SoldierBattle.createHuman(new PrecisePoint(x,y));
+		SoldierBattleConcrete player = SoldierBattleConcrete.createHuman(new PrecisePoint(x,y));
 		//human.setSizeAll(150, 150);
 		add(player);
 		gameMap.addCollidable(player);
@@ -189,7 +189,7 @@ public class EntityManager implements HumanoidEffectuator
 	}
 	public Auxiliarable createProtector(float x,float y)
 	{
-		SoldierBattle protector = SoldierBattle.createProtector(new PrecisePoint(x,y));
+		SoldierBattleConcrete protector = SoldierBattleConcrete.createProtector(new PrecisePoint(x,y));
 		add(protector);
 		//chanion = protector;
 		return protector;
@@ -197,7 +197,7 @@ public class EntityManager implements HumanoidEffectuator
 	}
 	public void createRifleman(float x,float y)
 	{
-		SoldierBattle rifleman = SoldierBattle.createRifleman(new PrecisePoint(x,y));
+		SoldierBattleConcrete rifleman = SoldierBattleConcrete.createRifleman(new PrecisePoint(x,y));
 		add(rifleman);
 		//add(new Protector(this, AnimationEnum.MAN, new Vector2(x,y)));
 	}
@@ -216,15 +216,15 @@ public class EntityManager implements HumanoidEffectuator
 		
 		
 	}
-	public void shoot(double y1,double x1,double height1,double y2,double x2,double z2,SoldierBattle shooter,double accuracy)
+	public void shoot(double y1,double x1,double height1,double y2,double x2,double z2,SoldierBattleConcrete shooter,double accuracy)
 	{
 		// height 1 and height 2 are entity heights independent of the map heights
 		// the final impact's z is far too low and completely inaccurate, but for a good reason. if a hurtboxable containes a point, it's dead. end of story
 		Vector3 impactFinal = new Vector3();
 		double height2 = z2;
 		float prev = 0;
-		Array <SoldierBattle> allHumanoid = getHumanoid();
-		for(SoldierBattle gb : allHumanoid)
+		Array <SoldierBattleConcrete> allHumanoid = getHumanoid();
+		for(SoldierBattleConcrete gb : allHumanoid)
 		{
 			if(gb.hurtboxContains((float)x2, (float)y2))
 			{
@@ -239,7 +239,7 @@ public class EntityManager implements HumanoidEffectuator
 				
 		
 		Array <Hurtboxable> hurtboxable = new Array <Hurtboxable>();
-		for(SoldierBattle hb : allHumanoid)
+		for(SoldierBattleConcrete hb : allHumanoid)
 		{
 			if(hb.hurtboxOverlaps((float)x1,(float) y1, (float)impactMap.x, (float)impactMap.y) && /*check this, */hb != shooter)
 			{
@@ -273,8 +273,8 @@ public class EntityManager implements HumanoidEffectuator
 		target.setAnimationSize(5, 5);
 		entity.add(target);	*/
 				
-		Array<SoldierBattle> test = new Array<SoldierBattle>();
-		for(SoldierBattle hb : allHumanoid)
+		Array<SoldierBattleConcrete> test = new Array<SoldierBattleConcrete>();
+		for(SoldierBattleConcrete hb : allHumanoid)
 		{
 			if(hb.hurtboxContains(impactFinal.x, impactFinal.y))
 			{
@@ -296,7 +296,7 @@ public class EntityManager implements HumanoidEffectuator
 	    }
 	    
 		search:
-		for(SoldierBattle hb : test)
+		for(SoldierBattleConcrete hb : test)
 		{
 			if(hb.getHeight() + 1 >= impactFinal.z && hb != shooter)
 			{
@@ -414,8 +414,8 @@ public class EntityManager implements HumanoidEffectuator
 	}
 	public Tuple<Boolean,Vector2> findCover(double x,double y,int searchCoverDistance)
 	{
-		Array<SoldierBattle> otherHumanoid = new Array<SoldierBattle>();
-		for(SoldierBattle h : getHumanoid())
+		Array<SoldierBattleConcrete> otherHumanoid = new Array<SoldierBattleConcrete>();
+		for(SoldierBattleConcrete h : getHumanoid())
 		{
 			if(Visible.withinDistance((int)x, (int)y, h, searchCoverDistance))
 			{
@@ -432,12 +432,12 @@ public class EntityManager implements HumanoidEffectuator
 	{		
 		return gameMap.coverDisparity(y1, x1, height1, y2, x2, height2);
 	}
-	public Tuple<Boolean,SoldierBattle> seeEnemy(SoldierBattle humanoid) 
+	public Tuple<Boolean,SoldierBattleConcrete> seeEnemy(SoldierBattleConcrete humanoid) 
 	{		
-		Tuple<Boolean,SoldierBattle> ret = new Tuple<Boolean, SoldierBattle>();
+		Tuple<Boolean,SoldierBattleConcrete> ret = new Tuple<Boolean, SoldierBattleConcrete>();
 		ret.x = false;
 		search:
-		for(SoldierBattle h : getFriendly())
+		for(SoldierBattleConcrete h : getFriendly())
 		{
 			if(humanoid.see(h))
 			{
@@ -449,7 +449,7 @@ public class EntityManager implements HumanoidEffectuator
 		return ret;
 	}
 
-	public boolean hitMarkerNear(SoldierBattle h) 
+	public boolean hitMarkerNear(SoldierBattleConcrete h) 
 	{
 		boolean ret = false;
 		for(HitMarker hm : getHitMarker())
@@ -472,23 +472,23 @@ public class EntityManager implements HumanoidEffectuator
 		entity.add(new Grenade(new PrecisePoint(x1,y1),new PrecisePoint(x2,y2)));
 	}
 	@Override
-	public void scanBattleField(SoldierBattle h) // only usable by enemies
+	public void scanBattleField(SoldierBattleConcrete h) // only usable by enemies
 	{
-		for(SoldierBattle humanoid : getHumanoid())
+		for(SoldierBattleConcrete humanoid : getHumanoid())
 		{
-			if(SoldierBattle.areEnemies(h, humanoid) && h.see(humanoid))
+			if(SoldierBattleConcrete.areEnemies(h, humanoid) && h.see(humanoid))
 			{
 				h.spotEnemy(humanoid);
 			}
 		}
 	}
 	@Override
-	public boolean enemyWithinRange(Vector2 position, SoldierBattle h, int radius) 
+	public boolean enemyWithinRange(Vector2 position, SoldierBattleConcrete h, int radius) 
 	{
 		boolean ret = false;
-		for(SoldierBattle humanoid : getHumanoid())
+		for(SoldierBattleConcrete humanoid : getHumanoid())
 		{
-			if(SoldierBattle.areEnemies(h, humanoid) && h.distanceFrom(position.x, position.y) < radius)
+			if(SoldierBattleConcrete.areEnemies(h, humanoid) && h.distanceFrom(position.x, position.y) < radius)
 			{
 				ret = true;
 			}
@@ -496,13 +496,13 @@ public class EntityManager implements HumanoidEffectuator
 		return ret;
 	}
 	@Override
-	public void foundObscuredEnemy(SoldierBattle target, SoldierBattle sender) 
+	public void foundObscuredEnemy(SoldierBattleConcrete target, SoldierBattleConcrete sender) 
 	{
-		Array<SoldierBattle> allHumanoid = getHumanoid();
+		Array<SoldierBattleConcrete> allHumanoid = getHumanoid();
 		for(int i = 0; i < allHumanoid.size; i ++)
 		{
-			SoldierBattle current = allHumanoid.get(i);
-			if(SoldierBattle.areAllies(sender, current) && sender != current)// second condition makes sure that the two soldiers aren't the same
+			SoldierBattleConcrete current = allHumanoid.get(i);
+			if(SoldierBattleConcrete.areAllies(sender, current) && sender != current)// second condition makes sure that the two soldiers aren't the same
 			{
 				
 				/*

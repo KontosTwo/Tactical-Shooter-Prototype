@@ -1,4 +1,4 @@
-package com.mygdx.misc;
+package com.mygdx.physics;
 
 import com.badlogic.gdx.math.Vector2;
 

@@ -1,4 +1,6 @@
-package com.mygdx.misc;
+package com.mygdx.physics;
+
+import com.mygdx.misc.MyVector2;
 
 public class PrecisePoint 
 {
@@ -41,5 +43,9 @@ public class PrecisePoint
 	public PrecisePoint(PrecisePoint p)
 	{
 		this(p.x,p.y);
+	}
+	public String toString()
+	{
+		return "" + x + " " + y;
 	}
 }

@@ -1,6 +1,6 @@
 package com.mygdx.entity;
 
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.PrecisePoint;
 
 public class BulletMark extends Visible
 {

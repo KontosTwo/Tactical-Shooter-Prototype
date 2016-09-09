@@ -13,12 +13,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.camera.Camera;
 import com.mygdx.camera.CameraHoggable;
-import com.mygdx.graphic.animation.Animator;
+import com.mygdx.graphic.Animator;
 import com.mygdx.map.GameMap;
-import com.mygdx.misc.MovableBox;
 import com.mygdx.misc.MyVector2;
 import com.mygdx.misc.Point;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.PrecisePoint;
 
 
 public abstract class  Visible extends Entity implements Comparable <Visible>, CameraHoggable
@@ -26,7 +26,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	private Animator animator;
 	protected PrecisePoint center; // may not be initialized in time
 	protected PrecisePoint centerOld;
-	private MovableBox animationBox;
+	//private MovableBox animationBox;
 	private MyVector2 velocity;
 	
 	private float speed;
@@ -43,13 +43,12 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		
 		this.center = new PrecisePoint(center);
 		centerOld = new PrecisePoint(center);
-		animationBox = new MovableBox(100,100,this.center);
 		velocity = new MyVector2();
 		speed = 0;
 		unitVelocity = new MyVector2();
 		unitVelocityInput = new MyVector2();
 		tileSizeGraphic = 0;
-		animator = new Animator(center);
+		animator = new Animator(this.center);
 	}
 	public static void supplyTileSizeGraphic(int num)
 	{
@@ -110,7 +109,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	}*/
 	protected void setAnimationSize(int x,int y)
 	{
-		animationBox.setSize((int)x, (int)y);
+		animator.setDimensions(x, y);
 	}
 	protected void updateAnimation(String animePath,String dataPath) 
 	{		
@@ -132,20 +131,14 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		centerOld.set(center);
 		velocity.set((unitVelocity.getX() + unitVelocityInput.getX()) * speed,(unitVelocity.getY() + unitVelocityInput.getY()) * speed);
 		center.add(velocity);
-	}
-	protected boolean animationBoxContains(int x,int y)
-	{
-		return animationBox.contains(x, y);
+
 	}
 
 	public PrecisePoint getCenter()
 	{
 		return new PrecisePoint(center);
 	}
-	public boolean overLapsAnimeBox(int x1,int y1,int x2,int y2)
-	{
-		return animationBox.overLaps(x1, y1, x2, y2);
-	}
+
 	public float getTileX(float tilesize)
 	{
 		return  center.x/tilesize;
@@ -239,7 +232,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	}
 	protected void setAnimationBoxOffset(int x,int y)
 	{
-		animationBox.setOffset(x, y);
+		animator.setOffset(x, y);
 	}
 	protected boolean willCross(float x1,float y1,float x2,float y2,MovableBox hitbox)
 	{
@@ -261,7 +254,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	}
 	protected void doodadify()
 	{
-		animationBox.centerToBottomCenter();
+		animator.doodadify();
 	}
 	/*
 	private enum AnimationDepot 

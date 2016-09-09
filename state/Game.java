@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.camera.Camera;
 import com.mygdx.debug.Debugger;
-import com.mygdx.graphic.animation.BatchRepo;
+import com.mygdx.graphic.BatchCoordinator;
 
 
 
@@ -31,7 +31,7 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	
 	private GameModeAction previousAction;
 	
-	private SpriteBatch sb;
+	//private SpriteBatch sb;
 	private Camera cam;
 	private Viewport viewport;
 	
@@ -40,9 +40,9 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	{
 		//sb = new SpriteBatch(); // spritebatch must be instantiated in create()
 		
-		BatchRepo.createBatch();
-		sb = BatchRepo.createNightShader();
+		//sb = BatchRepo.createNightShader();
 		cam = new Camera(); // so does Camera
+
 		cam.setToOrtho(false, Game.V_WIDTH, Game.V_HEIGHT);
 		viewport = new FitViewport(V_WIDTH,V_HEIGHT,cam);
 		//ButtonMenu.setGame(this);
@@ -93,11 +93,11 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	}
 	private Play getPlay()
 	{
-		return new Play(sb,cam,this);
+		return new Play(cam,this);
 	}
 	private Menu getMenu()
 	{
-		return new Menu(sb,cam,this);
+		return new Menu(cam,this);
 	}
 
 	@Override

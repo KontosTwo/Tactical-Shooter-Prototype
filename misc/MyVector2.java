@@ -1,6 +1,7 @@
 package com.mygdx.misc;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.physics.PrecisePoint;
 
 public class MyVector2
 {

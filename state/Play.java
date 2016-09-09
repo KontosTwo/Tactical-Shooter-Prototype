@@ -12,13 +12,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.camera.Camera;
+import com.mygdx.control.Auxiliarable;
+import com.mygdx.control.PlayerControllable;
 import com.mygdx.entity.Entity;
 import com.mygdx.entity.EntityManager;
+import com.mygdx.graphic.Animator;
+import com.mygdx.graphic.BatchCoordinator;
 import com.mygdx.graphic.MapRenderer;
-import com.mygdx.graphic.animation.Animator;
-import com.mygdx.handler.Auxiliarable;
-import com.mygdx.handler.Controllable;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.Script;
 import com.mygdx.script.Sequencialable;
 import com.mygdx.sound.SoundRepository;
@@ -29,7 +30,7 @@ final class Play extends GameState implements PlayControlSwitchable
 	
 	private PrecisePoint mousePosition;	
 	
-	private Controllable controller;
+	private PlayerControllable controller;
 	private Auxiliarable auxiliary;
 	
 	// Control State Variables
@@ -59,9 +60,13 @@ final class Play extends GameState implements PlayControlSwitchable
 		GAMEPLAY;
 	}
 	
-	Play(SpriteBatch sb,Camera cam,GameModeSwitchable gms) 
+	Play(Camera cam,GameModeSwitchable gms) 
 	{
-		super(sb,cam,gms);
+		super(cam,gms);
+		
+		BatchCoordinator.createBatch(cam);
+		
+		
 		EntityManager entityManager = new EntityManager();
 		controller = entityManager.createHuman(200, 200);
 		controller.initiateControllable();
@@ -75,7 +80,6 @@ final class Play extends GameState implements PlayControlSwitchable
 		mousePosition = new PrecisePoint();
 		cam.zoom = .7f;
 		cam.focusOnLead(mousePosition);
-		
 		Animator.setBoundaries(cam);
 		
 		level = new Level(entityManager,mr);
@@ -96,6 +100,7 @@ final class Play extends GameState implements PlayControlSwitchable
 	{
 		super.render();
 		level.render(cam);
+
 	}
 	public void update(float dt)
 	{
@@ -306,8 +311,11 @@ final class Play extends GameState implements PlayControlSwitchable
 		{
 			mr.setView(cam);
 			mr.renderBack();
+			//BatchCoordinator.beginBatch();
 			em.render();
-			mr.renderFront();		
+			//BatchCoordinator.endBatch();
+			mr.renderFront();	
+			BatchCoordinator.coordinatedRender();
 		}
 		private void update(float dt)
 		{

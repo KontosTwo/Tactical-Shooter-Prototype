@@ -1,7 +1,7 @@
 package com.mygdx.entity;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.PrecisePoint;
 
 public class Grenade extends Hitboxable
 {

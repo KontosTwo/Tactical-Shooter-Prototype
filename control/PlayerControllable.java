@@ -1,10 +1,9 @@
-package com.mygdx.handler;
+package com.mygdx.control;
 
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.camera.CameraHoggable;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.PrecisePoint;
 
-public interface Controllable extends CameraHoggable
+public interface PlayerControllable extends CameraHoggable
 {
 	public void cMoveRight(boolean b);
 	public void cMoveLeft(boolean b);

@@ -94,7 +94,7 @@ import com.mygdx.script.Sequencialable;
 	public boolean instaSucceeded() 
 	{
 		// TODO Auto-generated method stub
-		return false;
+		return false;//actor.finishMoveTo(destX,destY);
 	}
 	@Override
 	public boolean instaFailed() 

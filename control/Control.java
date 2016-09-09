@@ -1,9 +1,9 @@
-package com.mygdx.handler;
+package com.mygdx.control;
 
 
 import com.mygdx.misc.Updatable;
 
-public class ControlManager implements Updatable
+public class Control
 {
 	/*
 	 * encapsulating movement behaviors for classes implementing
@@ -14,7 +14,7 @@ public class ControlManager implements Updatable
 	 * also supports switching from moving one
 	 * direction to the opposite without causing issues
 	 */
-	private ControlManagerable controller;
+	private Steerable controller;
 	private boolean moveLeft;
 	private boolean moveRight;
 	private boolean moveUp;
@@ -22,7 +22,7 @@ public class ControlManager implements Updatable
 	private boolean enabled;
 	private boolean moving;
 	
-	public ControlManager(ControlManagerable c)
+	public Control(Steerable c)
 	{
 		controller = c;
 		enabled = true;
@@ -69,7 +69,7 @@ public class ControlManager implements Updatable
         moveDown = b;
 	}
 
-	@Override
+
 	public void update(float dt) 
 	{
 		moving = moveRight || moveLeft || moveUp || moveDown;

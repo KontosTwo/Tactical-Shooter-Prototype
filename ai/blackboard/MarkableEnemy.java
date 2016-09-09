@@ -1,6 +1,6 @@
 package com.mygdx.ai.blackboard;
 
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.physics.PrecisePoint;
 
 public interface MarkableEnemy 
 {

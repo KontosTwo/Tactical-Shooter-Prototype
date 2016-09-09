@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 
 class SoldierBattleState 
 {
+	private SoldierBattle owner;
+	
 	private Direction directionPrev;
 	private State statePrev;
 	private Height heightPrev;
@@ -11,17 +13,17 @@ class SoldierBattleState
 	private State state;
 	private Height height;
 	
-	private Weapon weapon;
-	private Armor armor;
-	private Identification id;
-	private Allegiance allegiance;
+	private final Weapon weapon;
+	private final Armor armor;
+	private final Identification id;
+	private final Allegiance allegiance;
 	
 	private int unsteadiness;// the inaccuracy of the gun due to a multitude of factors such as psychological pressure or having ran
 	private int ammo;
 	private int gunHeight;
 	private int currentHp;
 	
-	SoldierBattleState()
+	private SoldierBattleState(Weapon weapon,Armor armor,Identification id, Allegiance allegiance)
 	{
 		// initializing the state
 		direction = Direction.down;
@@ -32,13 +34,78 @@ class SoldierBattleState
 		heightPrev = Height.stand;
 		/////////////////
 		
+		this.weapon = weapon;
+		this.armor = armor;
+		this.id = id;
+		this.allegiance = allegiance;
 		
+	}
+	static SoldierBattleState createProtectorState()
+	{
+		return new SoldierBattleState(Weapon.TSOKOS,Armor.FEDARMOR,Identification.auxiliary,Allegiance.epeirot);
 	}
 	
 	void update()
 	{
-		
+		checkStateChange();
 	}
+	
+	private void checkStateChange()
+	{
+		boolean switchState = false;
+		if(!statePrev.equals(state))
+		{
+			statePrev = state;
+			switchState = true;
+		}
+		if(!directionPrev.equals(direction))
+		{
+			directionPrev = direction;
+			switchState = true;
+		}
+		if(!heightPrev.equals(height))
+		{
+			heightPrev = height;
+			switchState = true;
+		}
+		if(switchState)
+		{
+			switchAnimation();
+		}
+	}
+	private void switchAnimation()
+	{
+		StringBuilder animePath = new StringBuilder();
+		StringBuilder dataPath = new StringBuilder();
+
+		// unidirectional
+		if(state.equals(State.move) && height.equals(Height.crouch))
+		{
+			state = State.still;
+		}
+		if(state.equals(State.reload) || state.equals(State.dead))
+		{
+			//animePath = id.toString().concat(state.toString());
+		}
+		else
+		{
+			animePath.append("animation/soldier/");
+			animePath.append(id.toString());
+			animePath.append("/");
+			animePath.append(state.toString());
+			animePath.append("/");
+			animePath.append(height.toString());
+			animePath.append("/");
+			animePath.append(direction.toString());
+			animePath.append(".png");
+			dataPath.append("animation/data/soldier");
+			dataPath.append(state.toString());
+			dataPath.append(height.toString());
+			dataPath.append(".txt");
+
+		}	
+		owner.switchAnimation(animePath.toString(), dataPath.toString());
+	}	
 	
 	private enum Allegiance
 	{
@@ -169,8 +236,8 @@ class SoldierBattleState
 	}
 	private enum Identification
 	{
-		human,
-		protector,
+		controller,
+		auxiliary,
 		rifleman,
 		shotgunner,
 		machinegunner,
@@ -193,4 +260,5 @@ class SoldierBattleState
 			this.armor = armor;
 		}
 	}
+	
 }

@@ -4,8 +4,8 @@ import java.util.*;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.entity.soldier.SoldierBattle;
-import com.mygdx.misc.PrecisePoint;
+import com.mygdx.entity.soldier.SoldierBattleConcrete;
+import com.mygdx.physics.PrecisePoint;
 
 final class EnemyMarker
 {
@@ -28,7 +28,7 @@ final class EnemyMarker
 		timeUntilQuit = 0;
 		pendAsUser(seeker);
 	}
-	EnemyMarker(MarkableEnemy tracked,SoldierBattle seeker,PrecisePoint delayedCenter)
+	EnemyMarker(MarkableEnemy tracked,SoldierBattleConcrete seeker,PrecisePoint delayedCenter)
 	{ 
 		target = tracked;
 		this.position = new PrecisePoint(delayedCenter);
