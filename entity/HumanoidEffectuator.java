@@ -5,8 +5,8 @@ import java.util.PriorityQueue;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.entity.soldier.SoldierBattleConcrete;
-import com.mygdx.misc.Point;
 import com.mygdx.misc.Tuple;
+import com.mygdx.physics.Point;
 
 public interface HumanoidEffectuator
 {

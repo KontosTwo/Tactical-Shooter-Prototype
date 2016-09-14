@@ -1,18 +1,18 @@
 package com.mygdx.entity;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.MovableRectangle;
 import com.mygdx.physics.PrecisePoint;
 
 public abstract class Hurtboxable extends Hitboxable
 {
-	private MovableBox hurtbox;
+	private MovableRectangle hurtbox;
 	private float height;
 
 	public Hurtboxable(PrecisePoint center) 
 	{
 		super(center);
-		hurtbox = new MovableBox(100,100,this.center);
+		hurtbox = new MovableRectangle(this.center,100,100);
 	}
 	protected void setSizeAll(int x,int y)
 	{

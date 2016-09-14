@@ -3,7 +3,7 @@ package com.mygdx.graphic;
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.MovableRectangle;
 import com.mygdx.physics.PrecisePoint;
 /**
  * Controls the rendering and characteristics of an animation
@@ -21,7 +21,7 @@ public final class Animator
 	
 	private SpriteBatch spritebatch;
 	private static CameraBoundaryProvider cameraBoundaryProvider;
-	private final MovableBox animationDimensions;
+	private final MovableRectangle animationDimensions;
 	private Animation animation;
 	
 	private static final int defaultWidth = 100;
@@ -32,10 +32,12 @@ public final class Animator
 		cameraBoundaryProvider = cbp;
 	}
 	
-	public Animator(PrecisePoint center)
+	public Animator(PrecisePoint center,String animePath,String dataPath)
 	{
-		animationDimensions = new MovableBox(defaultWidth,defaultHeight,center);
+		animationDimensions = new MovableRectangle(center,defaultWidth,defaultHeight);
 		spritebatch = BatchCoordinator.getNightShader();
+		updateAnimation(animePath,dataPath);
+	
 	}
 	
 	public void update(float dt)
@@ -67,9 +69,9 @@ public final class Animator
 	{
 		return animation.complete();
 	}
-	public void updateAnimation(String filePath,String dataPath)
+	public void updateAnimation(String animePath,String dataPath)
 	{
-		animation = new Animation(filePath,dataPath);
+		animation = new Animation(animePath,dataPath);
 	}
 	public void doodadify()
 	{

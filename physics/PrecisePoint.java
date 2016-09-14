@@ -1,6 +1,5 @@
 package com.mygdx.physics;
 
-import com.mygdx.misc.MyVector2;
 
 public class PrecisePoint 
 {

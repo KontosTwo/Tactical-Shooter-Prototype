@@ -5,39 +5,93 @@ import com.mygdx.control.PlayerControllable;
 import com.mygdx.control.Steerable;
 import com.mygdx.graphic.Animator;
 import com.mygdx.physics.MovablePoint;
+import com.mygdx.physics.MovableRectangle;
 import com.mygdx.physics.PrecisePoint;
 
-class SoldierBattleControlled implements SoldierBattle,PlayerControllable,Steerable
-{
-	private SoldierBattleState state;
-	private Animator animator;
+class SoldierBattleControlled extends SoldierBattle implements PlayerControllable,Steerable
+{	
+	private static final int XHITBOX = 10;
+	private static final int YHITBOX = 10;
+	// make this a singleton
 	private Control control;
-	private MovablePoint center;
+	private final MovableRectangle collisionBox;
 	
-	SoldierBattleControlled(SoldierBattleState s)
+	SoldierBattleControlled(SoldierBattleMediator mediator,SoldierBattleState state)
 	{
-		animator = new Animator();
-		state = s;
+		super(mediator,state);
+		control = new Control(this);
+		collisionBox = new MovableRectangle(center.getCenterReference(),XHITBOX,YHITBOX);
+	}
+	public void update(float dt)
+	{
+		super.update(dt);
+		control.update(dt);
 	}
 	
 	@Override
-	public void render() 
-	{
-		
-	}
-
-
-	@Override
-	public void update() 
-	{
-		
-	}
-	
-	@Override
-	public PrecisePoint provideCenterCamera() 
-	{
+	public PrecisePoint provideCenterCamera() {
 		// TODO Auto-generated method stub
-		return null;
+		return center.getCenterReference();
+	}
+
+	@Override
+	public void moveRight() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveLeft() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveUpLeft() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveUpRight() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveDown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveDownLeft() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveDownRight() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notMoveAction() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveAction() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -119,73 +173,10 @@ class SoldierBattleControlled implements SoldierBattle,PlayerControllable,Steera
 	}
 
 	@Override
-	public void moveRight() {
+	protected void addToSighted() {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void moveLeft() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveUp() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveUpLeft() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveUpRight() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveDown() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveDownLeft() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveDownRight() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void notMoveAction() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveAction() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void switchAnimation(String animeFile, String dataFile) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	
-
-
 	
 }

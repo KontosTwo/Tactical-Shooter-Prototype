@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.graphic.BatchCoordinator.RenderRequest;
-import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.MovableRectangle;
 
 	
 public final class Animation
@@ -137,7 +137,6 @@ public final class Animation
 			float delayNonFinal = 0;
 			try{
 				delayNonFinal = Float.parseFloat(data[0]);
-				System.out.println(delayNonFinal);
 				width = Integer.parseInt(data[1]);
 				height = Integer.parseInt(data[2]);
 			}catch(IndexOutOfBoundsException e){

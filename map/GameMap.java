@@ -30,8 +30,8 @@ import com.mygdx.entity.Hitboxable;
 import com.mygdx.entity.Visible;
 import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.graphic.MapRenderer;
-import com.mygdx.misc.Point;
 import com.mygdx.misc.Tuple;
+import com.mygdx.physics.Point;
 
 public class GameMap
 {

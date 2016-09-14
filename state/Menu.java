@@ -3,17 +3,14 @@ package com.mygdx.state;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.camera.Camera;
-import com.mygdx.entity.EntityManager;
 import com.mygdx.physics.PrecisePoint;
 
 class Menu extends GameState
 {
-	private EntityManager em;
 	
 	Menu(Camera cam,GameModeSwitchable gms) 
 	{
 		super(cam,gms);
-		em = new EntityManager();
 		//em.add(ButtonMenu.ShrekButton(new PrecisePoint(100,100), GameModeAction.PLAY));
 	}
 	@Override

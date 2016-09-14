@@ -16,8 +16,8 @@ import com.mygdx.control.PlayerControllable;
 import com.mygdx.entity.HitMarker;
 import com.mygdx.entity.Hurtboxable;
 import com.mygdx.misc.Differentable;
-import com.mygdx.misc.Point;
 import com.mygdx.misc.Tuple;
+import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.ScriptManager;
 

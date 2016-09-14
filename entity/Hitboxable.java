@@ -4,18 +4,18 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.MovableRectangle;
 import com.mygdx.physics.PrecisePoint;
 
 public abstract class Hitboxable extends Visible
 {
-	private MovableBox hitbox;
+	private MovableRectangle hitbox;
 	private static final float FORCEFIELD = 1f;
 	
 	public Hitboxable(PrecisePoint center) 
 	{
 		super(center);
-		hitbox = new MovableBox(100,100,this.center);
+		hitbox = new MovableRectangle(this.center,100,100);
 	}
 	protected void setSizeAll(int x,int y)
 	{

@@ -15,7 +15,8 @@ import com.mygdx.camera.Camera;
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.entity.Entity;
-import com.mygdx.entity.EntityManager;
+import com.mygdx.entity.coordinator.EntityListener;
+import com.mygdx.entity.soldier.InteractionSoldierBattle;
 import com.mygdx.graphic.Animator;
 import com.mygdx.graphic.BatchCoordinator;
 import com.mygdx.graphic.MapRenderer;
@@ -31,7 +32,7 @@ final class Play extends GameState implements PlayControlSwitchable
 	private PrecisePoint mousePosition;	
 	
 	private PlayerControllable controller;
-	private Auxiliarable auxiliary;
+	//private Auxiliarable auxiliary;
 	
 	// Control State Variables
 	private Command command;	
@@ -66,13 +67,13 @@ final class Play extends GameState implements PlayControlSwitchable
 		
 		BatchCoordinator.createBatch(cam);
 		
+		EntityListener entityListener = null;
+		InteractionSoldierBattle interactionSoldier = new InteractionSoldierBattle(entityListener,entityListener);
+		entityListener = new EntityListener(interactionSoldier);
 		
-		EntityManager entityManager = new EntityManager();
-		controller = entityManager.createHuman(200, 200);
+		controller = interactionSoldier.createPlayer(200, 200);
 		controller.initiateControllable();
-
-		auxiliary = entityManager.createProtector(210,150);		//cam.focus(player);
-		entityManager.createRifleman(120, 300);
+		//auxiliary = entityManager.createProtector(210,150);		//cam.focus(player);
 
 		MapRenderer mr = new MapRenderer();
 		
@@ -82,7 +83,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		cam.focusOnLead(mousePosition);
 		Animator.setBoundaries(cam);
 		
-		level = new Level(entityManager,mr);
+		level = new Level(entityListener,mr);
 		
 		Music music = SoundRepository.GiftOfThistle.getMusic();
 		music.setVolume(.6f);
@@ -93,6 +94,8 @@ final class Play extends GameState implements PlayControlSwitchable
 		controlState = ControlState.GAMEPLAY;
 		command = Command.SHOOT;
 		paused = false;
+		
+
 	}
 
 	@Override
@@ -149,7 +152,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		        	controller.cReload();          
 					break;
 		        case Keys.W:
-					auxiliary.aFollow(controller);
+					//auxiliary.aFollow(controller);
 					break;
 		        case Keys.NUM_1:
 					command = Command.SHOOT;
@@ -226,8 +229,8 @@ final class Play extends GameState implements PlayControlSwitchable
 			{
 				case SHOOT:	controller.cShoot((int)truePoint.x,(int)truePoint.y,0);
 							break;
-				case MOVE: auxiliary.aMoveTo((int)truePoint.x,(int)truePoint.y);
-							break;
+				//case MOVE: auxiliary.aMoveTo((int)truePoint.x,(int)truePoint.y);
+							//break;
 				case GRENADE: //controller.cGrenade((int)truePoint.x, (int)truePoint.y);;
 							break;
 				default:
@@ -285,19 +288,17 @@ final class Play extends GameState implements PlayControlSwitchable
 	
 	private static class Level
 	{
-		private EntityManager em;
+		private EntityListener em;
 		private Script script;
 		private MapRenderer mr;
 		private int level;
 
 		
-		private Level(EntityManager em,MapRenderer mr)
+		private Level(EntityListener em,MapRenderer mr)
 		{
 			List <Sequencialable>list = new LinkedList<Sequencialable>();
-			//list.add(new WaitForEvent(new TimesUp(50000)));///currently a placeholder
 			script = new Script(list);
 			this.em = em;
-			Entity.setEntityListener(em);
 			this.mr = mr;					
 			level = 0;
 			load(level);
@@ -311,9 +312,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		{
 			mr.setView(cam);
 			mr.renderBack();
-			//BatchCoordinator.beginBatch();
 			em.render();
-			//BatchCoordinator.endBatch();
 			mr.renderFront();	
 			BatchCoordinator.coordinatedRender();
 		}

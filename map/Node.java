@@ -2,7 +2,7 @@ package com.mygdx.map;
 
 import java.util.LinkedList;
 
-import com.mygdx.misc.Point;
+import com.mygdx.physics.Point;
 
 class Node 
 {

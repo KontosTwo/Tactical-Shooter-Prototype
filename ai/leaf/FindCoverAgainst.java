@@ -2,7 +2,7 @@ package com.mygdx.ai.leaf;
 
 import java.util.PriorityQueue;
 
-import com.mygdx.misc.Point;
+import com.mygdx.physics.Point;
 
 class FindCoverAgainst
 {

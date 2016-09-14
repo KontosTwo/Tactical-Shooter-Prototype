@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.mygdx.ai.functional.RoutineSequencialable;
 import com.mygdx.ai.functional.Sequence;
-import com.mygdx.misc.Point;
 import com.mygdx.misc.Tuple;
+import com.mygdx.physics.Point;
 import com.mygdx.script.Sequencialable;
 
 final class PathTo implements RoutineSequencialable

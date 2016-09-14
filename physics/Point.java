@@ -1,4 +1,4 @@
-package com.mygdx.misc;
+package com.mygdx.physics;
 
 public class Point 
 {

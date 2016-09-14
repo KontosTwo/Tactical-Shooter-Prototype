@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.camera.Camera;
 import com.mygdx.entity.Clickable;
-import com.mygdx.entity.EntityManager;
 
 abstract class GameState implements InputProcessor
 {

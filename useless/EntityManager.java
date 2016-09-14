@@ -1,6 +1,6 @@
-package com.mygdx.entity;
+package com.mygdx.useless;
 
-
+/*
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,15 +13,22 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
+import com.mygdx.entity.Clickable;
+import com.mygdx.entity.Entity;
+import com.mygdx.entity.Grenade;
+import com.mygdx.entity.HitMarker;
+import com.mygdx.entity.HumanoidEffectuator;
+import com.mygdx.entity.Hurtboxable;
+import com.mygdx.entity.Visible;
 import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.graphic.MapRenderer;
 import com.mygdx.map.GameMap;
-import com.mygdx.misc.Point;
 import com.mygdx.misc.Tuple;
+import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.Sequencialable;
 
-public class EntityManager implements HumanoidEffectuator
+private class EntityManager implements HumanoidEffectuator
 {
 	private Array<Entity> entity;
 	
@@ -87,11 +94,7 @@ public class EntityManager implements HumanoidEffectuator
 			entity.get(i).update(dt);
 		}
 		gameMap.update();
-		/*if(!doOnce)
-		{
-			protector.setRoutine(new FindCoverAgainst(protector,human));
-			doOnce = true;
-		}*/
+
 		Iterator<Entity> iterator = entity.iterator();
 		while(iterator.hasNext())
 		{
@@ -241,7 +244,7 @@ public class EntityManager implements HumanoidEffectuator
 		Array <Hurtboxable> hurtboxable = new Array <Hurtboxable>();
 		for(SoldierBattleConcrete hb : allHumanoid)
 		{
-			if(hb.hurtboxOverlaps((float)x1,(float) y1, (float)impactMap.x, (float)impactMap.y) && /*check this, */hb != shooter)
+			if(hb.hurtboxOverlaps((float)x1,(float) y1, (float)impactMap.x, (float)impactMap.y) && hb != shooter)
 			{
 				hurtboxable.add(hb);
 			}
@@ -268,10 +271,7 @@ public class EntityManager implements HumanoidEffectuator
 			impactFinal.set(impactMap);
 		}
 		
-		
-		/*FakeVisible target = new FakeVisible(new Vector2(impactFinal.x,impactFinal.y));
-		target.setAnimationSize(5, 5);
-		entity.add(target);	*/
+
 				
 		Array<SoldierBattleConcrete> test = new Array<SoldierBattleConcrete>();
 		for(SoldierBattleConcrete hb : allHumanoid)
@@ -306,10 +306,7 @@ public class EntityManager implements HumanoidEffectuator
 				// fuck this hb up
 			}
 		}
-	    /*sr.begin(ShapeType.Line);
-		sr.setColor(1, 0, 0, 1);
-		sr.line(x1, y1, impactFinal.x, impactFinal.y);
-		sr.end();*/
+
 	    entity.add(new HitMarker((new PrecisePoint(impactFinal.x,impactFinal.y)),shooter));
 	}
 	private Vector3 hurtBoxImpact(int x0, int y0, float height1, int x1, int y1,float height2,Array<Hurtboxable> hurtboxable)
@@ -398,10 +395,7 @@ public class EntityManager implements HumanoidEffectuator
 	    {
 	    	impact.set(x1,y1);
 	    }
-	    /*if(!found)
-	    {
-	    	impact.set(x,y);
-	    }*/
+
 		return impact;
 	}
 	public  void mark(double x,double y)
@@ -422,10 +416,7 @@ public class EntityManager implements HumanoidEffectuator
 				otherHumanoid.add(h);
 			}
 		}
-		/*for(Point p : gameMap.findCover( (int)x, (int)y,otherHumanoid, searchCoverDistance))
-		{
-			//mark(p.getX(),p.getY());
-		}*/
+
 		return gameMap.findCover( (int)x, (int)y,otherHumanoid, searchCoverDistance);
 	}
 	public double judgeCover(double x1,double y1,double height1,double x2,double y2,double height2)
@@ -505,20 +496,7 @@ public class EntityManager implements HumanoidEffectuator
 			if(SoldierBattleConcrete.areAllies(sender, current) && sender != current)// second condition makes sure that the two soldiers aren't the same
 			{
 				
-				/*
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 */
-				
-				//current.recieveObscuredEnemyMessage(target);// all allies recieve the target that the sender has spotted
+			
 			}
 		}
 	}
@@ -536,4 +514,4 @@ public class EntityManager implements HumanoidEffectuator
 		COMPLETE,
 		PAUSED;
 	}
-}
+}*/

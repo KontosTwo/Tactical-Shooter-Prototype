@@ -1,10 +1,12 @@
 package com.mygdx.entity.soldier;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.physics.PrecisePoint;
 
-class SoldierBattleState 
-{
-	private SoldierBattle owner;
+final class SoldierBattleState 
+{	
+	private String animePath;
+	private String dataPath;
 	
 	private Direction directionPrev;
 	private State statePrev;
@@ -23,8 +25,13 @@ class SoldierBattleState
 	private int gunHeight;
 	private int currentHp;
 	
+	private static final int FIELDOFVISION = 1;
+	
 	private SoldierBattleState(Weapon weapon,Armor armor,Identification id, Allegiance allegiance)
 	{
+		dataPath = "";
+		animePath = "";
+		
 		// initializing the state
 		direction = Direction.down;
 		directionPrev = Direction.down;
@@ -34,12 +41,26 @@ class SoldierBattleState
 		heightPrev = Height.stand;
 		/////////////////
 		
+		
 		this.weapon = weapon;
 		this.armor = armor;
 		this.id = id;
 		this.allegiance = allegiance;
 		
+		updateAnimationFilePath();
+
 	}
+	
+	String getAnimePath()
+	{
+		return animePath;
+	}
+	
+	String getDataPath()
+	{
+		return dataPath;
+	}
+	
 	static SoldierBattleState createProtectorState()
 	{
 		return new SoldierBattleState(Weapon.TSOKOS,Armor.FEDARMOR,Identification.auxiliary,Allegiance.epeirot);
@@ -49,6 +70,66 @@ class SoldierBattleState
 	{
 		checkStateChange();
 	}
+	
+	float getCurrentAccuracy()
+	{
+		return weapon.accuracy;
+	}
+	boolean facingTowards(final PrecisePoint observerLocation,final PrecisePoint targetLocation)
+	{
+		Direction otherDirection = getDirectionBetweenTwoPoints(observerLocation,targetLocation);
+		return direction.bearingDifference(otherDirection) <= FIELDOFVISION;
+	}
+	private static Direction getDirectionBetweenTwoPoints(PrecisePoint origin,PrecisePoint target)
+	{
+		Direction ret = null;
+		if(Math.abs((target.y-origin.y)/(target.x-origin.x)) < .41)
+		{
+			if(target.x-origin.x > 0)
+			{
+				ret = Direction.right;
+			}
+			else
+			{
+				ret = Direction.left;
+			}
+		}
+		else if(Math.abs((target.x-origin.x)/(target.y-origin.y)) < .41)
+		{
+			if(target.y-origin.y > 0)
+			{
+				ret = Direction.up;
+			}
+			else
+			{
+				ret = Direction.down;
+			}
+		}	
+		else if(target.x-origin.x > 0)
+		{
+			if(target.y-origin.y > 0)
+			{
+				ret = Direction.upright;
+			}
+			else
+			{
+				ret = Direction.downright;
+			}
+		}
+		else
+		{
+			if(target.y-origin.y > 0)
+			{
+				ret = Direction.upleft;
+			}
+			else
+			{
+				ret = Direction.downleft;
+			}
+		}
+		return ret;
+	}
+	
 	
 	private void checkStateChange()
 	{
@@ -70,10 +151,10 @@ class SoldierBattleState
 		}
 		if(switchState)
 		{
-			switchAnimation();
+			updateAnimationFilePath();
 		}
 	}
-	private void switchAnimation()
+	private void updateAnimationFilePath()
 	{
 		StringBuilder animePath = new StringBuilder();
 		StringBuilder dataPath = new StringBuilder();
@@ -104,7 +185,8 @@ class SoldierBattleState
 			dataPath.append(".txt");
 
 		}	
-		owner.switchAnimation(animePath.toString(), dataPath.toString());
+		this.animePath = animePath.toString();
+		this.dataPath = dataPath.toString();
 	}	
 	
 	private enum Allegiance
@@ -152,7 +234,12 @@ class SoldierBattleState
 			this.position = position;
 		}
 		
-		private static int getDif(Direction one,Direction two)
+		private int bearingDifference(Direction other)
+		{
+			int rawDifference = Math.abs(position - other.position);
+			return rawDifference > 4 ? 8 - rawDifference : rawDifference;
+		}
+		/*private static int getDif(Direction one,Direction two)
 		{
 			int counter = one.position;
 			int diff = 0;
@@ -174,7 +261,8 @@ class SoldierBattleState
 				diff = 8-diff;
 			}
 			return diff;
-		}
+		}*/
+		
 	}
 	private enum Height
 	{

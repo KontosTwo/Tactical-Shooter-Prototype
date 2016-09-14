@@ -15,9 +15,9 @@ import com.mygdx.camera.Camera;
 import com.mygdx.camera.CameraHoggable;
 import com.mygdx.graphic.Animator;
 import com.mygdx.map.GameMap;
-import com.mygdx.misc.MyVector2;
-import com.mygdx.misc.Point;
-import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.MovableRectangle;
+import com.mygdx.physics.MyVector2;
+import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
 
 
@@ -48,7 +48,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 		unitVelocity = new MyVector2();
 		unitVelocityInput = new MyVector2();
 		tileSizeGraphic = 0;
-		animator = new Animator(this.center);
+		//animator = new Animator(this.center);
 	}
 	public static void supplyTileSizeGraphic(int num)
 	{
@@ -234,7 +234,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	{
 		animator.setOffset(x, y);
 	}
-	protected boolean willCross(float x1,float y1,float x2,float y2,MovableBox hitbox)
+	protected boolean willCross(float x1,float y1,float x2,float y2,MovableRectangle hitbox)
 	{
 		return hitbox.overLaps(x1 - velocity.getX(), y1 - velocity.getY(), x2 - velocity.getX(), y2 - velocity.getY());
 	}
