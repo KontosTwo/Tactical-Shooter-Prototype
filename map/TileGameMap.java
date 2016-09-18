@@ -137,4 +137,8 @@ public class TileGameMap {
 	{
 		return x >= 0 && x < map[0].length && y >= 0 && y < map.length;
 	}
+	private static class OverlappingTileException extends Exception
+	{
+		
+	}
 }

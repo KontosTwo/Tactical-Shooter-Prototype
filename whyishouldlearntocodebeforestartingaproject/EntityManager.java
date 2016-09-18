@@ -1,4 +1,4 @@
-package com.mygdx.useless;
+package com.mygdx.whyishouldlearntocodebeforestartingaproject;
 
 /*
 import java.util.Iterator;

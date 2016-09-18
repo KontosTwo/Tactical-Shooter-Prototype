@@ -18,9 +18,12 @@ public class EntityListener implements TacticalAction,TacticalInfoGatherer
 	private final InteractionSoldierBattle soldierManager;
 	private final TileGameMap gameMap;
 	
-	public interface Hurtboxable extends RayBlockable
-	{
+	public interface Hurtboxable extends RayBlockable{
 		public void hurt();
+	}
+	
+	public interface SightBlockable{
+		
 	}
 	
 	public EntityListener()
