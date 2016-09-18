@@ -6,12 +6,14 @@ import com.mygdx.graphic.Animator;
 public class MovablePoint 
 {
 	private final PrecisePoint center;
-	private final MyVector2 velocity;
+	private final MyVector2 unitVelocity;
+	private float speed;
 	
 	public MovablePoint()
 	{
 		center = new PrecisePoint();
-		velocity = new MyVector2();
+		speed = 0;
+		unitVelocity = new MyVector2();
 	}
 	public PrecisePoint getCenterReference()
 	{
@@ -19,10 +21,28 @@ public class MovablePoint
 	}
 	public void update()
 	{
-		center.add(velocity);
+		center.add(unitVelocity.getX()*speed,unitVelocity.getY()*speed);
 	}
-	public void setVelocity(int x,int y)
+	public void setUnitVelocity(double x,double y)
 	{
-		velocity.set(x, y);
+		unitVelocity.set(x, y);
+	}
+	public void setSpeed(float s)
+	{
+		speed = s;
+	}
+	public void teleportTo(PrecisePoint dest)
+	{
+		center.set(dest);
+	}
+	public void teleportTo(float x,float y)
+	{
+		center.set(x,y);
+	}
+	public PrecisePoint createProjectedLocation()
+	{
+		PrecisePoint newLocation = new PrecisePoint(center);
+		newLocation.add(unitVelocity.getX()*speed,unitVelocity.getY()*speed);
+		return newLocation;
 	}
 }

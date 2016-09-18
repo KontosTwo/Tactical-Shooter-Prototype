@@ -67,15 +67,11 @@ final class Play extends GameState implements PlayControlSwitchable
 		
 		BatchCoordinator.createBatch(cam);
 		
-		EntityListener entityListener = null;
-		InteractionSoldierBattle interactionSoldier = new InteractionSoldierBattle(entityListener,entityListener);
-		entityListener = new EntityListener(interactionSoldier);
+		EntityListener entityListener = new EntityListener();
 		
-		controller = interactionSoldier.createPlayer(200, 200);
-		controller.initiateControllable();
+		controller = entityListener.createPlayer(500, 500);
 		//auxiliary = entityManager.createProtector(210,150);		//cam.focus(player);
 
-		MapRenderer mr = new MapRenderer();
 		
 		cam.focus(controller);
 		mousePosition = new PrecisePoint();
@@ -83,7 +79,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		cam.focusOnLead(mousePosition);
 		Animator.setBoundaries(cam);
 		
-		level = new Level(entityListener,mr);
+		level = new Level(entityListener);
 		
 		Music music = SoundRepository.GiftOfThistle.getMusic();
 		music.setVolume(.6f);
@@ -95,7 +91,6 @@ final class Play extends GameState implements PlayControlSwitchable
 		command = Command.SHOOT;
 		paused = false;
 		
-
 	}
 
 	@Override
@@ -290,30 +285,25 @@ final class Play extends GameState implements PlayControlSwitchable
 	{
 		private EntityListener em;
 		private Script script;
-		private MapRenderer mr;
 		private int level;
 
 		
-		private Level(EntityListener em,MapRenderer mr)
+		private Level(EntityListener em)
 		{
 			List <Sequencialable>list = new LinkedList<Sequencialable>();
 			script = new Script(list);
 			this.em = em;
-			this.mr = mr;					
 			level = 0;
 			load(level);
 		}		
 		private void load(int level)
 		{
-			em.loadLevel(level, mr);
+			em.loadLevel(level);
 			script.loadScript(level);
 		}
 		private void render(Camera cam)
 		{
-			mr.setView(cam);
-			mr.renderBack();
 			em.render();
-			mr.renderFront();	
 			BatchCoordinator.coordinatedRender();
 		}
 		private void update(float dt)

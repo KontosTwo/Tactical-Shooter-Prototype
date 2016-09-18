@@ -107,17 +107,19 @@ public class GameMap
 			TiledMapTileLayer maplayer = (TiledMapTileLayer)tmtl;
 			if(tmtl.getName().contains("background"))
 			{
-				mr.addToBack(maplayer);
+				mr.addTileLayer(maplayer);
 			}
 			else if(tmtl.getName().contains("frontground"))
 			{
-				mr.addToFront(maplayer);
+				//mr.addToFront(maplayer);
 			}
 		}
 		int tilegraphicsize = Integer.parseInt(property.get("tilegraphicsize",String.class));
 		Visible.supplyTileSizeGraphic(tilegraphicsize);
 		//TiledMapTileLayer tmtl = (TiledMapTileLayer)mapvisual.getLayers().get("ground");
 		//mr.addToBack(tmtl);
+		
+		
 	}
 	public Array<Entity> getLoadedEntity(int level)// must be called after load level. this time call all doodads and put them into this array
 	{

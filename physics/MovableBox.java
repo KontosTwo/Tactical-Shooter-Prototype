@@ -10,4 +10,8 @@ public class MovableBox
 		center = pp;
 		dimensions = new MyVector3();
 	}
+	public void setHeight(float h)
+	{
+		dimensions.setZ(h);
+	}
 }

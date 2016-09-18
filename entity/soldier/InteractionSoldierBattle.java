@@ -6,6 +6,7 @@ import java.util.List;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.entity.soldier.SoldierBattle.SoldierBattleMediator;
 import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.PrecisePoint;
 
 public class InteractionSoldierBattle implements SoldierBattleMediator
 {
@@ -16,6 +17,16 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	private final TacticalAction actionMaker;
 	private final TacticalInfoGatherer infoGatherer;
 	
+	public interface TacticalInfoGatherer 
+	{
+		public boolean see(MovableBox observer,MovableBox target);
+		
+	}
+	public interface TacticalAction 
+	{
+		
+	}
+
 	
 	
 	public InteractionSoldierBattle(TacticalAction am,TacticalInfoGatherer ig)
@@ -25,14 +36,12 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 		player = null;
 		actionMaker = am;
 		infoGatherer = ig;
-		System.out.println("constructor");
 	}
 	public PlayerControllable createPlayer(int x,int y)
-	{
-		
-		SoldierBattleControlled newPlayer = new SoldierBattleControlled(this,SoldierBattleState.createProtectorState());
+	{		
+		SoldierBattleControlled newPlayer = SoldierBattleControlled.createControlledProtector(this);
 		player = newPlayer;
-		System.out.println("method");
+		player.soldierBattleState.center.teleportTo(x,y);
 		return newPlayer;
 	}
 	public void render()

@@ -14,4 +14,8 @@ public class MyVector3
 	{
 		vector.set(x, y, z);
 	}
+	public void setZ(float z)
+	{
+		vector.z = z;
+	}
 }

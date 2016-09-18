@@ -19,7 +19,7 @@ import com.mygdx.misc.Differentable;
 import com.mygdx.misc.Tuple;
 import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
-import com.mygdx.script.ScriptManager;
+import com.mygdx.script.Scripter;
 
 public class SoldierBattleConcrete extends Hurtboxable implements PlayerControllable, Auxiliarable,
 Differentable <SoldierBattleConcrete>,RiflemanRoutineable,Steerable,EnemyCognizable
@@ -68,7 +68,7 @@ Differentable <SoldierBattleConcrete>,RiflemanRoutineable,Steerable,EnemyCogniza
 	
 	// some classes that encapsulate mentioned behavior
 	private RoutineManager routineManager;
-	private ScriptManager scriptManager;
+	private Scripter scriptManager;
 	private Control controlManager;
 	private EnemyManager enemyManager;
 	//////////////////////////////
@@ -105,7 +105,7 @@ Differentable <SoldierBattleConcrete>,RiflemanRoutineable,Steerable,EnemyCogniza
 		// the encapsulation classes
 		routineManager = new RoutineManager();
 		//enemyManager = new EnemyManager(this);
-		scriptManager = new ScriptManager();
+		scriptManager = new Scripter();
 		controlManager = new Control(this);
 		/////////////////
 		

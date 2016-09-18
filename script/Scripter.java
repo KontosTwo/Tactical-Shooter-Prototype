@@ -2,7 +2,7 @@ package com.mygdx.script;
 
 import com.mygdx.misc.Updatable;
 
-public class ScriptManager implements Updatable
+public class Scripter implements Updatable
 {
 	/*
 	 * runs one sequencialable at a time. The sequencialable
@@ -14,7 +14,7 @@ public class ScriptManager implements Updatable
 	private Sequencialable sequence;
 	private boolean sequenceIsRunning;
 
-	public ScriptManager()
+	public Scripter()
 	{
 		sequenceIsRunning = false;
 	}

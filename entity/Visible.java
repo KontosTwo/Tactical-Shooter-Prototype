@@ -113,7 +113,7 @@ public abstract class  Visible extends Entity implements Comparable <Visible>, C
 	}
 	protected void updateAnimation(String animePath,String dataPath) 
 	{		
-		animator.updateAnimation(animePath, dataPath);
+		animator.changeAnimation(animePath, dataPath);
 	}
 	public void render()
 	{

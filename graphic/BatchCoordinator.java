@@ -8,6 +8,7 @@ import com.mygdx.camera.Camera;
 public final class BatchCoordinator 
 {
 	private static final HashMap<SpriteBatch,ArrayList<RenderRequest> >renderRequests = new HashMap<>();
+	private static final HashMap<SpriteBatch,ArrayList<MapRenderRequest> >mapRenderRequests = new HashMap<>();
 	private static Camera camera;
 	/**
 	 * A functional interface whose code
@@ -16,6 +17,10 @@ public final class BatchCoordinator
 	interface RenderRequest
 	{
 		public void render();
+	}
+	interface MapRenderRequest
+	{
+		public void render(Camera camera);
 	}
 	
 	private enum BatchType
@@ -54,6 +59,19 @@ public final class BatchCoordinator
 	
 	public static void coordinatedRender()
 	{
+		for(SpriteBatch sb :mapRenderRequests.keySet())
+		{
+			// can only set projection matrix one at a time
+			sb.setProjectionMatrix(camera.combined);
+			sb.begin();
+			for(MapRenderRequest request : mapRenderRequests.get(sb))
+			{
+				request.render(camera);
+			}
+			sb.end();
+		}
+		mapRenderRequests.clear();
+		
 		for(SpriteBatch sb :renderRequests.keySet())
 		{
 			// can only set projection matrix one at a time
@@ -74,6 +92,14 @@ public final class BatchCoordinator
 			renderRequests.put(sb, new ArrayList<RenderRequest>());
 		}
 		renderRequests.get(sb).add(request);
+	}
+	static void sendMapRenderRequest(SpriteBatch sb,MapRenderRequest request)
+	{
+		if(!mapRenderRequests.containsKey(sb))
+		{
+			mapRenderRequests.put(sb, new ArrayList<MapRenderRequest>());
+		}
+		mapRenderRequests.get(sb).add(request);
 	}
 	static SpriteBatch getNightShader()
 	{

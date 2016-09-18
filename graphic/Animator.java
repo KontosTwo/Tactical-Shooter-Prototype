@@ -36,7 +36,7 @@ public final class Animator
 	{
 		animationDimensions = new MovableRectangle(center,defaultWidth,defaultHeight);
 		spritebatch = BatchCoordinator.getNightShader();
-		updateAnimation(animePath,dataPath);
+		changeAnimation(animePath,dataPath);
 	
 	}
 	
@@ -69,7 +69,7 @@ public final class Animator
 	{
 		return animation.complete();
 	}
-	public void updateAnimation(String animePath,String dataPath)
+	public void changeAnimation(String animePath,String dataPath)
 	{
 		animation = new Animation(animePath,dataPath);
 	}

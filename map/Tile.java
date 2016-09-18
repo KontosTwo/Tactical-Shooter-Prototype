@@ -12,7 +12,7 @@ class Tile
 	private int heightPhyObstacle;
 	private int heightVisObstacle;
 	private boolean walkable;
-	private final static int groundLevel = 60;
+	private final static int groundLevel = 0;
 	private boolean ramp;
 	
 	public Tile()
@@ -40,6 +40,13 @@ class Tile
 	public void setObstacleHeightVis(int h)
 	{
 		heightVisObstacle = h;
+	}
+	public void setInfo(int heightP,int heightV,boolean w,boolean r)
+	{
+		heightPhy = heightP;
+		heightVis = heightV;
+		ramp = r;
+		walkable = w;
 	}
 	public boolean isRamp()
 	{

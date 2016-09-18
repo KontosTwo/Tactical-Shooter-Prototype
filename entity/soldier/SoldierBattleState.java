@@ -1,36 +1,61 @@
 package com.mygdx.entity.soldier;
 
-import com.badlogic.gdx.math.Vector2;
+import com.mygdx.misc.Tuple;
+import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.MovablePoint;
 import com.mygdx.physics.PrecisePoint;
 
-final class SoldierBattleState 
-{	
-	private String animePath;
-	private String dataPath;
+final class SoldierBattleState
+{		
+	 final PrecisePoint centerPrevious;
+	 final MovablePoint center;
+	 final PrecisePoint centerFuture;
+	
+	private final MovableBox body;
 	
 	private Direction directionPrev;
 	private State statePrev;
 	private Height heightPrev;
-	private Direction direction;
-	private State state;
-	private Height height;
+	 Direction direction;
+	 State state;
+	 Height height;
 	
 	private final Weapon weapon;
 	private final Armor armor;
 	private final Identification id;
 	private final Allegiance allegiance;
 	
-	private int unsteadiness;// the inaccuracy of the gun due to a multitude of factors such as psychological pressure or having ran
-	private int ammo;
-	private int gunHeight;
-	private int currentHp;
+	 int unsteadiness;// the inaccuracy of the gun due to a multitude of factors such as psychological pressure or having ran
+	 int ammo;
+	 int gunHeight;
+	 int currentHp;
+
+	private int reloadProgress;
+	private int shootingProgress;
+		
+	private static final int BODYX = 10;
+	private static final int BODYY = 10;
+	private static final int BODYZ = 70;
+	
+	private static final int CRAWLSPEED = 1;
+	private static final int STANDSPEED = 4;
+	private static final int STANDHEIGHT = 70;
+	private static final int CROUCHHEIGHT = 40;
+	private static final int CRAWLHEIGHT = 10;
+	private static final int STANDGUNHEIGHT = 70;
+	private static final int CROUCHGUNHEIGHT = 40;
+	private static final int CRAWLGUNHEIGHT = 10;
+	private static final int HEADHEIGHT = 50;
 	
 	private static final int FIELDOFVISION = 1;
-	
+
 	private SoldierBattleState(Weapon weapon,Armor armor,Identification id, Allegiance allegiance)
 	{
-		dataPath = "";
-		animePath = "";
+		centerPrevious = new PrecisePoint();
+		center = new MovablePoint();
+		centerFuture = new PrecisePoint();
+		body = new MovableBox(center.getCenterReference(),BODYX,BODYY,BODYZ);
+		stand();
 		
 		// initializing the state
 		direction = Direction.down;
@@ -41,26 +66,13 @@ final class SoldierBattleState
 		heightPrev = Height.stand;
 		/////////////////
 		
-		
+		reloadProgress = 0;
+		shootingProgress = 0;
 		this.weapon = weapon;
 		this.armor = armor;
 		this.id = id;
 		this.allegiance = allegiance;
-		
-		updateAnimationFilePath();
-
 	}
-	
-	String getAnimePath()
-	{
-		return animePath;
-	}
-	
-	String getDataPath()
-	{
-		return dataPath;
-	}
-	
 	static SoldierBattleState createProtectorState()
 	{
 		return new SoldierBattleState(Weapon.TSOKOS,Armor.FEDARMOR,Identification.auxiliary,Allegiance.epeirot);
@@ -68,9 +80,10 @@ final class SoldierBattleState
 	
 	void update()
 	{
-		checkStateChange();
+		centerPrevious.set(center.getCenterReference());
+		center.update();
+		centerFuture.set(center.createProjectedLocation());
 	}
-	
 	float getCurrentAccuracy()
 	{
 		return weapon.accuracy;
@@ -79,6 +92,35 @@ final class SoldierBattleState
 	{
 		Direction otherDirection = getDirectionBetweenTwoPoints(observerLocation,targetLocation);
 		return direction.bearingDifference(otherDirection) <= FIELDOFVISION;
+	}
+	 void stand()
+	{
+		body.setHeight(STANDHEIGHT);
+		center.setSpeed(STANDSPEED);
+		height = Height.stand;
+		gunHeight = STANDGUNHEIGHT;
+	}
+	 void move()
+	{
+		state = State.move;
+	}
+	 void crouch()
+	{
+		body.setHeight(CROUCHHEIGHT);
+		center.setSpeed(0);
+		height = Height.crouch;
+		gunHeight = CROUCHGUNHEIGHT;
+	}
+	 void lay()
+	{
+		body.setHeight(CRAWLHEIGHT);
+		center.setSpeed(CRAWLSPEED);
+		height = Height.lay;
+		gunHeight = CRAWLGUNHEIGHT;
+	}
+	 void idle()
+	{
+		state = State.still;
 	}
 	private static Direction getDirectionBetweenTwoPoints(PrecisePoint origin,PrecisePoint target)
 	{
@@ -130,8 +172,7 @@ final class SoldierBattleState
 		return ret;
 	}
 	
-	
-	private void checkStateChange()
+	boolean stateHasChanged()
 	{
 		boolean switchState = false;
 		if(!statePrev.equals(state))
@@ -149,15 +190,12 @@ final class SoldierBattleState
 			heightPrev = height;
 			switchState = true;
 		}
-		if(switchState)
-		{
-			updateAnimationFilePath();
-		}
+		return switchState;
 	}
-	private void updateAnimationFilePath()
+	Tuple<String,String> createAnimationFilePath()
 	{
-		StringBuilder animePath = new StringBuilder();
-		StringBuilder dataPath = new StringBuilder();
+		StringBuilder animePathBuiler = new StringBuilder();
+		StringBuilder dataPathBuilder = new StringBuilder();
 
 		// unidirectional
 		if(state.equals(State.move) && height.equals(Height.crouch))
@@ -170,23 +208,21 @@ final class SoldierBattleState
 		}
 		else
 		{
-			animePath.append("animation/soldier/");
-			animePath.append(id.toString());
-			animePath.append("/");
-			animePath.append(state.toString());
-			animePath.append("/");
-			animePath.append(height.toString());
-			animePath.append("/");
-			animePath.append(direction.toString());
-			animePath.append(".png");
-			dataPath.append("animation/data/soldier");
-			dataPath.append(state.toString());
-			dataPath.append(height.toString());
-			dataPath.append(".txt");
-
+			animePathBuiler.append("animation/soldier/");
+			animePathBuiler.append(id.toString());
+			animePathBuiler.append("/");
+			animePathBuiler.append(state.toString());
+			animePathBuiler.append("/");
+			animePathBuiler.append(height.toString());
+			animePathBuiler.append("/");
+			animePathBuiler.append(direction.toString());
+			animePathBuiler.append(".png");
+			dataPathBuilder.append("animation/data/soldier");
+			dataPathBuilder.append(state.toString());
+			dataPathBuilder.append(height.toString());
+			dataPathBuilder.append(".txt");
 		}	
-		this.animePath = animePath.toString();
-		this.dataPath = dataPath.toString();
+		return new Tuple<String,String>(animePathBuiler.toString(),dataPathBuilder.toString());
 	}	
 	
 	private enum Allegiance
@@ -194,17 +230,14 @@ final class SoldierBattleState
 		epeirot,
 		dalmati;	
 	}	
-	private enum State
+	 enum State
 	{
-		// common
-
 			// 8 directional
 		still,
 		move,
 		shoot,
 		reload,
 		hurt,
-		
 
 			// unidirectional 
 		wounded,
@@ -215,7 +248,7 @@ final class SoldierBattleState
 		;
 		
 	}
-	private enum Direction 
+	 enum Direction 
 	{
 		up(0),
 		upright(1),
@@ -239,32 +272,8 @@ final class SoldierBattleState
 			int rawDifference = Math.abs(position - other.position);
 			return rawDifference > 4 ? 8 - rawDifference : rawDifference;
 		}
-		/*private static int getDif(Direction one,Direction two)
-		{
-			int counter = one.position;
-			int diff = 0;
-			while(counter != two.position)
-			{
-				if(counter == 7)
-				{
-					counter = 0;
-					diff++;
-				}
-				else
-				{
-					counter ++;
-					diff ++;
-				}						
-			}
-			if(diff >=5)
-			{
-				diff = 8-diff;
-			}
-			return diff;
-		}*/
-		
 	}
-	private enum Height
+	 enum Height
 	{
 		stand,
 		crouch,
@@ -275,14 +284,6 @@ final class SoldierBattleState
 	{
 		GAUSSRIFLE(2,5,1,1,6,150,10,2,1), // Fed Assault Rifle. Ayane's weapon
 		TSOKOS(7,9,7,2,14,170,10,3,0), // Fed fully automatic shotgun. Chanion's weapon
-		
-		 // Zan automatic rifle
-		 // Zan semi automatic shotgun
-		 // Zan light machine gun
-		 // Zan anti-infantry bazooka
-		
-		 // Zan civilian issue derringer shotgun
-		 // Zan civilian issue automatic rifle
 		;
 		
 		private final int pierce;
@@ -307,18 +308,6 @@ final class SoldierBattleState
 			this.capacity = capacity;
 			this.burst = burst;
 			this.burstDev = burstDev;
-		}
-		
-		private Vector2 getDeviation()
-		{
-			Vector2 impact = new Vector2();
-			/*
-			 * this needs filling
-			 */
-			
-			
-			
-			return null;
 		}
 		
 	}
@@ -348,5 +337,5 @@ final class SoldierBattleState
 			this.armor = armor;
 		}
 	}
-	
+
 }

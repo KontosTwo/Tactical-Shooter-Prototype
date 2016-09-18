@@ -1,35 +1,24 @@
 package com.mygdx.entity.soldier;
 
 import com.mygdx.graphic.Animator;
+import com.mygdx.misc.Tuple;
 import com.mygdx.physics.MovableBox;
 import com.mygdx.physics.MovablePoint;
 import com.mygdx.physics.PrecisePoint;
 
-abstract class SoldierBattle
+abstract class SoldierBattle 
 {
 	private final Animator animator;
-	protected final MovablePoint center;
-	private final MovableBox body;
-	protected final SoldierBattleState state;
+	protected final SoldierBattleState soldierBattleState;
 	private final SoldierBattleMediator mediator;
 	
 	
-	private static final float WALKSPEED = 3;
-	private static final int CRAWLSPEED = 1;
-	private static final int STANDHEIGHT = 70;
-	private static final int CROUCHHEIGHT = 40;
-	private static final int CRAWLHEIGHT = 10;
-	private static final int STANDGUNHEIGHT = 70;
-	private static final int CROUCHGUNHEIGHT = 40;
-	private static final int CRAWLGUNHEIGHT = 10;
-	private static final int HEADHEIGHT = 50;
-	
-	private static final int BODYX = 10;
-	private static final int BODYY = 10;
-	private static final int BODYZ = 70;
 
-	private int reloadProgress;
-	private int shootingProgress;
+
+	
+	private static final int ANIMATIONBOXSIZE = 70;
+	//private static final int ANIMATIONBOXOFFSET = ;
+
 	
 	interface SoldierBattleMediator
 	{
@@ -39,13 +28,13 @@ abstract class SoldierBattle
 	
 	SoldierBattle(SoldierBattleMediator sbm,SoldierBattleState sbs)
 	{
-		center = new MovablePoint();
-		body = new MovableBox(center.getCenterReference(),BODYX,BODYY,BODYZ);
-		state = sbs;
-		animator = new Animator(center.getCenterReference(),sbs.getAnimePath(),sbs.getDataPath());
+		soldierBattleState = sbs;
+		Tuple<String,String> newAnimeData = soldierBattleState.createAnimationFilePath();
+		animator = new Animator(soldierBattleState.center.getCenterReference(),newAnimeData.x,newAnimeData.y);
+		animator.setDimensions(ANIMATIONBOXSIZE,ANIMATIONBOXSIZE);
+		animator.doodadify();
 		mediator = sbm;
-		reloadProgress = 0;
-		shootingProgress = 0;
+
 	}
 	final void render()
 	{
@@ -58,31 +47,34 @@ abstract class SoldierBattle
 			addToSighted();
 		}
 	}
-	
+	protected abstract void addToSighted();
+
 	private boolean withinRangeOfVision(SoldierBattle other)
 	{
-		return state.facingTowards(center.getCenterReference(), other.center.getCenterReference());
+		return soldierBattleState.facingTowards(soldierBattleState.center.getCenterReference(), other.soldierBattleState.center.getCenterReference());
 	}
 	private boolean seeDespiteTerrain(SoldierBattle other)
 	{
-		return mediator.see(body,other.body);
+		//return mediator.see(body,other.body);
+		return false;
 	}
 	
 	protected final void shoot(int xTarget,int yTarget,int zTarget)
 	{
-		mediator.shoot(this, state.getCurrentAccuracy(), xTarget, yTarget, zTarget);
+		mediator.shoot(this, soldierBattleState.getCurrentAccuracy(), xTarget, yTarget, zTarget);
 	}
 	
 	void update(float dt)
 	{
-		center.update();
-		state.update();
-		animator.updateAnimation(state.getAnimePath(), state.getDataPath());
+		soldierBattleState.update();
+		if(soldierBattleState.stateHasChanged())
+		{
+			Tuple<String,String> newAnimeData = soldierBattleState.createAnimationFilePath();
+			animator.changeAnimation(newAnimeData.x, newAnimeData.y);
+		}
 		animator.update(dt);
+		
 	}
-	
-	
-	
-	protected abstract void addToSighted();
+
 	
 }
