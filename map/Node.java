@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.mygdx.physics.Point;
 
-class Node 
+/*class Node 
 {
 	private Node parent;
 	private int x;
@@ -140,3 +140,4 @@ class Node
 		return ((Node)o).x == this.x &&  ((Node)o).y == this.y;
 	}
 }
+*/

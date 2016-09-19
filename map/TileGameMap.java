@@ -1,20 +1,28 @@
 package com.mygdx.map;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector3;
+import com.mygdx.debug.Debugger;
 import com.mygdx.graphic.MapRenderer;
 import com.mygdx.physics.MyVector3;
 import com.mygdx.physics.PrecisePoint;
+import com.mygdx.physics.VectorEquation;
 
 public class TileGameMap {
 	private final MapRenderer renderer;
 	private int tileSize;
 	private Tile[][] map;
+	private int[][] heightPhy;
+	private int[][] heightVis;
+	
 	private final ArrayList <Collidable> collidableList;
 
 	private static final String BACKGROUNDLAYER = "backgroundterrain";
@@ -98,8 +106,8 @@ public class TileGameMap {
 	private void collisionCheck(){
 		for(Collidable collider : collidableList){
 			PrecisePoint location = collider.getCurrentCollidablePosition();
-			int currentTileX = coordToTile(location.x);
-			int currentTileY = coordToTile(location.y);
+			int currentTileX = coordToTileAxis(location.x);
+			int currentTileY = coordToTileAxis(location.y);
 			Tile center = map[currentTileY][currentTileX];
 			Tile left = map[currentTileY][currentTileX - 1];
 			Tile right = map[currentTileY][currentTileX + 1];
@@ -116,29 +124,94 @@ public class TileGameMap {
 			}
 			if(!walkableFromXToY(center,bottom) && collider.aboutToCrossBelow((currentTileY)*tileSize)){
 				collider.stoppedbyCollision();
-
 			}
 		}
 	}
-	private boolean walkableFromXToY(Tile x,Tile y)
-	{
+	/**
+	 * Source:
+	 * http://tech-algorithm.com/articles/drawing-line-using-bresenham-algorithm/
+	 */
+	public boolean raytracePossible(int x1,int y1,int z1,int x2,int y2,int z2){
+		boolean possible = true;
+		VectorEquation ray = new VectorEquation(x1,y1,z1,x2,y2,z2);
+		x1 = coordToTileAxis(x1);
+		x2 = coordToTileAxis(x2);
+		y1 = coordToTileAxis(y1);
+		y2 = coordToTileAxis(y2);
+
+		int dx = Math.abs(x2 - x1);
+	    int dy = Math.abs(y2 - y1); 
+	    int x = x1;
+	    int y = y1;
+	    int n = 1 + dx + dy;
+	    int x_inc = (x2 > x1) ? 1 : -1;
+	    int y_inc = (y2 > y1) ? 1 : -1;
+	    int error = dx - dy;
+	    dx *= 2;
+	    dy *= 2;
+	    traverse:
+	    for (; n > 0; --n){
+	    	if(stoppedBy(createTileRayBlockable(x,y),ray)){
+	    		possible = false;
+	    		break traverse;
+	    	}
+	        if (error > 0){
+	            x += x_inc;
+	            error -= dy;
+	        }
+	        else{
+	            y += y_inc;
+	            error += dx;
+	        }
+	    }
+		return possible;
+	}
+	/**
+	 * Precondition - ray and block are guarenteed to intersect
+	 * at two points
+	 */
+	private boolean stoppedBy(RayBlockable block,VectorEquation ray){
+		boolean stopped = false;
+		
+		
+		return stopped;
+	}
+	private RayBlockable createTileRayBlockable(int x,int y){
+		return new RayBlockable(){
+			
+			@Override
+			public MyVector3 getSides() {
+				return new MyVector3(tileSize,tileSize,getHeightPhyAt(x,y));
+			}
+
+			@Override
+			public PrecisePoint getCenter() {
+				return new PrecisePoint(x,y);
+			}
+		};
+	}
+	
+
+	private boolean walkableFromXToY(Tile x,Tile y){
 		return y.walkable() && x.walkableTo(y);
 	}
 	
-	private Tile coordToTile(double y,double x)
-	{
+	private Tile coordToTile(double y,double x){
 		return map[(int)(y/tileSize)][(int)(x/tileSize)];
 	}
-	private int coordToTile(double x)
-	{
-		return (int)(x/tileSize);
+	private int coordToTileAxis(double a){
+		return (int)(a/tileSize);
 	}
-	private boolean inBounds(int x,int y)
-	{
+	private int tileToCoordAxis(int a){
+		return a*tileSize;
+	}
+	private boolean inBounds(int x,int y){
 		return x >= 0 && x < map[0].length && y >= 0 && y < map.length;
 	}
-	private static class OverlappingTileException extends Exception
-	{
+	private int getHeightPhyAt(int x,int y){
+		return map[y][x].getHeightPhy();
+	}
+	private static class OverlappingTileException extends Exception{
 		
 	}
 }

@@ -19,7 +19,7 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	
 	public interface TacticalInfoGatherer 
 	{
-		public boolean see(MovableBox observer,MovableBox target);
+		public boolean see(int x1,int y1,int z1,int x2,int y2,int z2);
 		
 	}
 	public interface TacticalAction 
@@ -82,7 +82,7 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	}
 
 	@Override
-	public boolean see(MovableBox observer, MovableBox target) {
-		return infoGatherer.see(observer, target);
+	public boolean see(int x1,int y1,int z1,int x2,int y2,int z2) {
+		return infoGatherer.see( x1, y1, z1, x2, y2, z2);
 	}
 }

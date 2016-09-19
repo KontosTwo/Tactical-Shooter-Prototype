@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.camera.Camera;
 import com.mygdx.camera.CameraHoggable;
 import com.mygdx.graphic.Animator;
-import com.mygdx.map.GameMap;
 import com.mygdx.physics.MovableRectangle;
 import com.mygdx.physics.MyVector2;
 import com.mygdx.physics.Point;

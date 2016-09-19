@@ -74,11 +74,11 @@ class Tile
 	{
 		return walkable;
 	}
-	public float getHeightPhy()
+	public int getHeightPhy()
 	{
 		return heightPhy + heightPhyObstacle;
 	}
-	public float getHeightVis()
+	public int getHeightVis()
 	{
 		return heightVis + heightVisObstacle;
 	}

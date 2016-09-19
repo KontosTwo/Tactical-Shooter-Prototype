@@ -1,5 +1,5 @@
-package com.mygdx.map;
-
+package com.mygdx.whyishouldlearntocodebeforestartingaproject;
+/*
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,7 +30,9 @@ import com.mygdx.entity.Hitboxable;
 import com.mygdx.entity.Visible;
 import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.graphic.MapRenderer;
-import com.mygdx.misc.Tuple;
+import com.mygdx.map.Node;
+import com.mygdx.map.Tile;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.Point;
 
 public class GameMap
@@ -393,7 +395,7 @@ public class GameMap
 				}
 			}
 		}
-	}*/
+	}
 	public int getTrue(boolean[][] checked)
 	{
 		int num = 0;
@@ -867,16 +869,16 @@ public class GameMap
 	{
 		return map.get((int)(y/tileSize)).get((int)(x/tileSize)).getHeightVis();
 	}
-	public Tuple<Boolean,LinkedList<Point>> findPath(int sx, int sy, int tx, int ty) // boolean is whether a path was found
+	public Pair<Boolean,LinkedList<Point>> findPath(int sx, int sy, int tx, int ty) // boolean is whether a path was found
 	{
-		Tuple<Boolean,LinkedList<Point>> ret = new Tuple<Boolean,LinkedList<Point>>();
+		Pair<Boolean,LinkedList<Point>> ret = new Pair<Boolean,LinkedList<Point>>();
 		int sizeOfPath = 0;
 		/*
 		 * Use G or F costs to make sure that 
 		 * the sizeOfPath does not exceed the
 		 * paramters i.e. the distance cannot exceed
 		 * 5 blocks
-		 */
+		 
 		ret.x = true;
 		sx /= tileSize;
 		sy /= tileSize;
@@ -956,9 +958,9 @@ public class GameMap
 		y /= tileSize;
 		return x < 0 || x > map.get(0).size || y < 0 || y > map.size;
 	}
-	public Tuple<Boolean,Vector2> findCover(int x,int y,Array<SoldierBattleConcrete> otherHumanoid,int searchCoverDistance)
+	public Pair<Boolean,Vector2> findCover(int x,int y,Array<SoldierBattleConcrete> otherHumanoid,int searchCoverDistance)
 	{
-		Tuple<Boolean,Vector2> ret = new Tuple<Boolean,Vector2>();
+		Pair<Boolean,Vector2> ret = new Pair<Boolean,Vector2>();
 		PriorityQueue<Point> allPoint = new PriorityQueue<Point>(new PointComparator(x,y));
 		int posX = x/tileSize;
 		int posY = y/tileSize;
@@ -1248,4 +1250,4 @@ public class GameMap
 	{
 		return map.get((int)(y/tileSize)).get((int)(x/tileSize));
 	}
-}
+}*/

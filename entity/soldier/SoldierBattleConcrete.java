@@ -16,7 +16,7 @@ import com.mygdx.control.PlayerControllable;
 import com.mygdx.entity.HitMarker;
 import com.mygdx.entity.Hurtboxable;
 import com.mygdx.misc.Differentable;
-import com.mygdx.misc.Tuple;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.Scripter;
@@ -518,7 +518,7 @@ Differentable <SoldierBattleConcrete>,RiflemanRoutineable,Steerable,EnemyCogniza
 		controlManager.pendDown(b);
 	}
 	@Override
-	public void cShoot(float x,float y,float z) 
+	public void cShoot(int x,int y,int z) 
 	{			
 		scriptManager.pushSequence(RoutineFactory.createBurstShootSeq(x, y, z, this));				
 	}
@@ -584,7 +584,7 @@ Differentable <SoldierBattleConcrete>,RiflemanRoutineable,Steerable,EnemyCogniza
 	
 	// PathDiagnostic
 	@Override
-	public Tuple<Boolean, LinkedList<Point>> calculatePath(double x, double y) 
+	public Pair<Boolean, LinkedList<Point>> calculatePath(double x, double y) 
 	{
 		return entityListener.findPath((int)this.center.x, (int)this.center.y, (int)x, (int)y);
 	}
@@ -770,7 +770,7 @@ Differentable <SoldierBattleConcrete>,RiflemanRoutineable,Steerable,EnemyCogniza
 		return (difference <= 1 || difference == 7) && entityListener.see(center.y,center.x,getHeight(), center.y,center.x,0);
 	}
 	
-	private Tuple<Boolean,SoldierBattleConcrete> seeEnemy()
+	private Pair<Boolean,SoldierBattleConcrete> seeEnemy()
 	{
 		return entityListener.seeEnemy(this);
 	}
@@ -799,12 +799,12 @@ Differentable <SoldierBattleConcrete>,RiflemanRoutineable,Steerable,EnemyCogniza
 		double angle = r.nextInt(361);
 		return new Vector2((float)(center.x + Math.cos(angle)*WANDERDISTANCE),(float)(center.y + Math.sin(angle)*WANDERDISTANCE));
 	}
-	private Tuple<Boolean,LinkedList<Point>>findPath(int tx,int ty)
+	private Pair<Boolean,LinkedList<Point>>findPath(int tx,int ty)
 	{
 		return entityListener.findPath((int)this.center.x, (int)this.center.y, tx, ty);
 	}
 	
-	private Tuple<Boolean,Vector2> findCover() // if false return the same tile as the player
+	private Pair<Boolean,Vector2> findCover() // if false return the same tile as the player
 	{
 		return entityListener.findCover(center.x,center.y,SEARCHCOVERDISTANCE);
 	}

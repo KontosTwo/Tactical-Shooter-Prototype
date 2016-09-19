@@ -1,6 +1,6 @@
 package com.mygdx.entity.soldier;
 
-import com.mygdx.misc.Tuple;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.MovableBox;
 import com.mygdx.physics.MovablePoint;
 import com.mygdx.physics.PrecisePoint;
@@ -92,6 +92,10 @@ final class SoldierBattleState
 	{
 		Direction otherDirection = getDirectionBetweenTwoPoints(observerLocation,targetLocation);
 		return direction.bearingDifference(otherDirection) <= FIELDOFVISION;
+	}
+	float getHeight()
+	{
+		return body.getHeight();
 	}
 	 void stand()
 	{
@@ -192,7 +196,7 @@ final class SoldierBattleState
 		}
 		return switchState;
 	}
-	Tuple<String,String> createAnimationFilePath()
+	Pair<String,String> createAnimationFilePath()
 	{
 		StringBuilder animePathBuiler = new StringBuilder();
 		StringBuilder dataPathBuilder = new StringBuilder();
@@ -222,7 +226,7 @@ final class SoldierBattleState
 			dataPathBuilder.append(height.toString());
 			dataPathBuilder.append(".txt");
 		}	
-		return new Tuple<String,String>(animePathBuiler.toString(),dataPathBuilder.toString());
+		return new Pair<String,String>(animePathBuiler.toString(),dataPathBuilder.toString());
 	}	
 	
 	private enum Allegiance

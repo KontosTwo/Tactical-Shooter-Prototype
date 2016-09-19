@@ -4,14 +4,10 @@ import com.mygdx.control.PlayerControllable;
 import com.mygdx.entity.soldier.InteractionSoldierBattle;
 import com.mygdx.entity.soldier.InteractionSoldierBattle.TacticalAction;
 import com.mygdx.entity.soldier.InteractionSoldierBattle.TacticalInfoGatherer;
-import com.mygdx.graphic.MapRenderer;
-import com.mygdx.map.GameMap;
 import com.mygdx.map.TileGameMap;
 import com.mygdx.map.TileGameMap.Collidable;
 import com.mygdx.map.TileGameMap.RayBlockable;
 import com.mygdx.physics.MovableBox;
-import com.mygdx.physics.MyVector3;
-import com.mygdx.physics.PrecisePoint;
 
 public class EntityListener implements TacticalAction,TacticalInfoGatherer
 {
@@ -23,7 +19,7 @@ public class EntityListener implements TacticalAction,TacticalInfoGatherer
 	}
 	
 	public interface SightBlockable{
-		
+		// for smoke grenades
 	}
 	
 	public EntityListener()
@@ -39,8 +35,8 @@ public class EntityListener implements TacticalAction,TacticalInfoGatherer
 	}
 
 	@Override
-	public boolean see(MovableBox observer, MovableBox target) {
-		return false;
+	public boolean see(int x1,int y1,int z1,int x2,int y2,int z2) {
+		return gameMap.raytracePossible(x1, y1, z1, x2, y2, z2);
 	}
 	public void update(float dt)
 	{

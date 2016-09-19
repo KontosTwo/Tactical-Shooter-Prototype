@@ -9,7 +9,7 @@ public interface PlayerControllable extends CameraHoggable
 	public void cMoveLeft(boolean b);
 	public void cMoveUp(boolean b);
 	public void cMoveDown(boolean b);
-	public void cShoot(float x,float y,float z);
+	public void cShoot(int x,int y,int z);
 	public void cReload();
 	public void cFace(double x,double y);
 	public void cStand();

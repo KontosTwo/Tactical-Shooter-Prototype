@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.mygdx.ai.functional.RoutineSequencialable;
 import com.mygdx.ai.functional.Sequence;
-import com.mygdx.misc.Tuple;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.Point;
 import com.mygdx.script.Sequencialable;
 
@@ -38,7 +38,7 @@ final class PathTo implements RoutineSequencialable
 	@Override
 	public void startSequence() 
 	{
-		Tuple<Boolean,LinkedList<Point>> result = actor.calculatePath(destX, destY);
+		Pair<Boolean,LinkedList<Point>> result = actor.calculatePath(destX, destY);
 		LinkedList<Point> pathPoint = result.y;
 		pathIsPossible = result.x;
 		if(pathIsPossible)
@@ -88,7 +88,7 @@ final class PathTo implements RoutineSequencialable
 	{	
 		// provide  an ordered set of points. It is up to the implementing class to ensure that the points are valid and sequential.
 		public void completePathTo();// execute once all moveTos have completed
-		public Tuple<Boolean,LinkedList<Point>> calculatePath(double x,double y);
+		public Pair<Boolean,LinkedList<Point>> calculatePath(double x,double y);
 	}
 	@Override
 	public boolean instaSucceeded() {

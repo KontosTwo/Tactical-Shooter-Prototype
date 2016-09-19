@@ -3,7 +3,7 @@ package com.mygdx.ai.leaf;
 import java.util.PriorityQueue;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.misc.Tuple;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.Point;
 
 class FindCover

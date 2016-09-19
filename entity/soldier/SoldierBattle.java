@@ -1,7 +1,7 @@
 package com.mygdx.entity.soldier;
 
 import com.mygdx.graphic.Animator;
-import com.mygdx.misc.Tuple;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.MovableBox;
 import com.mygdx.physics.MovablePoint;
 import com.mygdx.physics.PrecisePoint;
@@ -12,24 +12,20 @@ abstract class SoldierBattle
 	protected final SoldierBattleState soldierBattleState;
 	private final SoldierBattleMediator mediator;
 	
-	
-
-
-	
 	private static final int ANIMATIONBOXSIZE = 70;
 	//private static final int ANIMATIONBOXOFFSET = ;
 
 	
 	interface SoldierBattleMediator
 	{
-		public boolean see(MovableBox observer,MovableBox target);
+		public boolean see(int x1,int y1,int z1,int x2,int y2,int z2);
 		public void shoot(SoldierBattle shooter,float accuracy,int xTarget,int yTarget,int zTarget);
 	}
 	
 	SoldierBattle(SoldierBattleMediator sbm,SoldierBattleState sbs)
 	{
 		soldierBattleState = sbs;
-		Tuple<String,String> newAnimeData = soldierBattleState.createAnimationFilePath();
+		Pair<String,String> newAnimeData = soldierBattleState.createAnimationFilePath();
 		animator = new Animator(soldierBattleState.center.getCenterReference(),newAnimeData.x,newAnimeData.y);
 		animator.setDimensions(ANIMATIONBOXSIZE,ANIMATIONBOXSIZE);
 		animator.doodadify();
@@ -63,13 +59,16 @@ abstract class SoldierBattle
 	{
 		mediator.shoot(this, soldierBattleState.getCurrentAccuracy(), xTarget, yTarget, zTarget);
 	}
-	
+	protected final void see(int xOrigin,int yOrigin,int zOrigin,int xTarget,int yTarget,int zTarget)
+	{
+		mediator.see(xOrigin, yOrigin, zOrigin, xTarget, yTarget, zTarget);
+	}
 	void update(float dt)
 	{
 		soldierBattleState.update();
 		if(soldierBattleState.stateHasChanged())
 		{
-			Tuple<String,String> newAnimeData = soldierBattleState.createAnimationFilePath();
+			Pair<String,String> newAnimeData = soldierBattleState.createAnimationFilePath();
 			animator.changeAnimation(newAnimeData.x, newAnimeData.y);
 		}
 		animator.update(dt);

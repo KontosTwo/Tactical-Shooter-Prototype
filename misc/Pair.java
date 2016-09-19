@@ -1,17 +1,17 @@
 package com.mygdx.misc;
 
 
-public class Tuple<X, Y> 
+public class Pair<X, Y> 
 { 
   public X x; 
   public Y y; 
   
-  public Tuple() 
+  public Pair() 
   { 
 	  x = null;
 	  y = null;
   } 
-  public Tuple(X x,Y y)
+  public Pair(X x,Y y)
   {
 	  this.x = x;
 	  this.y = y;

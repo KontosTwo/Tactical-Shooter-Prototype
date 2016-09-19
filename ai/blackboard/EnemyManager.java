@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.misc.TimeCapsule;
-import com.mygdx.misc.Tuple;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.PrecisePoint;
 
 public final class EnemyManager

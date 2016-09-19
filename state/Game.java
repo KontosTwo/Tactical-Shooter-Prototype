@@ -68,7 +68,8 @@ public class Game implements ApplicationListener,GameModeSwitchable
 			GameState toBeUpdated = state.peek();
 			toBeUpdated.render();
 			toBeUpdated.update(step);
-			Debugger.update();
+			Debugger.render();
+			Debugger.update(step);
 		}
 		//System.out.println(state);
 		//currentState.render();

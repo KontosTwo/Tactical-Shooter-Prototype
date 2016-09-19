@@ -133,14 +133,12 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	}
 
 	@Override
-	public void cShoot(float x, float y, float z) {
-		// TODO Auto-generated method stub
-		
+	public void cShoot(int x, int y, int z) {
+		super.see((int)soldierBattleState.center.getCenterReference().x, (int)soldierBattleState.center.getCenterReference().y, (int)soldierBattleState.getHeight(), x,y,z);
 	}
 
 	@Override
 	public void cReload() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -264,6 +262,4 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	public boolean aboutToCrossBelow(int y) {
 		return soldierBattleState.centerFuture.y < y;
 	}
-	
-	
 }

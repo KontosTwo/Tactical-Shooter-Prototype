@@ -14,4 +14,8 @@ public class MovableBox
 	{
 		dimensions.setZ(h);
 	}
+	public float getHeight()
+	{
+		return dimensions.getZ();
+	}
 }
