@@ -26,4 +26,12 @@ public class MyVector3
 	{
 		return vector.z;
 	}
+	public float getY()
+	{
+		return vector.y;
+	}
+	public float getX()
+	{
+		return vector.x;
+	}
 }

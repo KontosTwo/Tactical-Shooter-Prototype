@@ -1,8 +1,7 @@
 package com.mygdx.script;
 
-import com.mygdx.misc.Updatable;
 
-public class Scripter implements Updatable
+public class Scripter
 {
 	/*
 	 * runs one sequencialable at a time. The sequencialable
@@ -36,7 +35,6 @@ public class Scripter implements Updatable
 		sequence.startSequence();		
 		sequenceIsRunning = true;
 	}
-	@Override
 	public void update(float dt) 
 	{
 		if(sequenceIsRunning)

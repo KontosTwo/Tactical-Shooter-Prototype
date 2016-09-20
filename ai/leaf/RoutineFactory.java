@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.mygdx.ai.functional.RoutineSequencialable;
+import com.mygdx.ai.leaf.MoveTo.MoveToable;
+import com.mygdx.ai.leaf.PathTo.PathToable;
 import com.mygdx.script.Sequencialable;
 
 
@@ -24,7 +26,7 @@ abstract public class RoutineFactory
 	{
 		return new Idle(aa);
 	}
-     static PathTo createPathTo(RiflemanRoutineable aa)
+     static PathTo createPathTo(PathToable aa)
     {
     	return new PathTo(aa,createMoveTo(aa));
     }
@@ -34,7 +36,7 @@ abstract public class RoutineFactory
     	 ret.designateDestination(x, y);
     	 return ret;
      }
-     static MoveTo createMoveTo(RiflemanRoutineable aa)
+     static MoveTo createMoveTo(MoveToable aa)
     {
     	return new MoveTo(aa);
     }
@@ -137,7 +139,7 @@ abstract public class RoutineFactory
     	
     	return base;
     }
-    public static Sequencialable createPathToSeq(double x,double y,RiflemanRoutineable aa)
+    public static Sequencialable createPathToSeq(double x,double y,PathToable aa)
     {
 	   	 
 	   	 PathTo ret = new PathTo(aa,createMoveTo(aa));

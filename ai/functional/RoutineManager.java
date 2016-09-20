@@ -3,9 +3,8 @@ package com.mygdx.ai.functional;
 import com.mygdx.ai.leaf.RiflemanRoutineable;
 import com.mygdx.ai.leaf.RoutineFactory;
 import com.mygdx.debug.Debugger;
-import com.mygdx.misc.Updatable;
 
-public class RoutineManager implements Updatable
+public class RoutineManager
 {
 	/*
 	 * Ai routines keep running until stopped by an outside action
@@ -29,7 +28,6 @@ public class RoutineManager implements Updatable
 	
 	
 	
-	@Override
 	public void update(float dt) 
 	{
 		if(routineActive && times < 1)

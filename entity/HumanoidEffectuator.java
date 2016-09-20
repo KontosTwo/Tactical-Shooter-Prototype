@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.misc.Pair;
 import com.mygdx.physics.Point;
+import com.mygdx.whyishouldlearntocodebeforestartingaproject.SoldierBattleConcrete;
 
 public interface HumanoidEffectuator
 {

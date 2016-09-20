@@ -1,8 +1,7 @@
 package com.mygdx.script;
 
-import com.mygdx.misc.Updatable;
 
-public interface Sequencialable extends Updatable
+public interface Sequencialable
 {
 	/*
 	 * this allows any implementing class to become a "cutscene"

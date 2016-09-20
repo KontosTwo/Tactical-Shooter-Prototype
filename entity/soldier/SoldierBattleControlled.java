@@ -26,7 +26,7 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 		script = new Scripter();
 		collisionBox = new MovableRectangle(state.center.getCenterReference(),XHITBOX,YHITBOX);
 	}
-	static SoldierBattleControlled createControlledProtector(SoldierBattleMediator mediator){
+	static SoldierBattleControlled createControlled(SoldierBattleMediator mediator){
 		return new SoldierBattleControlled(mediator,SoldierBattleState.createProtectorState());
 	}
 	public void update(float dt){

@@ -3,9 +3,8 @@ package com.mygdx.ai.blackboard;
 import java.util.HashSet;
 import java.util.List;
 
-import com.mygdx.misc.Updatable;
 
-public class CombatStressManager implements Updatable
+public class CombatStressManager
 {
 	private static final int GRENADED = 300;
 	private static final int LANDMINED = 300;
@@ -32,7 +31,6 @@ public class CombatStressManager implements Updatable
 		retreatThreshold = DEFAULTRETREATTHRESHOLD;
 	}
 
-	@Override
 	public void update(float dt) 
 	{
 		if(stress > 0)

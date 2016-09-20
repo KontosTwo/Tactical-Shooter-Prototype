@@ -3,6 +3,9 @@ package com.mygdx.map;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapProperties;
@@ -12,7 +15,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.debug.Debugger;
 import com.mygdx.graphic.MapRenderer;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.MyVector3;
+import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.physics.VectorEquation;
 
@@ -106,8 +111,8 @@ public class TileGameMap {
 	private void collisionCheck(){
 		for(Collidable collider : collidableList){
 			PrecisePoint location = collider.getCurrentCollidablePosition();
-			int currentTileX = coordToTileAxis(location.x);
-			int currentTileY = coordToTileAxis(location.y);
+			int currentTileX = coordToTileScaling(location.x);
+			int currentTileY = coordToTileScaling(location.y);
 			Tile center = map[currentTileY][currentTileX];
 			Tile left = map[currentTileY][currentTileX - 1];
 			Tile right = map[currentTileY][currentTileX + 1];
@@ -134,11 +139,16 @@ public class TileGameMap {
 	public boolean raytracePossible(int x1,int y1,int z1,int x2,int y2,int z2){
 		boolean possible = true;
 		VectorEquation ray = new VectorEquation(x1,y1,z1,x2,y2,z2);
-		x1 = coordToTileAxis(x1);
-		x2 = coordToTileAxis(x2);
-		y1 = coordToTileAxis(y1);
-		y2 = coordToTileAxis(y2);
+		x1 = coordToTileScaling(x1);
+		x2 = coordToTileScaling(x2);
+		y1 = coordToTileScaling(y1);
+		y2 = coordToTileScaling(y2);
 
+		/*
+		 * Bresenham's algorithm for identifying
+		 * tiles that lay on a vector. Those tiles
+		 * will be processed through stoppedBy()
+		 */
 		int dx = Math.abs(x2 - x1);
 	    int dy = Math.abs(y2 - y1); 
 	    int x = x1;
@@ -153,9 +163,10 @@ public class TileGameMap {
 	    for (; n > 0; --n){
 	    	if(stoppedBy(createTileRayBlockable(x,y),ray)){
 	    		possible = false;
+	    		Debugger.mark(x*tileSize, y*tileSize);
 	    		break traverse;
 	    	}
-	        if (error > 0){
+	        if(error > 0){
 	            x += x_inc;
 	            error -= dy;
 	        }
@@ -170,11 +181,34 @@ public class TileGameMap {
 	 * Precondition - ray and block are guarenteed to intersect
 	 * at two points
 	 */
-	private boolean stoppedBy(RayBlockable block,VectorEquation ray){
-		boolean stopped = false;
+	private boolean stoppedBy(RayBlockable obstacle,VectorEquation ray){
+		HashSet<PrecisePoint> rayHeuristic = ray.getIntersectionWithSquare(
+				obstacle.getCenter().x, 
+				obstacle.getCenter().x + obstacle.getSides().getX(), 
+				obstacle.getCenter().y,
+				obstacle.getCenter().y + obstacle.getSides().getY()
+		);
+		ArrayList<PrecisePoint> intersections = new ArrayList<>(rayHeuristic);
+		PrecisePoint intersectionCenter = new PrecisePoint();
 		
+		if(intersections.size() == 0){
+			return false;
+		}
+		else if(intersections.size() == 1){
+			intersectionCenter = intersections.get(0);
+		}else{
+			intersectionCenter.x = ((intersections.get(0).x + intersections.get(1).x)/2);
+			intersectionCenter.y = ((intersections.get(0).y + intersections.get(1).y)/2);
+		}
 		
-		return stopped;
+		float heightOfRayAtObstacle = Math.abs(
+			ray.getZFromXOrY(intersectionCenter.x)
+		);
+		float heightOfMapAtObstacle = getHeightPhyAt(
+			coordToTileScaling(intersectionCenter.x),
+			coordToTileScaling(intersectionCenter.y)
+		);
+		return heightOfMapAtObstacle > heightOfRayAtObstacle ;
 	}
 	private RayBlockable createTileRayBlockable(int x,int y){
 		return new RayBlockable(){
@@ -186,23 +220,96 @@ public class TileGameMap {
 
 			@Override
 			public PrecisePoint getCenter() {
-				return new PrecisePoint(x,y);
+				return new PrecisePoint(tileToCoordScaling(x),tileToCoordScaling(y));
 			}
 		};
 	}
+	public Pair<Boolean,LinkedList<Point>> findPath(int sx, int sy, int tx, int ty) // boolean is whether a path was found
+	{
+		Pair<Boolean,LinkedList<Point>> ret = new Pair<Boolean,LinkedList<Point>>();
+		int sizeOfPath = 0; 
+		ret.x = true;
+		sx /= tileSize;
+		sy /= tileSize;
+		tx /= tileSize;
+		ty /= tileSize;	
+		LinkedList<Node> openList = new LinkedList<Node>();
+		LinkedList<Node> closedList = new LinkedList<Node>();
+	    boolean done = false;
+	    Node current;
+	    Node start = new Node(sx,sy);
+	    Node target = new Node(tx,ty);
+	    if(!map[ty][tx].walkable())
+	    {
+	    	ret.x = false; // target is unwalkable
+	    }
+	    if(ret.x)
+	    {
+		    openList.add(start);
+		    calc:
+	        while (!done) 
+	        {
+	            current = Node.lowestFInOpen(openList); 
+	            closedList.add(current); 
+	            openList.remove(current); 
+	            if ((current.matches(tx, ty))) 
+	            { 
+	            	//return Node.calcPath(start, current,tileSize);
+	            	LinkedList<Point> pathway = Node.calcPath(start, current,tileSize);
+	            	Collections.reverse(pathway);
+	            	ret.y =  pathway;
+	            	break calc;
+	            }
+	            List<Node> adjacentNodes = current.getAdjacent(map[0].length, map.length,this,closedList);                    
+	            for (int i = 0; i < adjacentNodes.size(); i++) 
+	            {
+	            	Node currentAdj = adjacentNodes.get(i);         	
+	                if (!openList.contains(currentAdj)) 
+	                {                  
+	                    current.setAsParentAs(currentAdj);
+	                    currentAdj.setHCost(target); 
+	                    currentAdj.setGCost(start); 
+	                    openList.add(currentAdj);
+	                }
+	                else
+	                { 
+	                    if (currentAdj.moreCostlyThan(current)) 
+	                    { 
+	                        current.setAsParentAs(currentAdj);
+	                        currentAdj.setGCost(start);
+	                    }
+	                }
+	            }
+	            if (openList.isEmpty()) 
+	            { 
+	                //LinkedList<Point> ret = new LinkedList<Point>();
+	               // ret.add(new Point(sx*tileSize,sy*tileSize));
+	            	//return ret; 
+	            	ret.x = false;
+	            }                     
+	            //System.out.println("one loop done");   
+	        }
+	    }
+		//return null;
+	    return ret;
+	}
 	
-
+	boolean validMove(int sx,int sy,int tx,int ty)
+	{
+		return map[sy][sx].walkableTo(map[ty][tx]) && map[ty][tx].walkable();
+	}
+	
 	private boolean walkableFromXToY(Tile x,Tile y){
 		return y.walkable() && x.walkableTo(y);
 	}
 	
-	private Tile coordToTile(double y,double x){
+	private Tile getTileFromCoord(double y,double x){
 		return map[(int)(y/tileSize)][(int)(x/tileSize)];
 	}
-	private int coordToTileAxis(double a){
+	private int coordToTileScaling(double a){
 		return (int)(a/tileSize);
 	}
-	private int tileToCoordAxis(int a){
+	private int tileToCoordScaling(int a){
 		return a*tileSize;
 	}
 	private boolean inBounds(int x,int y){

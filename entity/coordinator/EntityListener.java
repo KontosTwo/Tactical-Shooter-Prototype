@@ -1,5 +1,8 @@
 package com.mygdx.entity.coordinator;
 
+import java.util.LinkedList;
+
+import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.entity.soldier.InteractionSoldierBattle;
 import com.mygdx.entity.soldier.InteractionSoldierBattle.TacticalAction;
@@ -7,7 +10,9 @@ import com.mygdx.entity.soldier.InteractionSoldierBattle.TacticalInfoGatherer;
 import com.mygdx.map.TileGameMap;
 import com.mygdx.map.TileGameMap.Collidable;
 import com.mygdx.map.TileGameMap.RayBlockable;
+import com.mygdx.misc.Pair;
 import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.Point;
 
 public class EntityListener implements TacticalAction,TacticalInfoGatherer
 {
@@ -33,6 +38,10 @@ public class EntityListener implements TacticalAction,TacticalInfoGatherer
 		gameMap.treatAsCollidable((Collidable)player);
 		return player;
 	}
+	public Auxiliarable createProtector(int x, int y) {
+		Auxiliarable aux = soldierManager.createAuxiliary(x, y);
+		return aux;
+	}
 
 	@Override
 	public boolean see(int x1,int y1,int z1,int x2,int y2,int z2) {
@@ -54,4 +63,10 @@ public class EntityListener implements TacticalAction,TacticalInfoGatherer
 		gameMap.loadLevel(level);
 		
 	}
+	@Override
+	public Pair<Boolean, LinkedList<Point>> findPath(int sx, int sy, int tx,
+			int ty) {
+		return gameMap.findPath(sx, sy, tx, ty);
+	}
+	
 }

@@ -43,6 +43,7 @@ class Tile
 	}
 	public void setInfo(int heightP,int heightV,boolean w,boolean r)
 	{
+		
 		heightPhy = heightP;
 		heightVis = heightV;
 		ramp = r;

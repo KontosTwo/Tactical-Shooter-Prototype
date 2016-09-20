@@ -33,7 +33,7 @@ final class Play extends GameState implements PlayControlSwitchable
 	private PrecisePoint mousePosition;	
 	
 	private PlayerControllable controller;
-	//private Auxiliarable auxiliary;
+	private Auxiliarable auxiliary;
 	
 	// Control State Variables
 	private Command command;	
@@ -71,7 +71,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		EntityListener entityListener = new EntityListener();
 		
 		controller = entityListener.createPlayer(500, 500);
-		//auxiliary = entityManager.createProtector(210,150);		//cam.focus(player);
+		auxiliary = entityListener.createProtector(210,150);		//cam.focus(player);
 
 		
 		cam.focus(controller);
@@ -224,8 +224,8 @@ final class Play extends GameState implements PlayControlSwitchable
 			{
 				case SHOOT:	controller.cShoot((int)truePoint.x,(int)truePoint.y,0);
 							break;
-				//case MOVE: auxiliary.aMoveTo((int)truePoint.x,(int)truePoint.y);
-							//break;
+				case MOVE: auxiliary.aMoveTo((int)truePoint.x,(int)truePoint.y);
+							break;
 				case GRENADE: //controller.cGrenade((int)truePoint.x, (int)truePoint.y);;
 							break;
 				default:

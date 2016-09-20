@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.mygdx.physics.Point;
 
-/*class Node 
+class Node 
 {
 	private Node parent;
 	private int x;
@@ -25,7 +25,7 @@ import com.mygdx.physics.Point;
 	}
 	
 	
-	public LinkedList <Node> getAdjacent(int xBound,int yBound,GameMap gameMap,LinkedList<Node> closedList)
+	public LinkedList <Node> getAdjacent(int xBound,int yBound,TileGameMap gameMap,LinkedList<Node> closedList)
 	{
 		LinkedList <Node> ret = new LinkedList<Node>();
 		for(int i = -1; i < 2; i ++)
@@ -140,4 +140,3 @@ import com.mygdx.physics.Point;
 		return ((Node)o).x == this.x &&  ((Node)o).y == this.y;
 	}
 }
-*/

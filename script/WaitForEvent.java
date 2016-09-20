@@ -1,6 +1,5 @@
 package com.mygdx.script;
 
-import com.mygdx.misc.Updatable;
 
 class WaitForEvent implements Sequencialable
 {
@@ -46,7 +45,8 @@ class WaitForEvent implements Sequencialable
 		
 	}
 }
-interface Triggerable extends Updatable
+interface Triggerable
 {
 	public boolean triggered();// returns true when the implementer's state changes so that it returns true, signaling a change
+	public void update(float dt);
 }

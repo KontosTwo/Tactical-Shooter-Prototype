@@ -12,7 +12,7 @@ import com.mygdx.script.Sequencialable;
 public class Selector implements RoutineSequencialable
 {
 	 private final List<RoutineSequencialable> routine;
-	    private Queue<RoutineSequencialable> routineQueue;
+	   private Queue<RoutineSequencialable> routineQueue;
 	    
 	     
 	    /*

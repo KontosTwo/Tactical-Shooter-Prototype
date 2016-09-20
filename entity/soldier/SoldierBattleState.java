@@ -126,6 +126,10 @@ final class SoldierBattleState
 	{
 		state = State.still;
 	}
+	 void face(double x,double y){
+		 direction = getDirectionBetweenTwoPoints(center.getCenterReference(),new PrecisePoint(x,y));
+	 }
+	
 	private static Direction getDirectionBetweenTwoPoints(PrecisePoint origin,PrecisePoint target)
 	{
 		Direction ret = null;

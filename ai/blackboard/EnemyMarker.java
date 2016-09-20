@@ -4,8 +4,8 @@ import java.util.*;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.physics.PrecisePoint;
+import com.mygdx.whyishouldlearntocodebeforestartingaproject.SoldierBattleConcrete;
 
 final class EnemyMarker
 {

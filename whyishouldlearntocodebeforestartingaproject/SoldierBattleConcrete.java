@@ -1,4 +1,4 @@
-package com.mygdx.entity.soldier;
+package com.mygdx.whyishouldlearntocodebeforestartingaproject;
 
 import java.util.LinkedList;
 import java.util.Random;

@@ -17,7 +17,6 @@ class TimesUp implements Triggerable
 		return currentTime > timer;
 	}
 
-	@Override
 	public void update(float dt) 
 	{
 		currentTime ++;

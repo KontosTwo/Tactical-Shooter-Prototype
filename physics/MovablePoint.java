@@ -39,10 +39,37 @@ public class MovablePoint
 	{
 		center.set(x,y);
 	}
+	public void stopVelocity(){
+		unitVelocity.set(0, 0);
+	}
 	public PrecisePoint createProjectedLocation()
 	{
 		PrecisePoint newLocation = new PrecisePoint(center);
 		newLocation.add(unitVelocity.getX()*speed,unitVelocity.getY()*speed);
 		return newLocation;
+	}
+	public boolean reachTarget(double x, double y) {
+		// TODO Auto-generated method stub
+		double futurex = center.x + (unitVelocity.getX()*speed);
+		double futurey = center.y + (unitVelocity.getY()*speed);
+		return !(sameSign(x - futurex,x - center.x)
+				&& sameSign(y - futurey,y - center.y));
+	}
+	 private boolean sameSign(double x1,double x2)// potential problem if either is 0
+	{
+		return x1*x2 > 0;
+	}
+	 public void orientVelocity(double x,double y)
+	{
+		 double angle = Math.atan2((y - center.y),(x - center.x));
+		unitVelocity.set((float)Math.cos(angle),(float)Math.sin(angle));
+	}
+	 
+	public int distanceFrom(double x, double y) {
+			return (int) 
+				Math.hypot(
+					Math.pow(x-center.x, 2),
+					Math.pow(y-center.y, 2)
+		);
 	}
 }

@@ -1,5 +1,7 @@
 package com.mygdx.physics;
 
+import java.util.HashSet;
+
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.misc.Pair;
 import com.sun.javafx.geom.Line2D;
@@ -36,43 +38,50 @@ public class VectorEquation{
 		this.vy = v.y;
 		this.vz = v.z;
 	}
+	public PrecisePoint get2DOrigin(){
+		return new PrecisePoint(ax,ay);
+	}
 	/**
-	 * Assumes that the intersection between
+	 * Precondition: the intersection between
 	 * this vector and the vertical line Y = y
 	 * exists
 	 */
-	public float getXAtY(float y)
+	private float getXAtY(float y)
 	{
-		return ax + ((y-ay)/vy)*vx;
+		return (ax + ((y-ay)/vy)*vx);
 	}
 	/**
-	 * Assumes that the intersection between
+	 * Precondition: the intersection between
 	 * this vector and the horizontal line X = x
 	 * exists
 	 */
-	public float getYAtX(float x)
+	private float getYAtX(float x)
 	{
-		return ay + ((x-ax)/vx)*vy;
+		return (ay + ((x-ax)/vx)*vy);
 	}
-	public Pair<Boolean,Pair<PrecisePoint,PrecisePoint>> projection2DIntersectsSquare(float topLeft,float bottomLeft,float bottomRight,float topRight){
-		Pair<Boolean,Pair<PrecisePoint,PrecisePoint>> result = new Pair<>();
-		result.x = false;
-		int intersections = 0;
-		
-		
-		
-		if(intersections == 2)
-		{
-			result.x = true;
-		}
-		return null;
+	public float getZFromXOrY(float x)
+	{
+		return (az + ((x-ax)/vx)*vz);
 	}
-	/**
-	 * Considers only the vector's x and y components. Calculates whether they intersect the vertical line
-	 * segment designated by the xBound, y1, and y2. 
-	 */
-
 	
-
-
+	public HashSet<PrecisePoint> getIntersectionWithSquare(float left,float right,float bottom,float top){
+		HashSet<PrecisePoint> result = new HashSet<PrecisePoint>(4);
+		float topX = getXAtY(top);
+		if(topX >= left && topX <= right){
+			result.add(new PrecisePoint(topX,top));
+		}
+		float bottomX = getXAtY(bottom);
+		if(bottomX >= left && bottomX <= right){
+			result.add(new PrecisePoint(bottomX,bottom));
+		}
+		float rightY = getYAtX(right);
+		if(rightY >= bottom && rightY <= top){
+			result.add(new PrecisePoint(right,rightY));
+		}
+		float leftY = getYAtX(left);
+		if(leftY >= bottom && leftY <= top){
+			result.add(new PrecisePoint(left,leftY));
+		}		
+		return result;
+	}
 }

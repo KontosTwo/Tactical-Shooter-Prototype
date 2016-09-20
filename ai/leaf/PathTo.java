@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.mygdx.ai.functional.RoutineSequencialable;
 import com.mygdx.ai.functional.Sequence;
+import com.mygdx.ai.leaf.MoveTo.MoveToable;
 import com.mygdx.misc.Pair;
 import com.mygdx.physics.Point;
 import com.mygdx.script.Sequencialable;
@@ -84,7 +85,7 @@ final class PathTo implements RoutineSequencialable
 	{
 		return path.failed();
 	}
-	interface PathToable
+	interface PathToable extends MoveToable
 	{	
 		// provide  an ordered set of points. It is up to the implementing class to ensure that the points are valid and sequential.
 		public void completePathTo();// execute once all moveTos have completed

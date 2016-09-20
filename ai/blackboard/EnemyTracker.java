@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.entity.soldier.SoldierBattleConcrete;
+import com.mygdx.whyishouldlearntocodebeforestartingaproject.SoldierBattleConcrete;
 
 final class EnemyTracker
 {

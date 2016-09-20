@@ -1,8 +1,8 @@
 package com.mygdx.entity;
 
-import com.mygdx.entity.soldier.SoldierBattleConcrete;
 import com.mygdx.misc.Differentable;
 import com.mygdx.physics.PrecisePoint;
+import com.mygdx.whyishouldlearntocodebeforestartingaproject.SoldierBattleConcrete;
 
 public class HitMarker extends Visible
 {

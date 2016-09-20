@@ -1,7 +1,6 @@
 package com.mygdx.control;
 
 
-import com.mygdx.misc.Updatable;
 
 public class Control
 {

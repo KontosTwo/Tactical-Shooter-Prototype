@@ -1,9 +1,12 @@
 package com.mygdx.entity.soldier;
 
+import java.util.LinkedList;
+
 import com.mygdx.graphic.Animator;
 import com.mygdx.misc.Pair;
 import com.mygdx.physics.MovableBox;
 import com.mygdx.physics.MovablePoint;
+import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
 
 abstract class SoldierBattle 
@@ -20,6 +23,7 @@ abstract class SoldierBattle
 	{
 		public boolean see(int x1,int y1,int z1,int x2,int y2,int z2);
 		public void shoot(SoldierBattle shooter,float accuracy,int xTarget,int yTarget,int zTarget);
+		public Pair<Boolean,LinkedList<Point>> findPath(int sx, int sy, int tx, int ty);
 	}
 	
 	SoldierBattle(SoldierBattleMediator sbm,SoldierBattleState sbs)
@@ -62,6 +66,9 @@ abstract class SoldierBattle
 	protected final void see(int xOrigin,int yOrigin,int zOrigin,int xTarget,int yTarget,int zTarget)
 	{
 		mediator.see(xOrigin, yOrigin, zOrigin, xTarget, yTarget, zTarget);
+	}
+	protected final Pair<Boolean,LinkedList<Point>> findPath(int sx, int sy, int tx, int ty){
+		return mediator.findPath(sx, sy, tx, ty);
 	}
 	void update(float dt)
 	{
