@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.misc.TimeCapsule;
 import com.mygdx.misc.Pair;
 import com.mygdx.physics.PrecisePoint;
-import com.mygdx.whyishouldlearntocodebeforestartingaproject.SoldierBattleConcrete;
 
 public final class EnemyManager
 {

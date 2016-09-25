@@ -5,9 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.whyishouldlearntocodebeforestartingaproject.SoldierBattleConcrete;
 
-final class EnemyTracker
+/*final class EnemyTracker
 {
 	private SoldierBattleConcrete owner;
 	private boolean inSight;
@@ -46,4 +45,4 @@ final class EnemyTracker
 	{
 		user.remove(h);
 	}
-}
+}*/

@@ -1,6 +1,7 @@
 package com.mygdx.entity.soldier;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.mygdx.ai.leaf.AuxiliaryRoutineable;
 import com.mygdx.ai.leaf.RoutineFactory;
@@ -62,7 +63,7 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 	}
 
 	@Override
-	public Pair<Boolean, LinkedList<Point>> calculatePath(double x, double y) {
+	public Pair<Boolean, List<Point>> calculatePath(double x, double y) {
 		// TODO Auto-generated method stub
 		return findPath((int)soldierBattleState.center.getCenterReference().x,
 				(int)soldierBattleState.center.getCenterReference().y,

@@ -3,7 +3,7 @@ package com.mygdx.ai.leaf;
 import com.mygdx.ai.functional.RoutineSequencialable;
 import com.mygdx.debug.Debugger;
 
-class Wait implements RoutineSequencialable
+public class Wait implements RoutineSequencialable
 {
 	private int tickQuota;
 	private int tickCount;
@@ -12,7 +12,7 @@ class Wait implements RoutineSequencialable
 	{
 		
 	}
-	Wait(int wait)
+	public Wait(int wait)
 	{
 		tickQuota = wait;
 	}

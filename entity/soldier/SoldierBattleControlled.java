@@ -4,7 +4,7 @@ import com.mygdx.ai.leaf.ControlledRoutineable;
 import com.mygdx.control.Control;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.control.Steerable;
-import com.mygdx.map.TileGameMap.Collidable;
+import com.mygdx.map.GameMap.Collidable;
 import com.mygdx.physics.MovableRectangle;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.Scripter;
@@ -239,7 +239,7 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	
 	
 	@Override
-	public PrecisePoint getCurrentCollidablePosition() {
+	public PrecisePoint getCollidablePosition() {
 		return soldierBattleState.center.getCenterReference();
 	}
 	@Override

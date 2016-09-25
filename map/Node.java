@@ -1,7 +1,10 @@
 package com.mygdx.map;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
+import com.mygdx.debug.Debugger;
 import com.mygdx.physics.Point;
 
 class Node 
@@ -9,51 +12,35 @@ class Node
 	private Node parent;
 	private int x;
 	private int y;
-	private int g;
-	private int h;
+	private int gCost;
+	private int hCost;
 	
-	public Node(int x,int y)
+	Node(int x,int y)
 	{
 		this.x = x;
 		this.y = y;
-		g = 0;
-		h = 0;
+		gCost = 0;
+		hCost = 0;
 	}
-	public boolean matches(int x,int y)
+	int getX(){
+		return x;
+	}
+	
+	int getY(){
+		return y;
+	}
+		
+	boolean matches(int x,int y)
 	{
 		return this.x == x && this.y == y;
 	}
 	
-	
-	public LinkedList <Node> getAdjacent(int xBound,int yBound,TileGameMap gameMap,LinkedList<Node> closedList)
-	{
-		LinkedList <Node> ret = new LinkedList<Node>();
-		for(int i = -1; i < 2; i ++)
-		{
-			for(int j = -1; j < 2; j ++)
-			{
-				if(!(i == 0 && j == 0))
-				{
-					Node current = new Node(this.x + i,this.y + j);
-					int currentX = x + i;
-					int currentY = y + j;
-					if(currentX >= 0 && currentX < xBound && currentY >= 0 && currentY < yBound && gameMap.validMove(this.x, this.y, currentX, currentY) && !closedList.contains(current))
-					{
-						ret.add(current);
-						//System.out.println(current);
-	
-					}
-				}
-			}
-		}
-		return ret;
-	}
-	public void setAsParentAs(Node n)
+	 void setAsParentAs(Node n)
 	{
 		n.parent = this;
 	}
 	
-	public static Node lowestFInOpen(LinkedList <Node> open)
+	 static Node lowestFInOpen(List <Node> open)
 	{
 		Node ret = null;
 		int lowest = Integer.MAX_VALUE;
@@ -67,62 +54,65 @@ class Node
 		}
 		return ret;
 	}
-	public void setGCost(Node target)
+	 void setGCost(Node target)
 	{		
-		int gCost = 0;
+		int newGCost = 0;
 		boolean found = false;
 		Node current = this;
 		while(!current.equals(target))
 		{
 			if(current.x != current.parent.x && current.y != current.parent.y)
 			{
-				gCost += 1.4;
+				newGCost += 1.4;
 			}
 			else
 			{
-				gCost += 1;
+				newGCost += 1;
 			}
 			current = current.parent;
 		}
-		g = gCost;	
+		gCost = newGCost;	
 	}
-	public void setHCost(Node n)
+	 void setHCost(Node n)
 	{
-		h = (Math.abs(n.x - this.x) + Math.abs(n.y - this.y));
+		hCost = (Math.abs(n.x - this.x) + Math.abs(n.y - this.y));
 	}
 	private int getFCost()
 	{
-		return h + g;
+		return hCost + gCost;
 	}
-	public Point asPoint(int tileSize)
-	{
+	
+	/**
+	 * The Node calling createPath should be the
+	 * last node (the intended destination of the
+	 * pathfinder)
+	 */
+	List<Point> createPath(int tileSize){
+		LinkedList<Point> path = new LinkedList<Point>();
+		
+		// always add the first node as the first point
+		path.add(createMapPoint(tileSize));
+		
+		// add all linked nodes
+		Node next = parent;
+		while(next != null){
+			path.add(next.createMapPoint(tileSize));
+			next = next.parent;
+		}
+		
+		// since we iterate from the destination, the path is in reverse order
+		Collections.reverse(path);
+		
+		return path;
+	}
+	
+	private Point createMapPoint(int tileSize){
 		return new Point((x*tileSize) + (tileSize/2),(y*tileSize) + (tileSize/2));
 	}
-	public static LinkedList<Point> calcPath(Node start,Node end,int tileSize)
+	
+	 boolean moreCostlyThan(Node n)
 	{
-		LinkedList<Point> ret = new LinkedList<Point>();
-		boolean found = false;
-		Node current = end;
-		while(!found)
-		{
-			if(current != start)
-			{
-				ret.add(current.asPoint(tileSize));
-				current = current.parent;
-			}
-			else
-			{
-				ret.add(current.asPoint(tileSize));
-				found = true;
-			}
-		}		
-		// I removed the starting node
-		return ret;
-
-	}
-	public boolean moreCostlyThan(Node n)
-	{
-		return this.g > n.g;
+		return this.gCost > n.gCost;
 	}
 	public String toString()
 	{

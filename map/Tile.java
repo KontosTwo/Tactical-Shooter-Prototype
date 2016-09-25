@@ -1,59 +1,24 @@
 package com.mygdx.map;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-
-import com.badlogic.gdx.utils.Array;
-
-class Tile
+final class Tile
 {
 	private int heightPhy;
 	private int heightVis;
-	private int heightPhyObstacle;
-	private int heightVisObstacle;
 	private boolean walkable;
-	private final static int groundLevel = 0;
 	private boolean ramp;
 	
-	public Tile()
-	{
-		heightPhy = groundLevel;
-		heightVis = groundLevel;
-		heightPhyObstacle = 0;
-		heightVisObstacle = 0;
-		ramp = false;
-		walkable = true;
+	Tile(int pHeight,int vHeight,boolean w,boolean r){
+		heightPhy = pHeight;
+		heightVis = vHeight;
+		walkable = w;
+		ramp = r;
 	}
 	
-	public void setHeightPhy(int h)
-	{
-		heightPhy = h;
-	}
-	public void setObstacleHeightPhy(int h)
-	{
-		heightPhyObstacle = h;
-	}
-	public void setHeightVis(int h)
-	{
-		heightVis = h;
-	}
-	public void setObstacleHeightVis(int h)
-	{
-		heightVisObstacle = h;
-	}
-	public void setInfo(int heightP,int heightV,boolean w,boolean r)
-	{
-		
-		heightPhy = heightP;
-		heightVis = heightV;
-		ramp = r;
-		walkable = w;
-	}
-	public boolean isRamp()
+	boolean isRamp()
 	{
 		return ramp;
 	}
-	public boolean walkableTo(Tile t)
+	boolean walkableTo(Tile t)
 	{
 		boolean ret = false;
 		if(ramp||t.ramp || (sameHeightPAs(t) && t.walkable))
@@ -62,41 +27,35 @@ class Tile
 		}
 		return ret;
 	}
-	public void toggleWalkable(boolean b)
-	{
-		walkable = b;
-	}
-	public void toggleRamp(boolean b)
-	{
-		ramp = b;
-	}
+	
 
-	public boolean walkable()
+	boolean walkable()
 	{
 		return walkable;
 	}
-	public int getHeightPhy()
+	int getHeightPhy()
 	{
-		return heightPhy + heightPhyObstacle;
+		return heightPhy ;
 	}
-	public int getHeightVis()
+	int getHeightVis()
 	{
-		return heightVis + heightVisObstacle;
+		return heightVis ;
 	}
-	public boolean sameHeightPAs(Tile t)// these may not
+	boolean sameHeightPAs(Tile t)
 	{
-		return t.heightPhy + t.heightPhyObstacle== this.heightPhy + this.heightPhyObstacle;
+		return t.heightPhy == this.heightPhy ;
 	}
-	public boolean lowerHeightThan(Tile t)
+	boolean lowerHeightThan(Tile t)
 	{
-		return t.heightPhy + t.heightPhyObstacle > this.heightPhy + this.heightPhyObstacle;
+		return t.heightPhy > this.heightPhy;
 	}
 	public String toString()
 	{
-		return "" + heightPhyObstacle ;//+ " " + heightVis + " " + walkable + " " + ramp;
+		return ""  ;
 	}
-	public boolean visualPeekAvailable()
+	boolean visualPeekAvailable()
 	{
 		return heightVis > heightPhy;
 	}
+
 }

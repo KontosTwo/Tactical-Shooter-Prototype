@@ -15,7 +15,6 @@ import com.mygdx.camera.Camera;
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.debug.Debugger;
-import com.mygdx.entity.Entity;
 import com.mygdx.entity.coordinator.EntityListener;
 import com.mygdx.entity.soldier.InteractionSoldierBattle;
 import com.mygdx.graphic.Animator;

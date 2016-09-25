@@ -39,8 +39,8 @@ final class PathTo implements RoutineSequencialable
 	@Override
 	public void startSequence() 
 	{
-		Pair<Boolean,LinkedList<Point>> result = actor.calculatePath(destX, destY);
-		LinkedList<Point> pathPoint = result.y;
+		Pair<Boolean,List<Point>> result = actor.calculatePath(destX, destY);
+		List<Point> pathPoint = result.y;
 		pathIsPossible = result.x;
 		if(pathIsPossible)
 		{
@@ -85,12 +85,7 @@ final class PathTo implements RoutineSequencialable
 	{
 		return path.failed();
 	}
-	interface PathToable extends MoveToable
-	{	
-		// provide  an ordered set of points. It is up to the implementing class to ensure that the points are valid and sequential.
-		public void completePathTo();// execute once all moveTos have completed
-		public Pair<Boolean,LinkedList<Point>> calculatePath(double x,double y);
-	}
+	
 	@Override
 	public boolean instaSucceeded() {
 		// TODO Auto-generated method stub
@@ -100,6 +95,12 @@ final class PathTo implements RoutineSequencialable
 	public boolean instaFailed() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	interface PathToable extends MoveToable
+	{	
+		// provide  an ordered set of points. It is up to the implementing class to ensure that the points are valid and sequential.
+		public void completePathTo();// execute once all moveTos have completed
+		public Pair<Boolean,List<Point>> calculatePath(double x,double y);
 	}
 }
 

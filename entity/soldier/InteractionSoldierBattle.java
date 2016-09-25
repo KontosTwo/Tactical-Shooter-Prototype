@@ -23,7 +23,7 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	public interface TacticalInfoGatherer 
 	{
 		public boolean see(int x1,int y1,int z1,int x2,int y2,int z2);
-		public Pair<Boolean,LinkedList<Point>> findPath(int sx, int sy, int tx, int ty);
+		public Pair<Boolean,List<Point>> findPath(int sx, int sy, int tx, int ty);
 		
 	}
 	public interface TacticalAction 
@@ -96,7 +96,7 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 		return infoGatherer.see( x1, y1, z1, x2, y2, z2);
 	}
 	@Override
-	public Pair<Boolean, LinkedList<Point>> findPath(int sx, int sy, int tx,
+	public Pair<Boolean, List<Point>> findPath(int sx, int sy, int tx,
 			int ty) {
 		return infoGatherer.findPath(sx, sy, tx, ty);
 	}

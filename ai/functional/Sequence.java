@@ -76,7 +76,7 @@ public class Sequence implements RoutineSequencialable
 	@Override
 	public void completeSequence() 
 	{
-		Debugger.tick("completing Sequence");
+		Debugger.tick("Sequence is complete");
 		if(!routineQueue.isEmpty())
 		{
 			routineQueue.peek().completeSequence();
@@ -200,6 +200,9 @@ public class Sequence implements RoutineSequencialable
 	}
 	public boolean instaSucceeded()
 	{
+		if(routine.isEmpty()){
+			return true;
+		}
 		boolean ret = true;
 		for(RoutineSequencialable r : routine)
 		{

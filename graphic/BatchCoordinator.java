@@ -9,10 +9,12 @@ public final class BatchCoordinator
 {
 	private static final HashMap<SpriteBatch,ArrayList<RenderRequest> >renderRequests = new HashMap<>();
 	private static final HashMap<SpriteBatch,ArrayList<MapRenderRequest> >mapRenderRequests = new HashMap<>();
+	private static final int DEFAULTRENDERREQUESTLENGTH = 50;
 	private static Camera camera;
 	/**
 	 * A functional interface whose code
 	 * contains the logic that renders
+	 * the image 
 	 */
 	interface RenderRequest
 	{
@@ -25,7 +27,7 @@ public final class BatchCoordinator
 	
 	private enum BatchType
 	{
-		NIGHT(.2f,.2f,.5f,1f),
+		NIGHT(.4f,.4f,.4f,1f),
 		DAY(1f,0f,0f,1f),
 		GAS(1f,1f,1f,1f);
 		
@@ -89,7 +91,7 @@ public final class BatchCoordinator
 	{
 		if(!renderRequests.containsKey(sb))
 		{
-			renderRequests.put(sb, new ArrayList<RenderRequest>());
+			renderRequests.put(sb, new ArrayList<RenderRequest>(DEFAULTRENDERREQUESTLENGTH));
 		}
 		renderRequests.get(sb).add(request);
 	}
@@ -97,7 +99,7 @@ public final class BatchCoordinator
 	{
 		if(!mapRenderRequests.containsKey(sb))
 		{
-			mapRenderRequests.put(sb, new ArrayList<MapRenderRequest>());
+			mapRenderRequests.put(sb, new ArrayList<MapRenderRequest>(DEFAULTRENDERREQUESTLENGTH));
 		}
 		mapRenderRequests.get(sb).add(request);
 	}
