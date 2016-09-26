@@ -2,17 +2,14 @@ package com.mygdx.ai.functional;
 
 import java.util.function.Supplier;
 
-public class Conditional implements RoutineSequencialable
+public class Conditional implements Routineable
 {
-	 private final RoutineSequencialable success;
-	 private final RoutineSequencialable fail;
-	 private RoutineSequencialable routine;
+	 private final Routineable success;
+	 private final Routineable fail;
+	 private Routineable routine;
 	 private Supplier<Boolean> heuristic;
-	 /*
-	  * this class will disrupt the instant transversal
-	  * of Sequence and Selector
-	  */
-	 public Conditional (Supplier<Boolean> heuristic, RoutineSequencialable success,RoutineSequencialable fail)
+	 
+	 public Conditional (Supplier<Boolean> heuristic, Routineable success,Routineable fail)
 	 {
 		 this.success = success;
 		 this.fail = fail;
@@ -20,7 +17,7 @@ public class Conditional implements RoutineSequencialable
 	 }
 	 
 	@Override
-	public void startSequence() 
+	public void startRoutine() 
 	{
 		if(heuristic.get())
 		{
@@ -38,55 +35,46 @@ public class Conditional implements RoutineSequencialable
 		 * separate the failing condition into a Supplier<Boolean>
 		 * to allow instantaneous determination. 
 		 */
-		routine.startSequence();
+		routine.startRoutine();
 	}
 	@Override
-	public void update(float dt) 
+	public void updateRoutine(float dt) 
 	{
-		routine.update(dt);
+		routine.updateRoutine(dt);
 	}
 
 	@Override
-	public boolean sequenceIsComplete() 
+	public void completeRoutine() 
 	{
-		return routine.sequenceIsComplete();
+		routine.completeRoutine();
 	}
 
 	@Override
-	public void completeSequence() 
+	public void cancelRoutine() 
 	{
-		routine.completeSequence();
+		routine.cancelRoutine();
 	}
 
 	@Override
-	public void cancelSequence() 
+	public boolean routineSucceeded()
 	{
-		routine.cancelSequence();
+		return routine.routineSucceeded();
 	}
 
 	@Override
-	public boolean succeeded()
+	public boolean routineFailed() 
 	{
-		return routine.succeeded();
+		return routine.routineFailed();
 	}
 
 	@Override
-	public boolean failed() 
+	public boolean routineInstaSucceeded() 
 	{
-		return routine.failed();
+		return heuristic.get() ? success.routineInstaSucceeded() : fail.routineInstaSucceeded();
 	}
 
 	@Override
-	public boolean instaSucceeded() 
-	{
-		return heuristic.get() ? success.instaSucceeded() : fail.instaSucceeded();
+	public boolean routineInstaFailed() {
+		return heuristic.get() ? success.routineInstaFailed() : fail.routineInstaFailed();
 	}
-
-	@Override
-	public boolean instaFailed() {
-		return heuristic.get() ? success.instaFailed() : fail.instaFailed();
-	}
-
-
-
 }

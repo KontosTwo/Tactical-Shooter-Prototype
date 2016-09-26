@@ -1,19 +1,19 @@
 package com.mygdx.entity.soldier;
 
-import java.util.LinkedList;
-import java.util.List;
 
 import com.mygdx.ai.leaf.AuxiliaryRoutineable;
 import com.mygdx.ai.leaf.RoutineFactory;
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
-import com.mygdx.misc.Pair;
-import com.mygdx.physics.Point;
+import com.mygdx.map.Path;
 import com.mygdx.script.Scripter;
 
 class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,AuxiliaryRoutineable
 {
 	private final Scripter script;
+	
+	private static final int MAXPATHFINDINGDISTANCE = 30;
+	private static final int MAXDISTANCEFROMTILECHECKINGDISTANCE = 21;
 	
 	private SoldierBattleAuxiliary(SoldierBattleMediator sbm, SoldierBattleState sbs) 
 	{
@@ -36,7 +36,7 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 
 	@Override
 	public void aMoveTo(double x, double y) {
-		script.pushSequence(RoutineFactory.createPathToSeq(x,y, this));		
+		script.pushSequence(RoutineFactory.createSequencialablePathTo(this,x,y));		
 	}
 
 	@Override
@@ -63,11 +63,11 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 	}
 
 	@Override
-	public Pair<Boolean, List<Point>> calculatePath(double x, double y) {
+	public Path calculatePath(double x, double y) {
 		// TODO Auto-generated method stub
 		return findPath((int)soldierBattleState.center.getCenterReference().x,
 				(int)soldierBattleState.center.getCenterReference().y,
-				(int)x, (int)y);
+				(int)x, (int)y,MAXPATHFINDINGDISTANCE);
 	}
 
 	@Override
@@ -89,8 +89,8 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 		soldierBattleState.idle();
 	}
 	@Override
-	public boolean finishMoveTo(double x, double y) {
-		return  soldierBattleState.center.reachTarget(x,y) || soldierBattleState.center.distanceFrom(x, y) < 50;
+	public boolean finishedMoveTo(double x, double y) {
+		return  /*soldierBattleState.center.reachTarget(x,y) ||*/ soldierBattleState.center.distanceFrom(x, y) < MAXDISTANCEFROMTILECHECKINGDISTANCE;
 	}
 	
 	

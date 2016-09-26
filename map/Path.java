@@ -1,22 +1,32 @@
 package com.mygdx.map;
 
+import java.util.Iterator;
 import java.util.List;
 
-import com.mygdx.physics.Point;
+import com.mygdx.physics.PrecisePoint;
 
 
 public class Path 
 {
-	private boolean pathPossible;
-	private List<Point> path;
+	private final boolean pathPossible;
+	private final boolean alreadyAtDestination;
+	private final List<PrecisePoint> path;
 	
-	Path(List<Point> p,boolean possible){
+	Path(List<PrecisePoint> p,boolean possible,boolean alreadyThere){
 		path = p;
 		pathPossible = possible;
+		alreadyAtDestination = alreadyThere;
 	}
 	
 	public boolean pathIsPossible(){
 		return pathPossible;
 	}
 	
+	public List<PrecisePoint> getPath(){
+		return path;
+	}
+	
+	public boolean alreadyAtDestionation(){
+		return alreadyAtDestination;
+	}
 }

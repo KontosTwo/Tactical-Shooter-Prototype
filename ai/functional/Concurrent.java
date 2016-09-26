@@ -3,21 +3,21 @@ package com.mygdx.ai.functional;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Concurrent implements RoutineSequencialable
+public class Concurrent implements Routineable
 {
-	private final List<RoutineSequencialable> routine;
-	private List<RoutineSequencialable> routineQueue;
+	private final List<Routineable> routine;
+	private List<Routineable> routineQueue;
 	
-	public Concurrent (List<RoutineSequencialable> routine)
+	public Concurrent (List<Routineable> routine)
 	{
 		this.routine = new LinkedList<>(routine);
 		routineQueue = new LinkedList<>();
 	}
 	
 	
-	public static Selector buildSelector(RoutineSequencialable... rs)
+	public static Selector buildSelector(Routineable... rs)
 	{
-		LinkedList <RoutineSequencialable> routineList = new LinkedList<RoutineSequencialable>();
+		LinkedList <Routineable> routineList = new LinkedList<Routineable>();
 		for(int i = 0; i < rs.length; i ++)
 		{
 			routineList.add(rs[i]);
@@ -25,73 +25,64 @@ public class Concurrent implements RoutineSequencialable
 		return new Selector(routineList);
 	}
 	@Override
-	public void startSequence() 
+	public void startRoutine() 
 	{
 		routineQueue.clear();
 		routineQueue.addAll(routine);
-		routineQueue.forEach(r -> r.startSequence());
+		routineQueue.forEach(r -> r.startRoutine());
 	}
 	@Override
-	public void update(float dt) 
+	public void updateRoutine(float dt) 
 	{
 		routineQueue.forEach(r ->
 		{
-			if(r.succeeded())
+			if(r.routineSucceeded())
 			{
-				r.completeSequence();
+				r.completeRoutine();
 				routineQueue.remove(r);
 			}
-			else if(r.failed())
+			else if(r.routineFailed())
 			{
-				r.cancelSequence();
+				r.cancelRoutine();
 				routineQueue.remove(r);
 			}
 			else
 			{
-				r.update(dt);
+				r.updateRoutine(dt);
 			}	
 		}			
 		);
 	}
 
 	@Override
-	public boolean sequenceIsComplete() 
-	{
-		return routineQueue.isEmpty();
-	}
-
-	@Override
-	public void completeSequence() 
-	{
+	public void completeRoutine() {
 		routineQueue.clear();
 	}
 
 	@Override
-	public void cancelSequence() 
-	{
-		routineQueue.forEach(r -> r.cancelSequence());
+	public void cancelRoutine() {
+		routineQueue.forEach(r -> r.cancelRoutine());
 	}
 
 	@Override
-	public boolean succeeded()
+	public boolean routineSucceeded()
 	{
 		return routineQueue.isEmpty();
 	}
 
 	@Override
-	public boolean failed() 
+	public boolean routineFailed() 
 	{
 		return false;
 	}
 
-
 	@Override
-	public boolean instaSucceeded() 
+	public boolean routineInstaSucceeded() 
 	{
 		boolean ret = true;
-		for(RoutineSequencialable r : routine)
+		for(Routineable r : routine)
 		{
-			if(!r.instaSucceeded())
+			if(!r.routineInstaSucceeded())
 			{
 				ret = false;
 			}
@@ -101,18 +92,17 @@ public class Concurrent implements RoutineSequencialable
 
 
 	@Override
-	public boolean instaFailed() 
+	public boolean routineInstaFailed() 
 	{
 		boolean ret = true;
-		for(RoutineSequencialable r : routine)
+		for(Routineable r : routine)
 		{
-			if(!r.instaFailed())
+			if(!r.routineInstaFailed())
 			{
 				ret = false;
 			}
 		}
 		return ret;
 	}
-
 
 }

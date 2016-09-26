@@ -1,63 +1,52 @@
 package com.mygdx.ai.functional;
 
 
-public class AlwaysSucceed implements RoutineSequencialable
+final class AlwaysSucceed implements Routineable
 {
-	private RoutineSequencialable routine;
+	private Routineable routine;
 	
-	public AlwaysSucceed(RoutineSequencialable r)
-	{
+	AlwaysSucceed(Routineable r){
 		routine = r;
 	}
 	
 	@Override
-	public void startSequence() 
-	{
-		routine.startSequence();
+	public void startRoutine() {
+		routine.startRoutine();
 	}
 
 	@Override
-	public void update(float dt)
-	{
-		routine.update(dt);
+	public void updateRoutine(float dt) {
+		routine.updateRoutine(dt);
 	}
 
 	@Override
-	public boolean sequenceIsComplete() 
-	{
-		return routine.sequenceIsComplete();
+	public void completeRoutine() {
+		routine.completeRoutine();
 	}
 
 	@Override
-	public void completeSequence() 
-	{
-		routine.completeSequence();
+	public void cancelRoutine() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void cancelSequence() {
-		routine.cancelSequence();
+	public boolean routineSucceeded() {
+		return routine.routineSucceeded() || routine.routineFailed();
 	}
 
 	@Override
-	public boolean failed() {
+	public boolean routineFailed() {
 		return false;
 	}
 
 	@Override
-	public boolean succeeded() {
-		// this routine will return fail the moment it is complete
-		return routine.sequenceIsComplete() || routine.failed();
-	}
-
-	@Override
-	public boolean instaSucceeded() {
+	public boolean routineInstaSucceeded() {
 		return false;
 	}
 
 	@Override
-	public boolean instaFailed() {
+	public boolean routineInstaFailed() {
 		return false;
 	}
-
 }

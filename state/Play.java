@@ -22,7 +22,7 @@ import com.mygdx.graphic.BatchCoordinator;
 import com.mygdx.graphic.MapRenderer;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.Script;
-import com.mygdx.script.Sequencialable;
+import com.mygdx.script.Scripter.Sequencialable;
 import com.mygdx.sound.SoundRepository;
 
 final class Play extends GameState implements PlayControlSwitchable
@@ -308,7 +308,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		private void update(float dt)
 		{
 			em.update(dt);
-			script.update(dt);
+			script.updateSequence(dt);
 			/*if(script.sequenceIsComplete())
 			{
 				/*

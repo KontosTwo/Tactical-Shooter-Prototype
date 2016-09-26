@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.mygdx.graphic.Animator;
+import com.mygdx.map.Path;
 import com.mygdx.misc.Pair;
 import com.mygdx.physics.MovableBox;
 import com.mygdx.physics.MovablePoint;
-import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
 
 abstract class SoldierBattle 
@@ -24,7 +24,7 @@ abstract class SoldierBattle
 	{
 		public boolean see(int x1,int y1,int z1,int x2,int y2,int z2);
 		public void shoot(SoldierBattle shooter,float accuracy,int xTarget,int yTarget,int zTarget);
-		public Pair<Boolean,List<Point>> findPath(int sx, int sy, int tx, int ty);
+		public Path findPath(int sx, int sy, int tx, int ty,int maxDistance);
 	}
 	
 	SoldierBattle(SoldierBattleMediator sbm,SoldierBattleState sbs)
@@ -68,8 +68,8 @@ abstract class SoldierBattle
 	{
 		mediator.see(xOrigin, yOrigin, zOrigin, xTarget, yTarget, zTarget);
 	}
-	protected final Pair<Boolean,List<Point>> findPath(int sx, int sy, int tx, int ty){
-		return mediator.findPath(sx, sy, tx, ty);
+	protected final Path findPath(int sx, int sy, int tx, int ty,int maxDistance){
+		return mediator.findPath(sx, sy, tx, ty,maxDistance);
 	}
 	void update(float dt)
 	{

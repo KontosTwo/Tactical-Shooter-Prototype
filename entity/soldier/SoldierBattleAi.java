@@ -1,6 +1,6 @@
 package com.mygdx.entity.soldier;
 
-class SoldierBattleAutomated 
+class SoldierBattleAi 
 {
 	interface AiMediator
 	{

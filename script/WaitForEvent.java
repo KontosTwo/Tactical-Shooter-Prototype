@@ -1,5 +1,7 @@
 package com.mygdx.script;
 
+import com.mygdx.script.Scripter.Sequencialable;
+
 
 class WaitForEvent implements Sequencialable
 {
@@ -18,7 +20,7 @@ class WaitForEvent implements Sequencialable
 	}
 
 	@Override
-	public void update(float dt) 
+	public void updateSequence(float dt) 
 	{
 		trigger.update(dt);
 		if(eventComplete == false)// the update loop will check trigger for triggered() only when it hasn't been triggered yet
@@ -28,7 +30,7 @@ class WaitForEvent implements Sequencialable
 	}
 
 	@Override
-	public boolean sequenceIsComplete() 
+	public boolean completed() 
 	{
 		return eventComplete;
 	}
@@ -42,6 +44,18 @@ class WaitForEvent implements Sequencialable
 	@Override
 	public void cancelSequence()
 	{
+		
+	}
+
+	@Override
+	public boolean sequenceInstaCompleted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void calculateInstaCompleted() {
+		// TODO Auto-generated method stub
 		
 	}
 }

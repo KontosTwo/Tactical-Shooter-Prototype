@@ -6,10 +6,7 @@ import java.util.List;
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.entity.soldier.SoldierBattle.SoldierBattleMediator;
-import com.mygdx.misc.Pair;
-import com.mygdx.physics.MovableBox;
-import com.mygdx.physics.Point;
-import com.mygdx.physics.PrecisePoint;
+import com.mygdx.map.Path;
 
 public class InteractionSoldierBattle implements SoldierBattleMediator
 {
@@ -23,7 +20,7 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	public interface TacticalInfoGatherer 
 	{
 		public boolean see(int x1,int y1,int z1,int x2,int y2,int z2);
-		public Pair<Boolean,List<Point>> findPath(int sx, int sy, int tx, int ty);
+		public Path findPath(int sx, int sy, int tx, int ty,int maxDistance);
 		
 	}
 	public interface TacticalAction 
@@ -96,9 +93,9 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 		return infoGatherer.see( x1, y1, z1, x2, y2, z2);
 	}
 	@Override
-	public Pair<Boolean, List<Point>> findPath(int sx, int sy, int tx,
-			int ty) {
-		return infoGatherer.findPath(sx, sy, tx, ty);
+	public Path findPath(int sx, int sy, int tx,
+			int ty,int maxDistance) {
+		return infoGatherer.findPath(sx, sy, tx, ty,maxDistance);
 	}
 	
 }

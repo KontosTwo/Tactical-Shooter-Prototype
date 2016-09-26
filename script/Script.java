@@ -2,6 +2,8 @@ package com.mygdx.script;
 
 import java.util.List;
 
+import com.mygdx.script.Scripter.Sequencialable;
+
  public class Script implements Sequencialable
 {
 	/*
@@ -32,9 +34,9 @@ import java.util.List;
 	}
 
 	@Override
-	public boolean sequenceIsComplete() 
+	public boolean completed() 
 	{
-		return script.sequenceIsComplete();
+		return script.completed();
 	}
 
 	@Override
@@ -44,14 +46,26 @@ import java.util.List;
 	}
 
 	@Override
-	public void update(float dt) 
+	public void updateSequence(float dt) 
 	{
-		script.update(dt);
+		script.updateSequence(dt);
 	}
 	@Override
 	public void cancelSequence() 
 	{
 		script.cancelSequence();
+	}
+
+	@Override
+	public boolean sequenceInstaCompleted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void calculateInstaCompleted() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

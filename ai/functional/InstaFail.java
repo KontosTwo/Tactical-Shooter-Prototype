@@ -1,61 +1,55 @@
 package com.mygdx.ai.functional;
 
-public class InstaFail implements RoutineSequencialable
+public class InstaFail implements Routineable
 {
 
 	@Override
-	public void startSequence() {
+	public void startRoutine() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void update(float dt) {
+	public void updateRoutine(float dt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void completeRoutine() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public boolean sequenceIsComplete() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public void completeSequence() {
+	public void cancelRoutine() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void cancelSequence() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean succeeded() {
+	public boolean routineSucceeded() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean failed() {
+	public boolean routineFailed() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public boolean instaSucceeded() {
+	public boolean routineInstaSucceeded() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean instaFailed() {
+	public boolean routineInstaFailed() {
 		// TODO Auto-generated method stub
 		return true;
 	}
-
 
 }

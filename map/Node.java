@@ -1,24 +1,24 @@
 package com.mygdx.map;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.mygdx.debug.Debugger;
-import com.mygdx.physics.Point;
+import com.mygdx.physics.PrecisePoint;
 
-class Node 
-{
+final class Node {
 	private Node parent;
 	private int x;
 	private int y;
 	private int gCost;
 	private int hCost;
-	
-	Node(int x,int y)
-	{
+		
+	Node(int x,int y){
 		this.x = x;
 		this.y = y;
+		Debugger.mark(x*30, y*30);
 		gCost = 0;
 		hCost = 0;
 	}
@@ -29,19 +29,15 @@ class Node
 	int getY(){
 		return y;
 	}
-		
-	boolean matches(int x,int y)
-	{
-		return this.x == x && this.y == y;
-	}
 	
-	 void setAsParentAs(Node n)
-	{
+	 void setAsParentAs(Node n){
 		n.parent = this;
 	}
+	 boolean withinRangeOfOrigin(int maxDistanceFromOrigin){
+		 return getFCost() <= maxDistanceFromOrigin;
+	 }
 	
-	 static Node lowestFInOpen(List <Node> open)
-	{
+	 static Node lowestFInOpen(Collection <Node> open){
 		Node ret = null;
 		int lowest = Integer.MAX_VALUE;
 		for(Node n : open)
@@ -87,8 +83,8 @@ class Node
 	 * last node (the intended destination of the
 	 * pathfinder)
 	 */
-	List<Point> createPath(int tileSize){
-		LinkedList<Point> path = new LinkedList<Point>();
+	List<PrecisePoint> createPath(int tileSize){
+		LinkedList<PrecisePoint> path = new LinkedList<>();
 		
 		// always add the first node as the first point
 		path.add(createMapPoint(tileSize));
@@ -103,11 +99,13 @@ class Node
 		// since we iterate from the destination, the path is in reverse order
 		Collections.reverse(path);
 		
+		// eliminate the first node. The actor is already at the first node. 
+		path.pollFirst();
 		return path;
 	}
 	
-	private Point createMapPoint(int tileSize){
-		return new Point((x*tileSize) + (tileSize/2),(y*tileSize) + (tileSize/2));
+	private PrecisePoint createMapPoint(int tileSize){
+		return new PrecisePoint((x*tileSize) + (tileSize/2),(y*tileSize) + (tileSize/2));
 	}
 	
 	 boolean moreCostlyThan(Node n)
@@ -125,8 +123,16 @@ class Node
         hash = hash * 31 + y;
         return hash;
 	}
-	public boolean equals(Object o)
-	{
-		return ((Node)o).x == this.x &&  ((Node)o).y == this.y;
+	public boolean equals(Object other){
+		if(this == other){
+			return true;
+		}
+		if(other == null){
+			return false;
+		}
+		if(!(this instanceof Node)){
+			return false;
+		}
+		return ((Node)other).x == this.x &&  ((Node)other).y == this.y;
 	}
 }

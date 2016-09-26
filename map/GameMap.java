@@ -1,11 +1,13 @@
 package com.mygdx.map;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -19,7 +21,6 @@ import com.mygdx.debug.Debugger;
 import com.mygdx.graphic.MapRenderer;
 import com.mygdx.misc.Pair;
 import com.mygdx.physics.MyVector3;
-import com.mygdx.physics.Point;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.physics.VectorEquation;
 /**
@@ -27,15 +28,13 @@ import com.mygdx.physics.VectorEquation;
  * one to interact with the map environment
  * 
  * @author Vincent Li
- *
  */
-public class GameMap {
+public final class GameMap {
 	private final MapRenderer renderer;
-	private MapData map;
+	private final MapData map;
 	
 	private final ArrayList <Collidable> collidableList;
 
-	
 	public interface Collidable{
 		public boolean aboutToCrossRightOf(int x);
 		public boolean aboutToCrossLeftOf(int x);
@@ -110,7 +109,7 @@ public class GameMap {
 			}
 		}
 	}
-	public boolean see(int x1,int y1,int z1,int x2,int y2,int z2){
+	public boolean canSee(int x1,int y1,int z1,int x2,int y2,int z2){
 		return raytracePossible(map.getHeightVisView(), x1, y1, z1, x2, y2, z2);
 	}
 	public boolean canShoot(int x1,int y1,int z1,int x2,int y2,int z2){
@@ -124,7 +123,7 @@ public class GameMap {
 		x2 = map.scaleToTileCoord(x2);
 		y1 = map.scaleToTileCoord(y1);
 		y2 = map.scaleToTileCoord(y2);
-
+		
 		/*
 		 * Bresenham's algorithm for identifying
 		 * tiles that lay on a vector. Those tiles
@@ -159,11 +158,13 @@ public class GameMap {
 	    }
 		return possible;
 	}
+
 	/**
-	 * Precondition - ray and block are guaranteed to intersect
-	 * at two points
+	 * Returns whether the ray intersects the obstacle
 	 */
 	private boolean stoppedBy(RayBlockable obstacle,VectorEquation ray,int[][] heightView){
+		
+		// find all the points where the ray intersects the obstacle
 		HashSet<PrecisePoint> rayHeuristic = ray.getIntersectionWithSquare(
 				obstacle.getCenter().x, 
 				obstacle.getCenter().x + obstacle.getSides().getX(), 
@@ -173,6 +174,7 @@ public class GameMap {
 		ArrayList<PrecisePoint> intersections = new ArrayList<>(rayHeuristic);
 		PrecisePoint intersectionCenter = new PrecisePoint();
 		
+		// determining which points, if any, exist
 		if(intersections.size() == 0){
 			return false;
 		}
@@ -183,6 +185,7 @@ public class GameMap {
 			intersectionCenter.y = ((intersections.get(0).y + intersections.get(1).y)/2);
 		}
 		
+		// obtaining the heights of the obstacle and at the ray
 		float heightOfRayAtObstacle = Math.abs(
 			ray.getZFromXOrY(intersectionCenter.x)
 		);
@@ -190,6 +193,7 @@ public class GameMap {
 				heightView[map.scaleToTileCoord(intersectionCenter.y)]
 						[map.scaleToTileCoord(intersectionCenter.x)];
 		
+		// if the obstacle's height is higher than that of the ray, the obstacle "stops" the ray
 		if(heightOfMapAtObstacle > heightOfRayAtObstacle){
 			Debugger.mark(intersectionCenter.x, intersectionCenter.y);
 		}
@@ -198,7 +202,7 @@ public class GameMap {
 	/**
 	 * Creates a representation of the terrain
 	 * at coordinates (x,y) as a 3-D box
-	 * Uses tile coordinates
+	 * Accepts tile coordinates
 	 */
 	private RayBlockable createTileRayBlockable(int x,int y,int[][] heightView){
 		return new RayBlockable(){
@@ -216,64 +220,72 @@ public class GameMap {
 	}
 	/**
 	 * Returns a list of points representing the shortest
-	 * path from sx to sy, and a boolean signifying whether
+	 * path from (sx,sy) to (tx,ty), and a boolean signifying whether
 	 * the path exists
+	 * 
+	 * Uses map coordinates
 	 */
-	public Pair<Boolean,List<Point>> findPath(int sx, int sy, int tx, int ty) {
-		Pair<Boolean,List<Point>> ret = new Pair<Boolean,List<Point>>();
-		int sizeOfPath = 0; 
-		ret.x = true;
+	public Path findPath(int sx, int sy, int tx, int ty,int maxDistance) {
+		//Pair<Boolean,List<PrecisePoint>> ret = new Pair<Boolean,List<PrecisePoint>>();
+		boolean pathPossible = true;
+		List<PrecisePoint> shortestPath = new LinkedList<PrecisePoint>();
+
 		sx = map.scaleToTileCoord(sx);
 		sy = map.scaleToTileCoord(sy);
 		tx = map.scaleToTileCoord(tx);
 		ty = map.scaleToTileCoord(ty);	
 		
-		if(!map.createTileAt(tx, ty).walkable()){
-			ret.x = false; 
-	    	return ret;
+		if(!map.inBounds(tx, ty) || !map.createTileAt(tx, ty).walkable()){
+			pathPossible = false; 
+	    	return new Path(shortestPath,pathPossible,false);
 	    }
-		LinkedList<Node> openList = new LinkedList<Node>();
-		LinkedList<Node> closedList = new LinkedList<Node>();
-	    boolean done = false;
-	    Node current;
-	    Node start = new Node(sx,sy);
-	    Node target = new Node(tx,ty);
+		Set<Node> openList = new HashSet<Node>();
+		Set<Node> closedList = new HashSet<Node>();
+	    Node startingNode = new Node(sx,sy);
+	    Node targetNode = new Node(tx,ty);
 	    
-	    openList.add(start);
+	    openList.add(startingNode);
 	    calc:
-        while (!done) {
-            current = Node.lowestFInOpen(openList); 
-            closedList.add(current); 
-            openList.remove(current); 
-            if ((current.matches(tx, ty))) { 
-            	List<Point> pathway = current.createPath(map.getTileSize());
-            	ret.y =  pathway;
+        while (true) {
+            // considering the node closest to the target
+        	Node currentNode = Node.lowestFInOpen(openList); 
+            closedList.add(currentNode); 
+            openList.remove(currentNode); 
+            
+            // if the shortest path is found
+            if ((currentNode.equals(targetNode))) { 
+            	List<PrecisePoint> pathway = currentNode.createPath(map.getTileSize());
+            	shortestPath =  pathway;
             	break calc;
-            }                            
-            List<Node> adjacentNodes = getAdjacentNodes(current,closedList);
-            for (int i = 0; i < adjacentNodes.size(); i++) {
-            	Node currentAdj = adjacentNodes.get(i);         	
-                if(!openList.contains(currentAdj)) {                  
-                    current.setAsParentAs(currentAdj);
-                    currentAdj.setHCost(target); 
-                    currentAdj.setGCost(start); 
-                    openList.add(currentAdj);
+            }        
+            
+            // sifting through adjacentNodes
+            List<Node> adjacentNodes = getAdjacentNodes(currentNode,closedList);
+            for (Node currentAdjNode : adjacentNodes) {
+                if(!openList.contains(currentAdjNode)) {                  
+                    currentNode.setAsParentAs(currentAdjNode);                    
+                    currentAdjNode.setGCost(startingNode); 
+                    currentAdjNode.setHCost(targetNode);
+                    
+                    // check to see whether the current node is within range of the startingNode
+                    if(currentAdjNode.withinRangeOfOrigin(maxDistance)){      
+                    	openList.add(currentAdjNode);
+                    }                
                 }
-                else{ 
-                    if (currentAdj.moreCostlyThan(current)) { 
-                        current.setAsParentAs(currentAdj);
-                        currentAdj.setGCost(start);
-                    }
+                else if (currentAdjNode.moreCostlyThan(currentNode)){                   
+                    currentNode.setAsParentAs(currentAdjNode);
+                    currentAdjNode.setGCost(startingNode); 
                 }
             }
             if (openList.isEmpty()) { 
-            	ret.x = false;
+            	pathPossible = false;
+            	return new Path(shortestPath,pathPossible,shortestPath.isEmpty());
             }                     
         }
-	    return ret;
+	    return new Path(shortestPath,pathPossible,shortestPath.isEmpty());
 	}
 	
-	private List<Node> getAdjacentNodes(Node center,List<Node> closedList){
+	private List<Node> getAdjacentNodes(Node center,Collection<Node> closedList){
 		List<Node> adjacentNodes = new ArrayList<Node>(8);
 		/*
 		 * This functional interface will add
@@ -303,9 +315,6 @@ public class GameMap {
 	private boolean walkableFromAToB(Node a,Node b){
 		return walkableFromAToB(a.getX(),a.getY(),b.getX(),b.getY());
 	}
-	/**
-	 * Uses tile coordinates
-	 */
 	private boolean inBounds(Node node){
 		return map.inBounds(node.getX(),node.getY());
 	}

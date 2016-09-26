@@ -2,8 +2,6 @@ package com.mygdx.map;
 
 import java.util.function.Consumer;
 
-import com.mygdx.physics.Point;
-
 /**
  * A collection of relative coordinate from an origin 
  * x, y. Useful for iterating through a coordinate's 
@@ -25,7 +23,7 @@ import com.mygdx.physics.Point;
 		vector = new Point(x,y);
 	}
 	
-	 static void iterateAdjacent(Consumer<Point> function){
+	static void iterateAdjacent(Consumer<Point> function){
 		for(CoordinateDirection direction : CoordinateDirection.values()){
 			function.accept(direction.vector);
 		}

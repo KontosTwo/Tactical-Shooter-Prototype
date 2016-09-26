@@ -10,10 +10,10 @@ import java.util.Queue;
 import com.mygdx.debug.Debugger;
 
 
-public class Survival implements RoutineSequencialable
+public class Survival implements Routineable
 {
-	 	private final List<RoutineSequencialable> routine;
-	    private Queue<RoutineSequencialable> routineQueue;
+	 	private final List<Routineable> routine;
+	    private Queue<Routineable> routineQueue;
 	    private List<Survivalable> condition;
 	     
 	    /*
@@ -21,13 +21,13 @@ public class Survival implements RoutineSequencialable
 	     * in other areas such as cutscenes and game scripts
 	     */
 	    
-	    public Survival(List<RoutineSurvivalable> routineList,RoutineSequencialable aspirational) 
+	    public Survival(List<RoutineSurvivalable> routineList,Routineable aspirational) 
 	    {
-	        routine = new LinkedList<RoutineSequencialable>(routineList);
-	        routineQueue = new LinkedList<RoutineSequencialable>();
+	        routine = new LinkedList<Routineable>(routineList);
+	        routineQueue = new LinkedList<Routineable>();
 	        condition = new LinkedList<>();
 	    }
-	    public static Survival build(RoutineSequencialable aspirational,RoutineSurvivalable... rs)
+	    public static Survival build(Routineable aspirational,RoutineSurvivalable... rs)
 		{
 			List <RoutineSurvivalable> routineList = new LinkedList<>();
 			for(int i = 0; i < rs.length; i ++)
@@ -38,64 +38,50 @@ public class Survival implements RoutineSequencialable
 		}
 		
 		@Override
-		public void startSequence() 
+		public void startRoutine() 
 		{
-			Debugger.tick("Sequence is starting");
+			Debugger.tick("Routine is starting");
 			routineQueue.clear();
 	        routineQueue.addAll(routine);
 	        transverse();
-	    	routineQueue.peek().startSequence();   
+	    	routineQueue.peek().startRoutine();   
 		}
 
 		@Override
-		public void update(float dt) 
+		public void updateRoutine(float dt) 
 		{
-			if(routineQueue.peek().succeeded())
+			if(routineQueue.peek().routineSucceeded())
 			{
-				routineQueue.peek().completeSequence();
+				routineQueue.peek().completeRoutine();
 				routineQueue.poll();
 				transverse();
-				routineQueue.peek().startSequence();
+				routineQueue.peek().startRoutine();
 			}
 			else
 			{
-				routineQueue.peek().update( dt);
+				routineQueue.peek().updateRoutine( dt);
 			}
 		}
 
 		@Override
-		public boolean sequenceIsComplete() 
+		public void completeRoutine() 
 		{
-			if(routineQueue.isEmpty())
-			{
-				return true;
-			}
-			else if(routineQueue.peek().succeeded())
-			{
-				return succeededAfterTransverseInstaSucceeded();
-			}	
-			return false;
-		}
-
-		@Override
-		public void completeSequence() 
-		{
-			Debugger.tick("completing Sequence");
+			Debugger.tick("completing Routine");
 			if(!routineQueue.isEmpty())
 			{
-				routineQueue.peek().completeSequence();
+				routineQueue.peek().completeRoutine();
 			}
 			routineQueue.clear();
 		}
 
 		@Override
-		public void cancelSequence() 
+		public void cancelRoutine() 
 		{
-			routineQueue.peek().cancelSequence();
+			routineQueue.peek().cancelRoutine();
 		}
 
 		@Override
-		public boolean succeeded() 
+		public boolean routineSucceeded() 
 		{
 			/*
 			 * rewrite a way to check if succeeded
@@ -105,7 +91,7 @@ public class Survival implements RoutineSequencialable
 			{
 				return true;
 			}
-			else if(routineQueue.peek().succeeded())
+			else if(routineQueue.peek().routineSucceeded())
 			{
 				return succeededAfterTransverseInstaSucceeded();
 			}
@@ -113,14 +99,14 @@ public class Survival implements RoutineSequencialable
 		}
 		private boolean succeededAfterTransverseInstaSucceeded()
 		{
-			LinkedList<RoutineSequencialable> copy = new LinkedList<>(routineQueue);
+			LinkedList<Routineable> copy = new LinkedList<>(routineQueue);
 			copy.poll();
-			Iterator <RoutineSequencialable> iterator = copy.iterator();
+			Iterator <Routineable> iterator = copy.iterator();
 			search:
 			while(iterator.hasNext())
 			{
-				RoutineSequencialable i = iterator.next();
-				if(i.instaSucceeded())
+				Routineable i = iterator.next();
+				if(i.routineInstaSucceeded())
 				{
 					iterator.remove();
 				}
@@ -133,7 +119,7 @@ public class Survival implements RoutineSequencialable
 		}
 
 		@Override
-		public boolean failed() 
+		public boolean routineFailed() 
 		{
 			if(!conditionUpheld())
 			{
@@ -143,11 +129,11 @@ public class Survival implements RoutineSequencialable
 			{
 				return false;
 			}
-			else if(routineQueue.peek().failed())
+			else if(routineQueue.peek().routineFailed())
 			{
 				return true;
 			}
-			else if(routineQueue.peek().succeeded())
+			else if(routineQueue.peek().routineSucceeded())
 			{
 				return failedAfterTransverseInstaFailed();
 			}
@@ -170,18 +156,18 @@ public class Survival implements RoutineSequencialable
 		private boolean failedAfterTransverseInstaFailed()
 		{
 			boolean ret = false;
-			LinkedList<RoutineSequencialable> copy = new LinkedList<>(routineQueue);
+			LinkedList<Routineable> copy = new LinkedList<>(routineQueue);
 			// get rid of the routine that succeeded
 			copy.poll();
 			search:
 			for(int i = 0; i < copy.size(); i ++)
 			{
-				if(copy.get(i).instaFailed())
+				if(copy.get(i).routineInstaFailed())
 				{
 					// checking that all preceding routines have ALREADY succeeded
 					for(int j = 0; j < i; j++)
 					{
-						if(!copy.get(j).instaSucceeded())
+						if(!copy.get(j).routineInstaSucceeded())
 						{
 							ret = false;
 							break search;
@@ -204,12 +190,12 @@ public class Survival implements RoutineSequencialable
 			 * Also returns the list of remaining routineSeq
 			 */
 			//assert !routineQueue.isEmpty();
-			Iterator <RoutineSequencialable> iterator = routineQueue.iterator();
+			Iterator <Routineable> iterator = routineQueue.iterator();
 			search:
 			while(iterator.hasNext())
 			{
-				RoutineSequencialable i = iterator.next();
-				if(i.instaSucceeded())
+				Routineable i = iterator.next();
+				if(i.routineInstaSucceeded())
 				{
 					iterator.remove();
 				}
@@ -219,31 +205,28 @@ public class Survival implements RoutineSequencialable
 				}
 			}
 		}
-		public boolean instaSucceeded()
+
+		public boolean routineInstaSucceeded()
 		{
 			boolean ret = true;
-			for(RoutineSequencialable r : routine)
+			for(Routineable r : routine)
 			{
-				if(!r.instaSucceeded())
+				if(!r.routineInstaSucceeded())
 				{
 					ret = false;
 				}
 			}
 			return ret;
 		}
-		public boolean instaFailed()
-		{
+		public boolean routineInstaFailed(){
 			boolean ret = false;
 			search:
-			for(int i = 0; i < routine.size(); i ++)
-			{
-				if(routine.get(i).instaFailed())
-				{
+			for(int i = 0; i < routine.size(); i ++){
+				if(routine.get(i).routineInstaFailed()){
+					
 					// checking that all preceding routines have ALREADY succeeded
-					for(int j = 0; j < i; j++)
-					{
-						if(!routine.get(j).instaSucceeded())
-						{
+					for(int j = 0; j < i; j++){
+						if(!routine.get(j).routineInstaSucceeded()){
 							ret = false;
 							break search;
 						}

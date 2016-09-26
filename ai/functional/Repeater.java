@@ -1,12 +1,12 @@
 package com.mygdx.ai.functional;
 
-public class Repeater implements RoutineSequencialable
+public class Repeater implements Routineable
 {
-	private final RoutineSequencialable routine;
+	private final Routineable routine;
 	private int times;
 	private int currentTimes;
 	
-	public Repeater(RoutineSequencialable rs)
+	public Repeater(Routineable rs)
 	{
 		routine = rs;
 	}
@@ -17,75 +17,69 @@ public class Repeater implements RoutineSequencialable
 	}
 	
 	@Override
-	public void startSequence() 
+	public void startRoutine() 
 	{
-		routine.startSequence();
+		routine.startRoutine();
 		currentTimes = 0;
 	}
 
 	@Override
-	public void update(float dt) 
+	public void updateRoutine(float dt) 
 	{
 		/*
 		 * repeater does not concern whether the routine has completed or not,
 		 * it checks for failure
 		 */
-		if(routine.succeeded())
+		if(routine.routineSucceeded())
 		{
-			routine.completeSequence();
-			routine.startSequence();
+			routine.completeRoutine();
+			routine.startRoutine();
 			currentTimes ++;
 		}
-		else if(routine.failed())
+		else if(routine.routineFailed())
 		{
-			routine.cancelSequence();
-			routine.startSequence();
+			routine.cancelRoutine();
+			routine.startRoutine();
 			currentTimes ++;
 		}
 		else
 		{
-			routine.update(dt);
+			routine.updateRoutine(dt);
 		}
 	}
 
 	@Override
-	public boolean sequenceIsComplete() 
-	{
-		return currentTimes >= times;
-	}
-
-	@Override
-	public void completeSequence() 
+	public void completeRoutine() 
 	{
 		currentTimes = 0;
 	}
 
 	@Override
-	public void cancelSequence() 
+	public void cancelRoutine() 
 	{
-		routine.cancelSequence();
+		routine.cancelRoutine();
 	}
 
 	@Override
-	public boolean succeeded() 
+	public boolean routineSucceeded() 
 	{
 		return currentTimes >= times;
 	}
 
 	@Override
-	public boolean failed() 
+	public boolean routineFailed() 
 	{
 		return false;
 	}
 
 	@Override
-	public boolean instaSucceeded() {
+	public boolean routineInstaSucceeded() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean instaFailed() {
+	public boolean routineInstaFailed() {
 		// TODO Auto-generated method stub
 		return false;
 	}

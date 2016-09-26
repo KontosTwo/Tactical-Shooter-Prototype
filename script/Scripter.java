@@ -1,58 +1,88 @@
 package com.mygdx.script;
 
-
-public class Scripter
-{
-	/*
-	 * runs one sequencialable at a time. The sequencialable
-	 * can only affect one actor. Controls when the actor
-	 * will execute a script
-	 * Scripts can be interrupted by the cancelScript method or the pushing
-	 * of another script
-	 */
+/**
+ * Runs one Sequencialable at a time. The Sequencialable
+ * should only affect one actor. 
+ * Scripts can be interrupted by the cancelScript method or the pushing
+ * of another script
+ */
+public class Scripter{
+	
 	private Sequencialable sequence;
 	private boolean sequenceIsRunning;
-
-	public Scripter()
-	{
+	
+	/**
+	 * Allows any implemented class to execute an action over time.
+	 * The action will have clearly defined starting conditions,
+	 * starting action, updating action, ending condition, ending action, etc
+	 */
+	public interface Sequencialable{
+		/**
+		 * @Precondition sequenceInstaCompleted is false
+		 */
+		public void startSequence();
+		public void updateSequence(float dt);
+		public boolean completed();
+		public void completeSequence();
+		public void cancelSequence();
+		
+		/**
+		 * Calculations to help sequenceInstaCompleted
+		 * reach a decision
+		 */
+		public void calculateInstaCompleted();
+		
+		/**
+		 * Whether the Sequencialable has already completed.
+		 * @Precondition calculateInstaCompleted was called
+		 */
+		public boolean sequenceInstaCompleted();
+	}
+	
+	public Scripter(){
 		sequenceIsRunning = false;
 	}
-	public void cancelScript()
-	{
-		if(sequenceIsRunning)
-		{
+	public void cancelScript(){
+		if(sequenceIsRunning){
 			sequenceIsRunning = false;
 			sequence.cancelSequence();
 		}
 	}
-	public void pushSequence(Sequencialable s)
-	{
-		if(sequenceIsRunning)
-		{
+	/**
+	 * Forcibly terminates the current script if it exists,
+	 * and starts another one
+	 */
+	public void pushSequence(Sequencialable pushed){
+		if(sequenceIsRunning){
 			sequence.cancelSequence();
 		}
-		sequence = s;
-		sequence.startSequence();		
-		sequenceIsRunning = true;
-	}
-	public void update(float dt) 
-	{
-		if(sequenceIsRunning)
-		{
-			if(sequence.sequenceIsComplete())
-			{
-				sequence.completeSequence();
-				sequenceIsRunning = false;
-			}
-			else
-			{
-				sequence.update(dt);
-			}
+		sequence = pushed;
+		
+		// check is sequence is already completed
+		sequence.calculateInstaCompleted();
+		if(sequence.sequenceInstaCompleted()){
+			sequenceIsRunning = false;
+		}else{
+			sequence.startSequence();		
+			sequenceIsRunning = true;
 		}
 		
 	}
-	public boolean isActive()
+	
+	public void update(float dt) 
 	{
+		if(sequenceIsRunning){
+			if(sequence.completed()){
+				sequence.completeSequence();
+				sequenceIsRunning = false;
+			}
+			else{
+				sequence.updateSequence(dt);
+			}
+		}
+	}
+	
+	public boolean isActive(){
 		return sequenceIsRunning;
 	}
 }

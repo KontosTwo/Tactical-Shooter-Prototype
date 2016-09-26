@@ -2,11 +2,11 @@ package com.mygdx.ai.functional;
 
 import com.mygdx.debug.Debugger;
 
-public class InstaSucceed implements RoutineSequencialable
+public class InstaSucceed implements Routineable
 {
 
 	@Override
-	public void startSequence() 
+	public void startRoutine() 
 	{
 		// TODO Auto-generated method stub
 		Debugger.tick("InstaSucceed is starting");
@@ -14,53 +14,46 @@ public class InstaSucceed implements RoutineSequencialable
 	}
 
 	@Override
-	public void update(float dt) {
+	public void updateRoutine(float dt) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public boolean sequenceIsComplete() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public void completeSequence() 
+	public void completeRoutine() 
 	{
 		// TODO Auto-generated method stub
 		Debugger.tick("InstaSucceed is completing");
 	}
 
 	@Override
-	public void cancelSequence() {
+	public void cancelRoutine() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public boolean succeeded() {
+	public boolean routineSucceeded() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public boolean failed() {
+	public boolean routineFailed() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean instaSucceeded() {
+	public boolean routineInstaSucceeded() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public boolean instaFailed() {
+	public boolean routineInstaFailed() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 
 }

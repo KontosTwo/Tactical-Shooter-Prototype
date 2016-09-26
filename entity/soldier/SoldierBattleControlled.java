@@ -211,32 +211,6 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 		// TODO Auto-generated method stub
 		
 	}
-	@Override
-	public int getBurstAmount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	@Override
-	public void beginReload() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public boolean finishedReloading() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public void completeReload() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void cancelReload() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	
 	@Override
 	public PrecisePoint getCollidablePosition() {

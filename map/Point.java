@@ -1,46 +1,43 @@
-package com.mygdx.physics;
+package com.mygdx.map;
 
-public class Point 
+final class Point 
 {
-	/*
-	 * integer coordinates
-	 * useful for designating map coordinates
-	 */
+
 	private int x;
 	private int y;
 	
-	public Point(int x,int y)
+	Point(int x,int y)
 	{
 		this.x = x;
 		this.y = y;
 	}
-	public Point()
+	Point()
 	{
 		this(0,0);
 	}
-	public Point(Point p)
+	Point(Point p)
 	{
 		this.x = p.x;
 		this.y = p.y;
 	}
 	
-	public int getX()
+	int getX()
 	{
 		return x;
 	}
-	public int getY()
+	int getY()
 	{
 		return y;
 	}
-	public void setY(int y)
+	void setY(int y)
 	{
 		this.y = y;
 	}
-	public void setX(int x)
+	void setX(int x)
 	{
 		this.x = x;
 	}
-	public void set(Point p)
+	void set(Point p)
 	{
 		this.x = p.x;
 		this.y = p.y;
@@ -60,15 +57,15 @@ public class Point
 	{
 		return ((Point)o).x == this.x &&  ((Point)o).y == this.y;
 	}
-	public boolean semiEquals(Object o)
+	boolean semiEquals(Object o)
 	{
 		return ((Point)o).x == this.x ||  ((Point)o).y == this.y;
 	}
-	public Point toMapCoord(int tileSize)
+	Point toMapCoord(int tileSize)
 	{
 		return new Point((x * tileSize) + tileSize/2, (y * tileSize) + tileSize/2);
 	}
-	public Point toTileCoord(int tileSize)
+	Point toTileCoord(int tileSize)
 	{
 		return new Point((x / tileSize) , (y / tileSize) );
 	}

@@ -6,28 +6,28 @@ import java.util.List;
 import java.util.Queue;
 
 import com.mygdx.debug.Debugger;
-import com.mygdx.script.Sequencialable;
 
-
-public class Selector implements RoutineSequencialable
+/**
+ * Executes Routineables until one succeeded
+ * @Succeeds as soon as one Routineable succeeds
+ * @Fails once all Routineables have failed
+ * @InstaSucceeds if the first Routineable InstaSucceeds
+ * @InstaFails if all Routineables InstaFails
+ */
+public class Selector implements Routineable
 {
-	 private final List<RoutineSequencialable> routine;
-	   private Queue<RoutineSequencialable> routineQueue;
+	 private final List<Routineable> routine;
+	 private Queue<Routineable> routineQueue;
 	    
-	     
-	    /*
-	     * due to the generic nature of this class, it can find use
-	     * in other areas such as cutscenes and game scripts
-	     */
-	    
-	    public Selector(List<? extends RoutineSequencialable> sequence) 
+	   
+	    public Selector(List<? extends Routineable> Routine) 
 	    {
-	        routine = new LinkedList<RoutineSequencialable>(sequence);
-	        routineQueue = new LinkedList<RoutineSequencialable>();
+	        routine = new LinkedList<Routineable>(Routine);
+	        routineQueue = new LinkedList<Routineable>();
 	    }
-	    public static Selector build(RoutineSequencialable... rs)
+	    public static Selector build(Routineable... rs)
 		{
-			LinkedList <RoutineSequencialable> routineList = new LinkedList<RoutineSequencialable>();
+			LinkedList <Routineable> routineList = new LinkedList<Routineable>();
 			for(int i = 0; i < rs.length; i ++)
 			{
 				routineList.add(rs[i]);
@@ -36,68 +36,50 @@ public class Selector implements RoutineSequencialable
 		}
 		
 		@Override
-		public void startSequence() 
+		public void startRoutine() 
 		{
 			Debugger.tick("Selector is starting");
 			routineQueue.clear();
 	        routineQueue.addAll(routine);
 	        transverse();
-	    	routineQueue.peek().startSequence();   
+	    	routineQueue.peek().startRoutine();   
 		}
 
 		@Override
-		public void update(float dt) 
+		public void updateRoutine(float dt) 
 		{
-			if(routineQueue.peek().succeeded())
+			if(routineQueue.peek().routineSucceeded())
 			{
-				routineQueue.peek().completeSequence();
+				routineQueue.peek().completeRoutine();
 				routineQueue.poll();
 				transverse();
-				routineQueue.peek().startSequence();
+				routineQueue.peek().startRoutine();
 			}
 			else
 			{
-				routineQueue.peek().update( dt);
+				routineQueue.peek().updateRoutine( dt);
 			}
 		}
 
 		@Override
-		public boolean sequenceIsComplete() 
-		{
-			if(routineQueue.isEmpty())
-			{
-				return false;
-			}
-			else if(routineQueue.peek().succeeded())
-			{
-				return true;
-			}
-			else if(routineQueue.peek().failed())
-			{
-				return succeededAfterTransverseInstaSucceeded();
-			}
-			return false;
-		}
-
-		@Override
-		public void completeSequence() 
+		public void completeRoutine() 
 		{
 			Debugger.tick("completing selector");
 			if(!routineQueue.isEmpty())
 			{
-				routineQueue.peek().completeSequence();
+				routineQueue.peek().completeRoutine();
 			}
 			routineQueue.clear();
 		}
 
 		@Override
-		public void cancelSequence() 
+		public void cancelRoutine() 
 		{
-			routineQueue.peek().cancelSequence();
+			routineQueue.peek().cancelRoutine();
 		}
 
 		@Override
-		public boolean failed() 
+		public boolean routineFailed() 
 		{
 			/*
 			 * rewrite a way to check if succeeded
@@ -107,7 +89,7 @@ public class Selector implements RoutineSequencialable
 			{
 				return true;
 			}
-			else if(routineQueue.peek().succeeded())
+			else if(routineQueue.peek().routineSucceeded())
 			{
 				return failedAfterTransverseInstaFailed();
 			}
@@ -115,14 +97,14 @@ public class Selector implements RoutineSequencialable
 		}
 		private boolean failedAfterTransverseInstaFailed()
 		{
-			LinkedList<RoutineSequencialable> copy = new LinkedList<>(routineQueue);
+			LinkedList<Routineable> copy = new LinkedList<>(routineQueue);
 			copy.poll();
-			Iterator <RoutineSequencialable> iterator = copy.iterator();
+			Iterator <Routineable> iterator = copy.iterator();
 			search:
 			while(iterator.hasNext())
 			{
-				RoutineSequencialable i = iterator.next();
-				if(i.instaSucceeded())
+				Routineable i = iterator.next();
+				if(i.routineInstaSucceeded())
 				{
 					iterator.remove();
 				}
@@ -135,17 +117,17 @@ public class Selector implements RoutineSequencialable
 		}
 
 		@Override
-		public boolean succeeded() 
+		public boolean routineSucceeded() 
 		{
 			if(routineQueue.isEmpty())
 			{
 				return false;
 			}
-			else if(routineQueue.peek().succeeded())
+			else if(routineQueue.peek().routineSucceeded())
 			{
 				return true;
 			}
-			else if(routineQueue.peek().failed())
+			else if(routineQueue.peek().routineFailed())
 			{
 				return succeededAfterTransverseInstaSucceeded();
 			}
@@ -155,18 +137,18 @@ public class Selector implements RoutineSequencialable
 		private boolean succeededAfterTransverseInstaSucceeded()
 		{
 			boolean ret = false;
-			LinkedList<RoutineSequencialable> copy = new LinkedList<>(routineQueue);
+			LinkedList<Routineable> copy = new LinkedList<>(routineQueue);
 			// get rid of the routine that succeeded
 			copy.poll();
 			search:
 			for(int i = 0; i < copy.size(); i ++)
 			{
-				if(copy.get(i).instaSucceeded())
+				if(copy.get(i).routineInstaSucceeded())
 				{
 					// checking that all preceding routines have ALREADY succeeded
 					for(int j = 0; j < i; j++)
 					{
-						if(!copy.get(j).instaFailed())
+						if(!copy.get(j).routineInstaFailed())
 						{
 							ret = false;
 							break search;
@@ -189,12 +171,12 @@ public class Selector implements RoutineSequencialable
 			 * Also returns the list of remaining routineSeq
 			 */
 			//assert !routineQueue.isEmpty();
-			Iterator <RoutineSequencialable> iterator = routineQueue.iterator();
+			Iterator <Routineable> iterator = routineQueue.iterator();
 			search:
 			while(iterator.hasNext())
 			{
-				RoutineSequencialable i = iterator.next();
-				if(i.instaFailed())
+				Routineable i = iterator.next();
+				if(i.routineInstaFailed())
 				{
 					iterator.remove();
 				}
@@ -204,30 +186,31 @@ public class Selector implements RoutineSequencialable
 				}
 			}
 		}
-		public boolean instaFailed()
+
+		public boolean routineInstaFailed()
 		{
 			boolean ret = true;
-			for(RoutineSequencialable r : routine)
+			for(Routineable r : routine)
 			{
-				if(!r.instaFailed())
+				if(!r.routineInstaFailed())
 				{
 					ret = false;
 				}
 			}
 			return ret;
 		}
-		public boolean instaSucceeded()
+		public boolean routineInstaSucceeded()
 		{
 			boolean ret = false;
 			search:
 			for(int i = 0; i < routine.size(); i ++)
 			{
-				if(routine.get(i).instaSucceeded())
+				if(routine.get(i).routineInstaSucceeded())
 				{
 					// checking that all preceding routines have ALREADY succeeded
 					for(int j = 0; j < i; j++)
 					{
-						if(!routine.get(j).instaFailed())
+						if(!routine.get(j).routineInstaFailed())
 						{
 							ret = false;
 							break search;
@@ -239,4 +222,5 @@ public class Selector implements RoutineSequencialable
 			}
 			return ret;
 		}
+		
 }

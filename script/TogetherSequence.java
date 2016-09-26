@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.mygdx.script.Scripter.Sequencialable;
+
 
 class TogetherSequence implements Sequencialable
 {
@@ -32,25 +34,25 @@ class TogetherSequence implements Sequencialable
 	}
 
 	@Override
-	public void update(float dt) 
+	public void updateSequence(float dt) 
 	{
 		Iterator <Sequencialable> iterator = sequence.iterator();
 		while(iterator.hasNext())
 		{
 			Sequencialable current = iterator.next();
-			if(current.sequenceIsComplete())
+			if(current.completed())
 			{
 				iterator.remove();
 			}
 			else
 			{
-				current.update(dt);
+				current.updateSequence(dt);
 			}
 		}
 	}
 
 	@Override
-	public boolean sequenceIsComplete() 
+	public boolean completed() 
 	{
 		// returns true once sequence is empty, meaning that all sequences have been executed
 		
@@ -73,5 +75,17 @@ class TogetherSequence implements Sequencialable
 		{
 			sequence.get(i).cancelSequence();
 		}
+	}
+
+	@Override
+	public boolean sequenceInstaCompleted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void calculateInstaCompleted() {
+		// TODO Auto-generated method stub
+		
 	}
 }

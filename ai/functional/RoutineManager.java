@@ -9,7 +9,7 @@ public class RoutineManager
 	/*
 	 * Ai routines keep running until stopped by an outside action
 	 */
-	private RoutineSequencialable routine;
+	private Routineable routine;
 	private boolean routineActive;
 	
 	
@@ -20,8 +20,8 @@ public class RoutineManager
 		routineActive = false;
 	}
 	
-	//retest selector and sequence, which has the sequenceIsComplete replaced
-	//with succeeded. Test to make sure that no extraneous startSequence is called
+	//retest selector and Routine, which has the RoutineIsComplete replaced
+	//with succeeded. Test to make sure that no extraneous startRoutine is called
 	
 	
 	
@@ -33,23 +33,23 @@ public class RoutineManager
 		if(routineActive && times < 1)
 		{
 			System.out.println("updating");
-			if(routine.succeeded())
+			if(routine.routineSucceeded())
 			{
 				Debugger.tick("Routine succeeded");
-				routine.completeSequence();
-				//routine.startSequence();
+				routine.completeRoutine();
+				//routine.startRoutine();
 				times ++;
 			}
-			else if(routine.failed())
+			else if(routine.routineFailed())
 			{
 				Debugger.tick("Routine failed");
-				routine.cancelSequence();
-				//routine.startSequence();
+				routine.cancelRoutine();
+				//routine.startRoutine();
 				times ++;
 			}
 			else
 			{
-				routine.update(dt);
+				routine.updateRoutine(dt);
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class RoutineManager
 	{
 		if(routineActive)
 		{
-			routine.cancelSequence();
+			routine.cancelRoutine();
 			routineActive = false;
 		}
 	}
@@ -69,9 +69,7 @@ public class RoutineManager
 	public void startRiflemanRoutine(RiflemanRoutineable r)
 	{
 		routineActive = true;
-		routine = RoutineFactory.createRifleManRoutine(r);
-		System.out.println("InstaSucceeded " + routine.instaSucceeded());
-		System.out.println("InstaFailed " + routine.instaFailed());
-		routine.startSequence();
+		System.out.println("go to RoutineManager to implemen this");
+		routine.startRoutine();
 	}
 }

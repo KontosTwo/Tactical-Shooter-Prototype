@@ -1,70 +1,64 @@
 package com.mygdx.ai.leaf;
 
-import com.mygdx.ai.functional.RoutineSequencialable;
+import com.mygdx.ai.functional.Routineable;
 import com.mygdx.debug.Debugger;
-
-public class Wait implements RoutineSequencialable
+/**
+ * @Succeeds once a designated amount of time has passed
+ */
+public class Wait implements Routineable
 {
 	private int tickQuota;
 	private int tickCount;
-	
-	Wait() 
-	{
 		
-	}
-	public Wait(int wait)
-	{
+	 public Wait(int wait){
 		tickQuota = wait;
 	}
-	void setWaitTime(int wait)
-	{
+	
+	void setWaitTime(int wait){
 		tickQuota = wait;
 	}
+	
 	@Override
-	public void startSequence() 
-	{
+	public void startRoutine() {
 		tickCount = 0;
 		Debugger.tick("Wait is starting");
 	}
+	
 	@Override
-	public void update(float dt) 
-	{
+	public void updateRoutine(float dt) {
 		tickCount ++;
 		Debugger.tick("Wait is updating for " + tickCount + " out of " + tickQuota );
 	}
+	
 	@Override
-	public boolean sequenceIsComplete() 
-	{
-		return tickCount + 1 >= tickQuota;
-	}
-	@Override
-	public void completeSequence() 
-	{
+	public void completeRoutine() {
 		Debugger.tick("Wait is complete");
 	}
+	
 	@Override
-	public void cancelSequence() 
-	{
+	public void cancelRoutine() {
 		tickCount = 0;
 	}
+	
 	@Override
-	public boolean succeeded() 
-	{
+	public boolean routineSucceeded() {
 		return tickCount + 1 >= tickQuota;
 	}
+	
 	@Override
-	public boolean failed() 
-	{
+	public boolean routineFailed() {
 		return false;
 	}
+
 	@Override
-	public boolean instaSucceeded() {
-		// TODO Auto-generated method stub
+	public boolean routineInstaSucceeded() {
 		return false;
 	}
+	
 	@Override
-	public boolean instaFailed() {
-		// TODO Auto-generated method stub
+	public boolean routineInstaFailed() {
 		return false;
 	}
+
+	
 }

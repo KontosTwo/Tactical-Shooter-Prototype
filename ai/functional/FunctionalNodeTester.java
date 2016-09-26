@@ -28,7 +28,7 @@ public class FunctionalNodeTester {
 		/*
 		 * Ai routines keep running until stopped by an outside action
 		 */
-		private RoutineSequencialable routine;
+		private Routineable routine;
 		private boolean routineActive;
 		
 		
@@ -43,8 +43,8 @@ public class FunctionalNodeTester {
 			routineActive = false;
 		}
 		
-		//retest selector and sequence, which has the sequenceIsComplete replaced
-		//with succeeded. Test to make sure that no extraneous startSequence is called
+		//retest selector and Routine, which has the RoutineIsComplete replaced
+		//with succeeded. Test to make sure that no extraneous startRoutine is called
 		
 		
 		
@@ -56,23 +56,23 @@ public class FunctionalNodeTester {
 			if(routineActive && times < 1)
 			{
 				//System.out.println("updating");
-				if(routine.succeeded())
+				if(routine.routineSucceeded())
 				{
 					Debugger.tick("Routine succeeded");
-					routine.completeSequence();
-					//routine.startSequence();
+					routine.completeRoutine();
+					//routine.startRoutine();
 					times ++;
 				}
-				else if(routine.failed())
+				else if(routine.routineFailed())
 				{
 					Debugger.tick("Routine failed");
-					routine.cancelSequence();
-					//routine.startSequence();
+					routine.cancelRoutine();
+					//routine.startRoutine();
 					times ++;
 				}
 				else
 				{
-					routine.update(dt);
+					routine.updateRoutine(dt);
 				}
 			}
 		}
@@ -81,7 +81,7 @@ public class FunctionalNodeTester {
 		{
 			if(routineActive)
 			{
-				routine.cancelSequence();
+				routine.cancelRoutine();
 				routineActive = false;
 			}
 		}
@@ -93,27 +93,27 @@ public class FunctionalNodeTester {
 		{
 			routineActive = true;
 			
-			List<RoutineSequencialable> sequence = new LinkedList<>();
+			List<Routineable> Routine = new LinkedList<>();
 
 	
-			sequence.add(new Wait(10));
+			Routine.add(new Wait(10));
 
 			
-			sequence.add(new InstaFail());
+			Routine.add(new InstaFail());
 
-			sequence.add(new InstaFail());
-			sequence.add(new InstaFail());
-			sequence.add(new InstaFail());
-			sequence.add(new InstaFail());
-			sequence.add(new InstaSucceed());
-			sequence.add(new Wait(10));
-			sequence.add(new InstaFail());
+			Routine.add(new InstaFail());
+			Routine.add(new InstaFail());
+			Routine.add(new InstaFail());
+			Routine.add(new InstaFail());
+			Routine.add(new InstaSucceed());
+			Routine.add(new Wait(10));
+			Routine.add(new InstaFail());
 
-			routine = new Selector(sequence);
+			routine = new Selector(Routine);
 			
-			System.out.println("InstaSucceeded " + routine.instaSucceeded());
-			System.out.println("InstaFailed " + routine.instaFailed());
-			routine.startSequence();
+			System.out.println("InstaSucceeded " + routine.routineInstaSucceeded());
+			System.out.println("InstaFailed " + routine.routineInstaFailed());
+			routine.startRoutine();
 		}
 	}
 

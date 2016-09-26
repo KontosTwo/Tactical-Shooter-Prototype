@@ -157,6 +157,9 @@ final class MapData {
 	int scaleToTileCoord(double mapCoord){
 		return (int)(mapCoord/tileSize);
 	}
+	int getHeightOfTerrain(int x,int y){
+		return heightPhyMap[y][x];
+	}
 	int getTileSize(){
 		return tileSize;
 	}
