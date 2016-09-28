@@ -1,55 +1,55 @@
 package com.mygdx.ai.functional;
 
-public class InstaFail implements Routineable
-{
+/**
+ * Executes a routine regardless of whether it instaSucceeds
+ * or instaFails
+ */
+class AlwaysExecute implements Routineable{
 
+	private Routineable routine;
+	
+	AlwaysExecute(Routineable routine){
+		this.routine = routine;
+	}
+	
 	@Override
 	public void startRoutine() {
-		// TODO Auto-generated method stub
-		
+		routine.startRoutine();
 	}
 
 	@Override
 	public void updateRoutine(float dt) {
-		// TODO Auto-generated method stub
-		
+		routine.updateRoutine(dt);
 	}
-
 
 	@Override
 	public void completeRoutine() {
-		// TODO Auto-generated method stub
-		
+		routine.completeRoutine();
 	}
 
 	@Override
 	public void cancelRoutine() {
-		// TODO Auto-generated method stub
-		
+		routine.cancelRoutine();
 	}
 
 	@Override
 	public boolean succeededRoutine() {
-		// TODO Auto-generated method stub
-		return false;
+		return routine.succeededRoutine();
 	}
 
 	@Override
 	public boolean failedRoutine() {
-		// TODO Auto-generated method stub
-		return true;
+		return routine.failedRoutine();
 	}
 
 	@Override
 	public boolean instaSucceededRoutine() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean instaFailedRoutine() {
-		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
-
+	
 }

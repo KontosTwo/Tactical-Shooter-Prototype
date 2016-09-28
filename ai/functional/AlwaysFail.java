@@ -29,23 +29,23 @@ final class AlwaysFail implements Routineable
 	}
 
 	@Override
-	public boolean routineSucceeded() {
+	public boolean succeededRoutine() {
 		return false;
 	}
 
 	@Override
-	public boolean routineFailed() {
-		return routine.routineSucceeded() || routine.routineFailed();
+	public boolean failedRoutine() {
+		return routine.succeededRoutine() || routine.failedRoutine();
 	}
 
 	@Override
-	public boolean routineInstaSucceeded() {
+	public boolean instaSucceededRoutine() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean routineInstaFailed() {
+	public boolean instaFailedRoutine() {
 		// TODO Auto-generated method stub
 		return false;
 	}

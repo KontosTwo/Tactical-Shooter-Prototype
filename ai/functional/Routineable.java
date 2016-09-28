@@ -10,28 +10,31 @@ package com.mygdx.ai.functional;
  * complete the action
  */
 public interface Routineable{
+	public boolean instaSucceededRoutine();
+	/**
+	 * @Precondition: instaSucceeded returned false
+	 */
+	public boolean instaFailedRoutine();
+	/**
+	 * @Precondition: instaSucceeded and instaFailed returned false
+	 */
+	public boolean succeededRoutine();
+	/**
+	 * @Precondition: instaSucceeded, instaFailed, and succeeded returned false
+	 */ 
+	public boolean failedRoutine();
+
+	public void updateRoutine(float dt);// updating
+	
+	
 	
 	public void startRoutine();// initializing
-	public void updateRoutine(float dt);// updating
 	public void completeRoutine();// action to "clean up" the sequencialable
 	public void cancelRoutine();//
 	
 	
 	
-	/**
-	 * @Precondition: instaSucceeded and instaFailed returned false
-	 */
-	public boolean routineSucceeded();
-	/**
-	 * @Precondition: instaSucceeded, instaFailed, and succeeded returned false
-	 */ 
-	public boolean routineFailed();
-	
-	public boolean routineInstaSucceeded();
-	/**
-	 * @Precondition: instaSucceeded returned false
-	 */
-	public boolean routineInstaFailed();
+
 	
 	/*
 	 * RoutineSequencialable are Sequencialable that are adapted to 

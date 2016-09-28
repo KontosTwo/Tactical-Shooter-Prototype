@@ -56,14 +56,14 @@ public class FunctionalNodeTester {
 			if(routineActive && times < 1)
 			{
 				//System.out.println("updating");
-				if(routine.routineSucceeded())
+				if(routine.succeededRoutine())
 				{
 					Debugger.tick("Routine succeeded");
 					routine.completeRoutine();
 					//routine.startRoutine();
 					times ++;
 				}
-				else if(routine.routineFailed())
+				else if(routine.failedRoutine())
 				{
 					Debugger.tick("Routine failed");
 					routine.cancelRoutine();
@@ -96,23 +96,13 @@ public class FunctionalNodeTester {
 			List<Routineable> Routine = new LinkedList<>();
 
 	
-			Routine.add(new Wait(10));
-
-			
 			Routine.add(new InstaFail());
 
-			Routine.add(new InstaFail());
-			Routine.add(new InstaFail());
-			Routine.add(new InstaFail());
-			Routine.add(new InstaFail());
-			Routine.add(new InstaSucceed());
-			Routine.add(new Wait(10));
-			Routine.add(new InstaFail());
 
 			routine = new Selector(Routine);
 			
-			System.out.println("InstaSucceeded " + routine.routineInstaSucceeded());
-			System.out.println("InstaFailed " + routine.routineInstaFailed());
+			System.out.println("InstaSucceeded " + routine.instaSucceededRoutine());
+			System.out.println("InstaFailed " + routine.instaFailedRoutine());
 			routine.startRoutine();
 		}
 	}

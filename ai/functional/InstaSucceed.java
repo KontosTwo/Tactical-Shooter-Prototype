@@ -33,25 +33,25 @@ public class InstaSucceed implements Routineable
 	}
 
 	@Override
-	public boolean routineSucceeded() {
+	public boolean succeededRoutine() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public boolean routineFailed() {
+	public boolean failedRoutine() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean routineInstaSucceeded() {
+	public boolean instaSucceededRoutine() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public boolean routineInstaFailed() {
+	public boolean instaFailedRoutine() {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -31,22 +31,22 @@ final class AlwaysSucceed implements Routineable
 	}
 
 	@Override
-	public boolean routineSucceeded() {
-		return routine.routineSucceeded() || routine.routineFailed();
+	public boolean succeededRoutine() {
+		return routine.succeededRoutine() || routine.failedRoutine();
 	}
 
 	@Override
-	public boolean routineFailed() {
+	public boolean failedRoutine() {
 		return false;
 	}
 
 	@Override
-	public boolean routineInstaSucceeded() {
+	public boolean instaSucceededRoutine() {
 		return false;
 	}
 
 	@Override
-	public boolean routineInstaFailed() {
+	public boolean instaFailedRoutine() {
 		return false;
 	}
 }

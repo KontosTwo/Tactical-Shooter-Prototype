@@ -67,21 +67,21 @@ final class PathTo implements Routineable,Sequencialable{
 	}
 	
 	@Override
-	public boolean routineSucceeded() {
-		return sequenceForPath.routineSucceeded();
+	public boolean succeededRoutine() {
+		return sequenceForPath.succeededRoutine();
 	}
 	
 	@Override
-	public boolean routineFailed() {
-		return sequenceForPath.routineFailed();
+	public boolean failedRoutine() {
+		return sequenceForPath.failedRoutine();
 	}
 
 	@Override
-	public boolean routineInstaSucceeded() {
+	public boolean instaSucceededRoutine() {
 		return pathHeuristic.alreadyAtDestionation();
 	}
 	@Override
-	public boolean routineInstaFailed() {
+	public boolean instaFailedRoutine() {
 		return !pathHeuristic.pathIsPossible();
 	}
 	
@@ -113,7 +113,7 @@ final class PathTo implements Routineable,Sequencialable{
 
 	@Override
 	public boolean completed() {
-		return sequenceForPath.routineSucceeded();
+		return sequenceForPath.succeededRoutine();
 	}
 
 	@Override

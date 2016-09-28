@@ -1,17 +1,24 @@
 package com.mygdx.ai.functional;
 
-public class Repeater implements Routineable
+/**
+ * Executes a routine a specified number of times. If the executed routine
+ * ever fails, then, provided that Repeater can still run the routine, Repeater simply
+ * attempts another execution of the routine. 
+ * @succeeds if the current routine has been executed a certian number of times
+ *
+ */
+final class Repeater implements Routineable
 {
 	private final Routineable routine;
 	private int times;
 	private int currentTimes;
 	
-	public Repeater(Routineable rs)
+	Repeater(Routineable rs)
 	{
 		routine = rs;
 	}
 	
-	public void setTimes(int t)
+	void setTimes(int t)
 	{
 		times = t;
 	}
@@ -30,13 +37,13 @@ public class Repeater implements Routineable
 		 * repeater does not concern whether the routine has completed or not,
 		 * it checks for failure
 		 */
-		if(routine.routineSucceeded())
+		if(routine.succeededRoutine())
 		{
 			routine.completeRoutine();
 			routine.startRoutine();
 			currentTimes ++;
 		}
-		else if(routine.routineFailed())
+		else if(routine.failedRoutine())
 		{
 			routine.cancelRoutine();
 			routine.startRoutine();
@@ -52,35 +59,36 @@ public class Repeater implements Routineable
 	public void completeRoutine() 
 	{
 		currentTimes = 0;
+		routine.completeRoutine();
 	}
 
 	@Override
 	public void cancelRoutine() 
 	{
+		currentTimes = 0;
 		routine.cancelRoutine();
 	}
 
 	@Override
-	public boolean routineSucceeded() 
-	{
+	public boolean succeededRoutine() {
 		return currentTimes >= times;
 	}
 
+	/**
+	 * If the routine fails, then simply attempt again
+	 */
 	@Override
-	public boolean routineFailed() 
-	{
+	public boolean failedRoutine() {
 		return false;
 	}
 
 	@Override
-	public boolean routineInstaSucceeded() {
-		// TODO Auto-generated method stub
+	public boolean instaSucceededRoutine() {
 		return false;
 	}
 
 	@Override
-	public boolean routineInstaFailed() {
-		// TODO Auto-generated method stub
+	public boolean instaFailedRoutine() {
 		return false;
 	}
    

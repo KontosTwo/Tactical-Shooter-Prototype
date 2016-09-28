@@ -36,12 +36,12 @@ public class Concurrent implements Routineable
 	{
 		routineQueue.forEach(r ->
 		{
-			if(r.routineSucceeded())
+			if(r.succeededRoutine())
 			{
 				r.completeRoutine();
 				routineQueue.remove(r);
 			}
-			else if(r.routineFailed())
+			else if(r.failedRoutine())
 			{
 				r.cancelRoutine();
 				routineQueue.remove(r);
@@ -65,24 +65,24 @@ public class Concurrent implements Routineable
 	}
 
 	@Override
-	public boolean routineSucceeded()
+	public boolean succeededRoutine()
 	{
 		return routineQueue.isEmpty();
 	}
 
 	@Override
-	public boolean routineFailed() 
+	public boolean failedRoutine() 
 	{
 		return false;
 	}
 
 	@Override
-	public boolean routineInstaSucceeded() 
+	public boolean instaSucceededRoutine() 
 	{
 		boolean ret = true;
 		for(Routineable r : routine)
 		{
-			if(!r.routineInstaSucceeded())
+			if(!r.instaSucceededRoutine())
 			{
 				ret = false;
 			}
@@ -92,12 +92,12 @@ public class Concurrent implements Routineable
 
 
 	@Override
-	public boolean routineInstaFailed() 
+	public boolean instaFailedRoutine() 
 	{
 		boolean ret = true;
 		for(Routineable r : routine)
 		{
-			if(!r.routineInstaFailed())
+			if(!r.instaFailedRoutine())
 			{
 				ret = false;
 			}

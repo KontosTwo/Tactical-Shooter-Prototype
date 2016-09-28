@@ -95,6 +95,7 @@ public final class GameMap {
 			Tile top = map.createTileAt(colliderTileX, colliderTileY + 1);
 			Tile bottom = map.createTileAt(colliderTileX, colliderTileY - 1);
 			
+			// determine if the collider will cross adjacent tiles. If so, move the collider back to its original location
 			if(!walkableFromAToB(center,left) && collider.aboutToCrossLeftOf(map.scaleToMapCoord(colliderTileX))){
 				collider.stoppedbyCollision();
 			}
@@ -225,8 +226,7 @@ public final class GameMap {
 	 * 
 	 * Uses map coordinates
 	 */
-	public Path findPath(int sx, int sy, int tx, int ty,int maxDistance) {
-		//Pair<Boolean,List<PrecisePoint>> ret = new Pair<Boolean,List<PrecisePoint>>();
+	public Path findPath(int sx, int sy, int tx, int ty,int maxDistance) {		
 		boolean pathPossible = true;
 		List<PrecisePoint> shortestPath = new LinkedList<PrecisePoint>();
 
@@ -239,8 +239,8 @@ public final class GameMap {
 			pathPossible = false; 
 	    	return new Path(shortestPath,pathPossible,false);
 	    }
-		Set<Node> openList = new HashSet<Node>();
-		Set<Node> closedList = new HashSet<Node>();
+		Collection<Node> openList = new HashSet<Node>();
+		Collection<Node> closedList = new HashSet<Node>();
 	    Node startingNode = new Node(sx,sy);
 	    Node targetNode = new Node(tx,ty);
 	    

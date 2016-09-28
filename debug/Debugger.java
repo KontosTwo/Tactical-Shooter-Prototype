@@ -1,16 +1,17 @@
 package com.mygdx.debug;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Debugger 
 {
 	private static int tick;
-	private static ArrayList<Marker> markers;
+	private static Set<Marker> markers;
 	
 	static
 	{
 		tick = 0;
-		markers = new ArrayList<>();
+		markers = new HashSet<>();
 	}
 	public static void render()
 	{

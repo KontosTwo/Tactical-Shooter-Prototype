@@ -56,25 +56,25 @@ public class Conditional implements Routineable
 	}
 
 	@Override
-	public boolean routineSucceeded()
+	public boolean succeededRoutine()
 	{
-		return routine.routineSucceeded();
+		return routine.succeededRoutine();
 	}
 
 	@Override
-	public boolean routineFailed() 
+	public boolean failedRoutine() 
 	{
-		return routine.routineFailed();
+		return routine.failedRoutine();
 	}
 
 	@Override
-	public boolean routineInstaSucceeded() 
+	public boolean instaSucceededRoutine() 
 	{
-		return heuristic.get() ? success.routineInstaSucceeded() : fail.routineInstaSucceeded();
+		return heuristic.get() ? success.instaSucceededRoutine() : fail.instaSucceededRoutine();
 	}
 
 	@Override
-	public boolean routineInstaFailed() {
-		return heuristic.get() ? success.routineInstaFailed() : fail.routineInstaFailed();
+	public boolean instaFailedRoutine() {
+		return heuristic.get() ? success.instaFailedRoutine() : fail.instaFailedRoutine();
 	}
 }

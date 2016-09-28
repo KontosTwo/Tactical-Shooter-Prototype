@@ -2,8 +2,10 @@ package com.mygdx.map;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import com.mygdx.debug.Debugger;
 import com.mygdx.physics.PrecisePoint;
@@ -130,7 +132,7 @@ final class Node {
 		if(other == null){
 			return false;
 		}
-		if(!(this instanceof Node)){
+		if(!(other instanceof Node)){
 			return false;
 		}
 		return ((Node)other).x == this.x &&  ((Node)other).y == this.y;

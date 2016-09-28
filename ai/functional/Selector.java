@@ -48,7 +48,7 @@ public class Selector implements Routineable
 		@Override
 		public void updateRoutine(float dt) 
 		{
-			if(routineQueue.peek().routineSucceeded())
+			if(routineQueue.peek().succeededRoutine())
 			{
 				routineQueue.peek().completeRoutine();
 				routineQueue.poll();
@@ -79,7 +79,7 @@ public class Selector implements Routineable
 		}
 
 		@Override
-		public boolean routineFailed() 
+		public boolean failedRoutine() 
 		{
 			/*
 			 * rewrite a way to check if succeeded
@@ -89,7 +89,7 @@ public class Selector implements Routineable
 			{
 				return true;
 			}
-			else if(routineQueue.peek().routineSucceeded())
+			else if(routineQueue.peek().succeededRoutine())
 			{
 				return failedAfterTransverseInstaFailed();
 			}
@@ -104,7 +104,7 @@ public class Selector implements Routineable
 			while(iterator.hasNext())
 			{
 				Routineable i = iterator.next();
-				if(i.routineInstaSucceeded())
+				if(i.instaSucceededRoutine())
 				{
 					iterator.remove();
 				}
@@ -117,17 +117,17 @@ public class Selector implements Routineable
 		}
 
 		@Override
-		public boolean routineSucceeded() 
+		public boolean succeededRoutine() 
 		{
 			if(routineQueue.isEmpty())
 			{
 				return false;
 			}
-			else if(routineQueue.peek().routineSucceeded())
+			else if(routineQueue.peek().succeededRoutine())
 			{
 				return true;
 			}
-			else if(routineQueue.peek().routineFailed())
+			else if(routineQueue.peek().failedRoutine())
 			{
 				return succeededAfterTransverseInstaSucceeded();
 			}
@@ -143,12 +143,12 @@ public class Selector implements Routineable
 			search:
 			for(int i = 0; i < copy.size(); i ++)
 			{
-				if(copy.get(i).routineInstaSucceeded())
+				if(copy.get(i).instaSucceededRoutine())
 				{
 					// checking that all preceding routines have ALREADY succeeded
 					for(int j = 0; j < i; j++)
 					{
-						if(!copy.get(j).routineInstaFailed())
+						if(!copy.get(j).instaFailedRoutine())
 						{
 							ret = false;
 							break search;
@@ -176,7 +176,7 @@ public class Selector implements Routineable
 			while(iterator.hasNext())
 			{
 				Routineable i = iterator.next();
-				if(i.routineInstaFailed())
+				if(i.instaFailedRoutine())
 				{
 					iterator.remove();
 				}
@@ -187,30 +187,30 @@ public class Selector implements Routineable
 			}
 		}
 
-		public boolean routineInstaFailed()
+		public boolean instaFailedRoutine()
 		{
 			boolean ret = true;
 			for(Routineable r : routine)
 			{
-				if(!r.routineInstaFailed())
+				if(!r.instaFailedRoutine())
 				{
 					ret = false;
 				}
 			}
 			return ret;
 		}
-		public boolean routineInstaSucceeded()
+		public boolean instaSucceededRoutine()
 		{
 			boolean ret = false;
 			search:
 			for(int i = 0; i < routine.size(); i ++)
 			{
-				if(routine.get(i).routineInstaSucceeded())
+				if(routine.get(i).instaSucceededRoutine())
 				{
 					// checking that all preceding routines have ALREADY succeeded
 					for(int j = 0; j < i; j++)
 					{
-						if(!routine.get(j).routineInstaFailed())
+						if(!routine.get(j).instaFailedRoutine())
 						{
 							ret = false;
 							break search;

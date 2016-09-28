@@ -46,7 +46,7 @@ public class Sequence implements Routineable
 	@Override
 	public void updateRoutine(float dt) 
 	{
-		if(routineQueue.peek().routineSucceeded())
+		if(routineQueue.peek().succeededRoutine())
 		{
 			routineQueue.peek().completeRoutine();
 			routineQueue.poll();
@@ -77,7 +77,7 @@ public class Sequence implements Routineable
 	}
 
 	@Override
-	public boolean routineSucceeded() 
+	public boolean succeededRoutine() 
 	{
 		/*
 		 * rewrite a way to check if succeeded
@@ -87,7 +87,7 @@ public class Sequence implements Routineable
 		{
 			return true;
 		}
-		else if(routineQueue.peek().routineSucceeded())
+		else if(routineQueue.peek().succeededRoutine())
 		{
 			return succeededAfterTransverseInstaSucceeded();
 		}
@@ -102,7 +102,7 @@ public class Sequence implements Routineable
 		while(iterator.hasNext())
 		{
 			Routineable i = iterator.next();
-			if(i.routineInstaSucceeded())
+			if(i.instaSucceededRoutine())
 			{
 				iterator.remove();
 			}
@@ -115,17 +115,17 @@ public class Sequence implements Routineable
 	}
 
 	@Override
-	public boolean routineFailed() 
+	public boolean failedRoutine() 
 	{
 		if(routineQueue.isEmpty())
 		{
 			return false;
 		}
-		else if(routineQueue.peek().routineFailed())
+		else if(routineQueue.peek().failedRoutine())
 		{
 			return true;
 		}
-		else if(routineQueue.peek().routineSucceeded())
+		else if(routineQueue.peek().succeededRoutine())
 		{
 			return failedAfterTransverseInstaFailed();
 		}
@@ -141,12 +141,12 @@ public class Sequence implements Routineable
 		search:
 		for(int i = 0; i < copy.size(); i ++)
 		{
-			if(copy.get(i).routineInstaFailed())
+			if(copy.get(i).instaFailedRoutine())
 			{
 				// checking that all preceding routines have ALREADY succeeded
 				for(int j = 0; j < i; j++)
 				{
-					if(!copy.get(j).routineInstaSucceeded())
+					if(!copy.get(j).instaSucceededRoutine())
 					{
 						ret = false;
 						break search;
@@ -173,7 +173,7 @@ public class Sequence implements Routineable
 		search:
 		while(iterator.hasNext()){
 			Routineable i = iterator.next();
-			if(i.routineInstaSucceeded()){
+			if(i.instaSucceededRoutine()){
 				iterator.remove();
 			}
 			else{
@@ -182,26 +182,26 @@ public class Sequence implements Routineable
 		}
 	}
 
-	public boolean routineInstaSucceeded(){
+	public boolean instaSucceededRoutine(){
 		if(routine.isEmpty()){
 			return true;
 		}
 		boolean ret = true;
 		for(Routineable r : routine){
-			if(!r.routineInstaSucceeded()){
+			if(!r.instaSucceededRoutine()){
 				ret = false;
 			}
 		}
 		return ret;
 	}
-	public boolean routineInstaFailed(){
+	public boolean instaFailedRoutine(){
 		boolean ret = false;
 		search:
 		for(int i = 0; i < routine.size(); i ++){
-			if(routine.get(i).routineInstaFailed()){
+			if(routine.get(i).instaFailedRoutine()){
 				// checking that all preceding routines have ALREADY succeeded
 				for(int j = 0; j < i; j++){
-					if(!routine.get(j).routineInstaSucceeded()){
+					if(!routine.get(j).instaSucceededRoutine()){
 						ret = false;
 						break search;
 					}

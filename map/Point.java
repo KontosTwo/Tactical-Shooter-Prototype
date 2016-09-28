@@ -57,10 +57,6 @@ final class Point
 	{
 		return ((Point)o).x == this.x &&  ((Point)o).y == this.y;
 	}
-	boolean semiEquals(Object o)
-	{
-		return ((Point)o).x == this.x ||  ((Point)o).y == this.y;
-	}
 	Point toMapCoord(int tileSize)
 	{
 		return new Point((x * tileSize) + tileSize/2, (y * tileSize) + tileSize/2);

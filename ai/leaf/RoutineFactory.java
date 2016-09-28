@@ -71,22 +71,22 @@ abstract public class RoutineFactory
 			}
 
 			@Override
-			public boolean routineSucceeded() {
-				return r.routineSucceeded();
+			public boolean succeededRoutine() {
+				return r.succeededRoutine();
 			}
 
 			@Override
-			public boolean routineFailed() {
-				return r.routineFailed();
+			public boolean failedRoutine() {
+				return r.failedRoutine();
 			}
 
 			@Override
-			public boolean routineInstaSucceeded() {
+			public boolean instaSucceededRoutine() {
 				return false;
 			}
 
 			@Override
-			public boolean routineInstaFailed() {
+			public boolean instaFailedRoutine() {
 				return false;
 			}
 

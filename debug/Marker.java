@@ -23,4 +23,22 @@ class Marker
 	{
 		animator.update(dt);
 	}
+	public boolean equals(Object other){
+		if(this == other){
+			return true;
+		}
+		if(other == null){
+			return false;
+		}
+		if(!(other instanceof Marker)){
+			return false;
+		}
+		return this.center.equals(((Marker)other).center);
+	}
+	public int hashCode(){
+		int hash = 1;
+        hash = (int) (hash * 17 + center.x);
+        hash = (int) (hash * 31 + center.y);
+        return hash;
+	}
 }
