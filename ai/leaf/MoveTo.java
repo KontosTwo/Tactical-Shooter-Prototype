@@ -77,5 +77,10 @@ final class MoveTo implements Routineable{
 		public void completeMoveTo(); // action to take after arriving at the destination. Resets things
 		public void stopMoveTo(); // just stop the actor's velocity. May or may not be the exact same as compelteMoveTo
 	}
+
+	@Override
+	public void calculateInstaHeuristic() {
+		
+	}
 }
 

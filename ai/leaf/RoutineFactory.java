@@ -1,44 +1,96 @@
 package com.mygdx.ai.leaf;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import com.mygdx.ai.functional.Routineable;
 import com.mygdx.ai.leaf.MoveTo.MoveToable;
 import com.mygdx.ai.leaf.PathTo.PathToable;
+import com.mygdx.ai.leaf.Shoot.Shootable;
+import com.mygdx.physics.PrecisePoint;
+import com.mygdx.physics.PrecisePoint3;
 import com.mygdx.script.Scripter.Sequencialable;
 
 
-abstract public class RoutineFactory 
-{
-     static PathTo createPathTo(PathToable aa)
+abstract public class RoutineFactory {
+	 
+	public static Sequencialable createSequencialablePathTo(PathToable pathToActor,PrecisePoint target){
+    	 PathTo pathToRoutine = new PathTo(pathToActor,createMoveTo(pathToActor));
+    	 pathToRoutine.designateDestination(target);
+    	 return createSequencialableAdapterFrom(pathToRoutine);
+     }
+	
+	 public static Sequencialable createSequencialableShoot(Shootable shootActor,PrecisePoint target){
+    	 Shoot shootRoutine = new Shoot(shootActor);
+    	 shootRoutine.designateTarget(new PrecisePoint3(target.x,target.y,0));
+    	 return createSequencialableAdapterFrom(shootRoutine);
+     }
+	 
+	/**
+	 * @param  A Routineable instance
+	 * @return An adapter for Sequencialable
+	 */
+    private static Sequencialable createSequencialableAdapterFrom(Routineable routine){
+    	return new Sequencialable(){
+
+			@Override
+			public void startSequence() {
+				routine.startRoutine();
+			}
+
+			@Override
+			public void updateSequence(float dt) {
+				routine.updateRoutine(dt);
+			}
+
+			@Override
+			public boolean completed() {
+				return routine.succeededRoutine() || routine.failedRoutine();
+			}
+
+			@Override
+			public void completeSequence() {
+				routine.completeRoutine();
+			}
+
+			@Override
+			public void cancelSequence() {
+				routine.cancelRoutine();
+			}
+
+			@Override
+			public void calculateInstaCompleted() {
+				routine.calculateInstaHeuristic();
+			}
+
+			@Override
+			public boolean sequenceInstaCompleted() {
+				return routine.instaFailedRoutine() || routine.instaSucceededRoutine();
+			}   		
+    	};
+    }
+	
+	static PathTo createPathTo(PathToable aa)
     {
     	return new PathTo(aa,createMoveTo(aa));
     }
-     static PathTo createPathTo(PathToable aa,double x,double y)
+     static PathTo createPathTo(PathToable aa,PrecisePoint target)
      {
     	 PathTo ret = new PathTo(aa,createMoveTo(aa));
-    	 ret.designateDestination(x, y);
+    	 ret.designateDestination(target);
     	 return ret;
      }
-     public static Sequencialable createSequencialablePathTo(PathToable pathToActor,double x,double y)
-     {
-    	 PathTo ret = new PathTo(pathToActor,createMoveTo(pathToActor));
-    	 ret.designateDestination(x, y);
-    	 return ret;
-     }
+    
      static MoveTo createMoveTo(MoveToable aa)
     {
     	return new MoveTo(aa);
     }
-    static Shoot createShoot(RiflemanRoutineable aa)
+    static Shoot createShoot(Shootable aa)
     {
     	return new Shoot(aa);
     }
-     static Shoot createShoot(RiflemanRoutineable aa,double x,double y,double z)
+     static Shoot createShoot(Shootable aa,PrecisePoint3 target)
      {
      	Shoot s = new Shoot(aa);
-     	s.designateTarget(x, y,z);
+     	s.designateTarget(target);
     	return s;
      }
      
@@ -47,51 +99,7 @@ abstract public class RoutineFactory
     	 return new Wait(tick);
      }
      
-    static Routineable createMandatoryRoutine(Routineable r){
-    	return new Routineable(){
-
-			@Override
-			public void startRoutine() {
-				r.startRoutine();
-			}
-
-			@Override
-			public void updateRoutine(float dt) {
-				r.updateRoutine(dt);
-			}
-	
-			@Override
-			public void completeRoutine() {
-				r.completeRoutine();
-			}
-
-			@Override
-			public void cancelRoutine() {
-				r.cancelRoutine();
-			}
-
-			@Override
-			public boolean succeededRoutine() {
-				return r.succeededRoutine();
-			}
-
-			@Override
-			public boolean failedRoutine() {
-				return r.failedRoutine();
-			}
-
-			@Override
-			public boolean instaSucceededRoutine() {
-				return false;
-			}
-
-			@Override
-			public boolean instaFailedRoutine() {
-				return false;
-			}
-
-    	};
-    }
+  
     
     /*
      * public static factory methods begin here

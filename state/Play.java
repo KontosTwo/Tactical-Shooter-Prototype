@@ -221,9 +221,9 @@ final class Play extends GameState implements PlayControlSwitchable
 		{
 			switch(command)
 			{
-				case SHOOT:	controller.cShoot((int)truePoint.x,(int)truePoint.y,0);
+				case SHOOT:	controller.cShoot(new PrecisePoint(truePoint.x,truePoint.y));
 							break;
-				case MOVE: auxiliary.aMoveTo((int)truePoint.x,(int)truePoint.y);
+				case MOVE: auxiliary.aMoveTo(new PrecisePoint(truePoint.x,truePoint.y));
 							break;
 				case GRENADE: //controller.cGrenade((int)truePoint.x, (int)truePoint.y);;
 							break;

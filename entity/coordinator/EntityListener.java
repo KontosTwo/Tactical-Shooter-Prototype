@@ -1,5 +1,6 @@
 package com.mygdx.entity.coordinator;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,19 +11,17 @@ import com.mygdx.entity.soldier.InteractionSoldierBattle.TacticalAction;
 import com.mygdx.entity.soldier.InteractionSoldierBattle.TacticalInfoGatherer;
 import com.mygdx.map.GameMap;
 import com.mygdx.map.GameMap.Collidable;
-import com.mygdx.map.GameMap.RayBlockable;
+import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.map.Path;
 import com.mygdx.misc.Pair;
 import com.mygdx.physics.MovableBox;
+import com.mygdx.physics.PrecisePoint;
+import com.mygdx.physics.PrecisePoint3;
 
 public class EntityListener implements TacticalAction,TacticalInfoGatherer
 {
 	private final InteractionSoldierBattle soldierManager;
 	private final GameMap gameMap;
-	
-	public interface Hurtboxable extends RayBlockable{
-		public void hurt();
-	}
 	
 	public interface SightBlockable{
 		// for smoke grenades
@@ -44,10 +43,6 @@ public class EntityListener implements TacticalAction,TacticalInfoGatherer
 		return aux;
 	}
 
-	@Override
-	public boolean see(int x1,int y1,int z1,int x2,int y2,int z2) {
-		return gameMap.canSee(x1, y1, z1, x2, y2, z2);
-	}
 	public void update(float dt)
 	{
 		soldierManager.update(dt);
@@ -65,9 +60,13 @@ public class EntityListener implements TacticalAction,TacticalInfoGatherer
 		
 	}
 	@Override
-	public Path findPath(int sx, int sy, int tx,
-			int ty,int maxDistance) {
-		return gameMap.findPath(sx, sy, tx, ty,maxDistance);
+	public Path findPath(PrecisePoint start,PrecisePoint target,int maxDistance) {
+		return gameMap.findPath(start,target,maxDistance);
 	}
-	
+
+	@Override
+	public boolean see(PrecisePoint3 observer,PrecisePoint3 target) {
+		return gameMap.canSee(observer,target);
+	}
+
 }

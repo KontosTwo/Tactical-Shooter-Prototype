@@ -18,21 +18,30 @@ public class VectorEquation{
 		setOrigin( x1, y1, z1);
 		setRay( x2-x1, y2-y1, z2-z1);
 	}
+	
+	public VectorEquation(PrecisePoint3 start,PrecisePoint3 end){
+		setOrigin(start.x,start.y,start.z);
+		setRay(end.x - start.x, end.y - start.y, end.z - start.z);
+	}
+	
 	public void setOrigin(float ax,float ay,float az){
 		this.ax = ax;
 		this.ay = ay;
 		this.az = az;
 	}
+	
 	public void setOrigin(Vector3 v){
 		this.ax = v.x;
 		this.ay = v.y;
 		this.az = v.z;
 	}
+	
 	public void setRay(float vx,float vy,float vz){
 		this.vx = vx;
 		this.vy = vy;
 		this.vz = vz;
 	}
+	
 	public void setRay(Vector3 v){
 		this.vx = v.x;
 		this.vy = v.y;

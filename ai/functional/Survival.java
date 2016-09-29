@@ -204,8 +204,15 @@ final class Survival implements Routineable
 		}
 	}
 
+	@Override
 	public boolean instaSucceededRoutine(){return false;}
 	
 	@Override
 	public boolean instaFailedRoutine(){return false;}
+
+	@Override
+	public void calculateInstaHeuristic() {
+		// TODO Auto-generated method stub
+		
+	}
 }

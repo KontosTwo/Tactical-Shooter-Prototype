@@ -187,6 +187,7 @@ public class Selector implements Routineable
 			}
 		}
 
+		@Override
 		public boolean instaFailedRoutine()
 		{
 			boolean ret = true;
@@ -199,6 +200,7 @@ public class Selector implements Routineable
 			}
 			return ret;
 		}
+		@Override
 		public boolean instaSucceededRoutine()
 		{
 			boolean ret = false;
@@ -221,6 +223,11 @@ public class Selector implements Routineable
 				}
 			}
 			return ret;
+		}
+		@Override
+		public void calculateInstaHeuristic() {
+			// TODO Auto-generated method stub
+			
 		}
 		
 }

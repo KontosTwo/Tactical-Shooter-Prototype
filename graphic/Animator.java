@@ -73,7 +73,7 @@ public final class Animator
 	{
 		animation = new Animation(animePath,dataPath);
 	}
-	public void doodadify()
+	public void setCenterToBase()
 	{
 		animationDimensions.centerToBottomCenter();
 	}

@@ -1,6 +1,5 @@
 package com.mygdx.map;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.mygdx.physics.PrecisePoint;

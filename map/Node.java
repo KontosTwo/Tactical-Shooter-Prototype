@@ -12,17 +12,19 @@ import com.mygdx.physics.PrecisePoint;
 
 final class Node {
 	private Node parent;
-	private int x;
-	private int y;
+	private final int x;
+	private final int y;
 	private int gCost;
 	private int hCost;
-		
+	private int fCost;
+	
 	Node(int x,int y){
 		this.x = x;
 		this.y = y;
 		Debugger.mark(x*30, y*30);
 		gCost = 0;
 		hCost = 0;
+		fCost = 0;
 	}
 	int getX(){
 		return x;
@@ -36,7 +38,7 @@ final class Node {
 		n.parent = this;
 	}
 	 boolean withinRangeOfOrigin(int maxDistanceFromOrigin){
-		 return getFCost() <= maxDistanceFromOrigin;
+		 return fCost <= maxDistanceFromOrigin;
 	 }
 	
 	 static Node lowestFInOpen(Collection <Node> open){
@@ -44,40 +46,47 @@ final class Node {
 		int lowest = Integer.MAX_VALUE;
 		for(Node n : open)
 		{
-			if(n.getFCost()<lowest)
+			if(n.fCost<lowest)
 			{
-				lowest = n.getFCost();
+				lowest = n.fCost;
 				ret = n;
 			}
 		}
 		return ret;
 	}
-	 void setGCost(Node target)
-	{		
+	 
+	void calculateCost(Node start,Node target){
+		setGCost(start);
+		setHCost(target);
+		setFCost();
+	}
+	private void setGCost(Node start){		
 		int newGCost = 0;
-		boolean found = false;
 		Node current = this;
-		while(!current.equals(target))
-		{
-			if(current.x != current.parent.x && current.y != current.parent.y)
-			{
+		
+		//calculates the length of the path from this node to the starting node
+		while(!current.equals(start)){
+			if(current.x != current.parent.x && current.y != current.parent.y){
 				newGCost += 1.4;
 			}
-			else
-			{
+			else{
 				newGCost += 1;
 			}
 			current = current.parent;
 		}
+		
 		gCost = newGCost;	
 	}
-	 void setHCost(Node n)
-	{
+	
+	/**
+	 * Calculates Manhattan distance between this Node and Node n
+	 */
+	private void setHCost(Node n){
 		hCost = (Math.abs(n.x - this.x) + Math.abs(n.y - this.y));
 	}
-	private int getFCost()
-	{
-		return hCost + gCost;
+	
+	private void setFCost(){
+		fCost =  hCost + gCost;
 	}
 	
 	/**
@@ -114,6 +123,14 @@ final class Node {
 	{
 		return this.gCost > n.gCost;
 	}
+	static Comparator<Node> createComparator(){
+		 return new Comparator<Node>(){
+			@Override
+			public int compare(Node o1, Node o2) {			
+				return o1.fCost - o2.fCost;
+			}
+		 };
+	 }
 	public String toString()
 	{
 		return x + " " + y;

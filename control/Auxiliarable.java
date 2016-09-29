@@ -1,10 +1,12 @@
 package com.mygdx.control;
 
+import com.mygdx.physics.PrecisePoint;
+
 public interface Auxiliarable 
 {
-	public void aMoveTo(double x,double y);
-	public void aAttackMoveTo(double x,double y);
+	public void aMoveTo(PrecisePoint target);
+	public void aAttackMoveTo(PrecisePoint target);
 	public void aFollow(PlayerControllable c);
-	public void aTurn(double x,double y);
+	public void aTurn(PrecisePoint target);
 	
 }

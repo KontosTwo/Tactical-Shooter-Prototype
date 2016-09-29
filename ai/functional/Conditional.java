@@ -77,4 +77,10 @@ public class Conditional implements Routineable
 	public boolean instaFailedRoutine() {
 		return heuristic.get() ? success.instaFailedRoutine() : fail.instaFailedRoutine();
 	}
+
+	@Override
+	public void calculateInstaHeuristic() {
+		// TODO Auto-generated method stub
+		
+	}
 }

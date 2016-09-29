@@ -26,8 +26,7 @@ final class AlwaysSucceed implements Routineable
 
 	@Override
 	public void cancelRoutine() {
-		// TODO Auto-generated method stub
-		
+		routine.cancelRoutine();
 	}
 
 	@Override
@@ -48,5 +47,10 @@ final class AlwaysSucceed implements Routineable
 	@Override
 	public boolean instaFailedRoutine() {
 		return false;
+	}
+
+	@Override
+	public void calculateInstaHeuristic() {
+		
 	}
 }

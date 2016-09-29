@@ -51,5 +51,11 @@ class AlwaysExecute implements Routineable{
 	public boolean instaFailedRoutine() {
 		return false;
 	}
+
+	@Override
+	public void calculateInstaHeuristic() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

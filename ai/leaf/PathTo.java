@@ -13,41 +13,33 @@ import com.mygdx.script.Scripter.Sequencialable;
  * @Succeeds once the path has been completed
  * @author Vincent Li
  */
-final class PathTo implements Routineable,Sequencialable{
+final class PathTo implements Routineable{
 	
 	private final MoveTo moveTo;
 	private final PathToable actor;
 	private Sequence sequenceForPath;
-	private boolean pathIsPossible;
-	private double destX;
-	private double destY;
+	private PrecisePoint destination;
 	private Path pathHeuristic;
 	
 	PathTo(PathToable p,MoveTo mt) {
 		actor = p;
 		moveTo = mt;
-		destX = 0; 
-		destY = 0;
+		destination = new PrecisePoint();
 	}
 	
-	void designateDestination(double x,double y){
-		destX = x;
-		destY = y;
+	void designateDestination(PrecisePoint target){
+		destination.set(target);
 	}
 	
 	@Override
 	public void startRoutine() {
-		Path result = actor.calculatePath(destX, destY);
-		List<PrecisePoint> pathPoint = result.getPath();
-		pathIsPossible = result.pathIsPossible();
-		if(pathIsPossible){
-			List <MoveTo> pathMoveTo = moveTo.duplicate(pathPoint.size());
-			for(int i = 0; i < pathPoint.size(); i ++){
-				pathMoveTo.get(i).designateDestination(pathPoint.get(i).x, pathPoint.get(i).y);
-			}
-			sequenceForPath = new Sequence(pathMoveTo);
-			sequenceForPath.startRoutine();
+		List<PrecisePoint> pathPoint = pathHeuristic.getPath();	
+		List <MoveTo> pathMoveTo = moveTo.duplicate(pathPoint.size());
+		for(int i = 0; i < pathPoint.size(); i ++){
+			pathMoveTo.get(i).designateDestination(pathPoint.get(i).x, pathPoint.get(i).y);
 		}
+		sequenceForPath = new Sequence(pathMoveTo);
+		sequenceForPath.startRoutine();	
 	}
 	
 	@Override
@@ -77,9 +69,15 @@ final class PathTo implements Routineable,Sequencialable{
 	}
 
 	@Override
+	public void calculateInstaHeuristic() {
+		pathHeuristic = actor.calculatePath(destination);
+	}
+
+	@Override
 	public boolean instaSucceededRoutine() {
 		return pathHeuristic.alreadyAtDestionation();
 	}
+	
 	@Override
 	public boolean instaFailedRoutine() {
 		return !pathHeuristic.pathIsPossible();
@@ -88,22 +86,18 @@ final class PathTo implements Routineable,Sequencialable{
 	interface PathToable extends MoveToable{	
 		// provide  an ordered set of points. It is up to the implementing class to ensure that the points are valid and sequential.
 		public void completePathTo();// execute once all moveTos have completed
-		public Path calculatePath(double x,double y);
+		public Path calculatePath(PrecisePoint destination);
 	}
-
-	@Override
+}
+	/*@Override
 	public void startSequence() {
-		Path result = actor.calculatePath(destX, destY);
-		List<PrecisePoint> pathPoint = result.getPath();
-		pathIsPossible = result.pathIsPossible();
-		if(pathIsPossible){
-			List <MoveTo> pathMoveTo = moveTo.duplicate(pathPoint.size());
-			for(int i = 0; i < pathPoint.size(); i ++){
-				pathMoveTo.get(i).designateDestination(pathPoint.get(i).x, pathPoint.get(i).y);
-			}
-			sequenceForPath = new Sequence(pathMoveTo);
-			sequenceForPath.startRoutine();
+		List<PrecisePoint> pathPoint = pathHeuristic.getPath();	
+		List <MoveTo> pathMoveTo = moveTo.duplicate(pathPoint.size());
+		for(int i = 0; i < pathPoint.size(); i ++){
+			pathMoveTo.get(i).designateDestination(pathPoint.get(i).x, pathPoint.get(i).y);
 		}
+		sequenceForPath = new Sequence(pathMoveTo);
+		sequenceForPath.startRoutine();	
 	}
 
 	@Override
@@ -135,6 +129,5 @@ final class PathTo implements Routineable,Sequencialable{
 	public boolean sequenceInstaCompleted() {
 		return pathHeuristic.alreadyAtDestionation() || !pathHeuristic.pathIsPossible() ;
 	}
-
 }
-
+*/

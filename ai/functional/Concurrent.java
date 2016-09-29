@@ -105,4 +105,11 @@ public class Concurrent implements Routineable
 		return ret;
 	}
 
+
+	@Override
+	public void calculateInstaHeuristic() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -1,17 +1,15 @@
 package com.mygdx.entity.soldier;
 
-import java.util.LinkedList;
-import java.util.List;
 
 import com.mygdx.graphic.Animator;
+import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.map.Path;
 import com.mygdx.misc.Pair;
-import com.mygdx.physics.MovableBox;
-import com.mygdx.physics.MovablePoint;
+import com.mygdx.physics.MyVector3;
 import com.mygdx.physics.PrecisePoint;
+import com.mygdx.physics.PrecisePoint3;
 
-abstract class SoldierBattle 
-{
+abstract class SoldierBattle {
 	private final Animator animator;
 	protected final SoldierBattleState soldierBattleState;
 	private final SoldierBattleMediator mediator;
@@ -20,68 +18,70 @@ abstract class SoldierBattle
 	//private static final int ANIMATIONBOXOFFSET = ;
 
 	
-	interface SoldierBattleMediator
-	{
-		public boolean see(int x1,int y1,int z1,int x2,int y2,int z2);
-		public void shoot(SoldierBattle shooter,float accuracy,int xTarget,int yTarget,int zTarget);
-		public Path findPath(int sx, int sy, int tx, int ty,int maxDistance);
+	interface SoldierBattleMediator{
+		public boolean see(PrecisePoint3 observer,PrecisePoint3 target);
+		public void shootForPlayer(SoldierBattle shooter,float accuracy,PrecisePoint target);
+		public Path findPath(PrecisePoint start,PrecisePoint target,int maxDistance);
+	}
+
+	public interface Attacker{
+		
 	}
 	
-	SoldierBattle(SoldierBattleMediator sbm,SoldierBattleState sbs)
-	{
+	SoldierBattle(SoldierBattleMediator sbm,SoldierBattleState sbs){
 		soldierBattleState = sbs;
 		Pair<String,String> newAnimeData = soldierBattleState.createAnimationFilePath();
 		animator = new Animator(soldierBattleState.center.getCenterReference(),newAnimeData.x,newAnimeData.y);
 		animator.setDimensions(ANIMATIONBOXSIZE,ANIMATIONBOXSIZE);
-		animator.doodadify();
+		animator.setCenterToBase();
 		mediator = sbm;
 
 	}
-	final void render()
-	{
+	
+	final void render(){
 		animator.render();
 	}
-	final void scanFor(SoldierBattle other)
-	{
-		if(withinRangeOfVision(other) && seeDespiteTerrain(other))
-		{
+	
+	final void scanFor(SoldierBattle other){
+		if(withinRangeOfVision(other) && seeDespiteTerrain(other)){
 			addToSighted();
 		}
 	}
-	protected abstract void addToSighted();
+	
 
-	private boolean withinRangeOfVision(SoldierBattle other)
-	{
-		return soldierBattleState.facingTowards(soldierBattleState.center.getCenterReference(), other.soldierBattleState.center.getCenterReference());
+	private boolean withinRangeOfVision(SoldierBattle other){
+		return soldierBattleState.facingTowards(soldierBattleState.center.getCenterReference()
+				, other.soldierBattleState.center.getCenterReference());
 	}
-	private boolean seeDespiteTerrain(SoldierBattle other)
-	{
-		//return mediator.see(body,other.body);
-		return false;
+	private boolean seeDespiteTerrain(SoldierBattle otherSoldier){
+		return see(otherSoldier.soldierBattleState.getVantagePoint());
+	}
+
+	protected abstract void addToSighted();
+	
+	protected final void shootForPlayer(PrecisePoint target){
+		soldierBattleState.face(target.x,target.y);
+		mediator.shootForPlayer(this, soldierBattleState.getCurrentAccuracy(), target);
 	}
 	
-	protected final void shoot(int xTarget,int yTarget,int zTarget)
-	{
-		mediator.shoot(this, soldierBattleState.getCurrentAccuracy(), xTarget, yTarget, zTarget);
+	protected final boolean see(PrecisePoint3 target){
+		return mediator.see(soldierBattleState.getVantagePoint(),target);
 	}
-	protected final void see(int xOrigin,int yOrigin,int zOrigin,int xTarget,int yTarget,int zTarget)
-	{
-		mediator.see(xOrigin, yOrigin, zOrigin, xTarget, yTarget, zTarget);
+	
+	protected final Path findPath(PrecisePoint start,PrecisePoint target,int maxDistance){
+		return mediator.findPath(start,target,maxDistance);
 	}
-	protected final Path findPath(int sx, int sy, int tx, int ty,int maxDistance){
-		return mediator.findPath(sx, sy, tx, ty,maxDistance);
-	}
-	void update(float dt)
-	{
+	
+	void update(float dt){
 		soldierBattleState.update();
-		if(soldierBattleState.stateHasChanged())
-		{
+		if(soldierBattleState.stateHasChanged()){
 			Pair<String,String> newAnimeData = soldierBattleState.createAnimationFilePath();
 			animator.changeAnimation(newAnimeData.x, newAnimeData.y);
 		}
-		animator.update(dt);
-		
+		animator.update(dt);	
 	}
-
 	
+	HitBoxable getBody(){
+		return soldierBattleState.getBody();
+	}
 }

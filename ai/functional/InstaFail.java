@@ -52,4 +52,10 @@ public class InstaFail implements Routineable
 		return true;
 	}
 
+	@Override
+	public void calculateInstaHeuristic() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

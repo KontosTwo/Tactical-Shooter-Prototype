@@ -46,7 +46,11 @@ final class AlwaysFail implements Routineable
 
 	@Override
 	public boolean instaFailedRoutine() {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void calculateInstaHeuristic() {
+		
 	}
 }

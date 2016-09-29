@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.mygdx.physics.PrecisePoint3;
 
 final class MapData {
 	
@@ -157,6 +158,27 @@ final class MapData {
 	int scaleToTileCoord(double mapCoord){
 		return (int)(mapCoord/tileSize);
 	}
+	/**
+	 * Accepts map coordinates.
+	 * @param relativeHeight
+	 * @param mapCoordX
+	 * @param mapCoordY
+	 * @return the z value scaled for terrain
+	 */
+	void scaleToTerrainHeight(PrecisePoint3 location){
+		location.z += getHeightOfTerrain(scaleToTileCoord(location.x),scaleToTileCoord(location.y));
+	}
+	void scaleToRelativeHeight(PrecisePoint3 location){
+		location.z -= getHeightOfTerrain(scaleToTileCoord(location.x),scaleToTileCoord(location.y));
+	}
+	
+	/**
+	 * Accepts map coordinates.
+	 * @param relativeHeight
+	 * @param mapCoordX
+	 * @param mapCoordY
+	 * @return the z value scaled back to relative value
+	 */
 	int getHeightOfTerrain(int x,int y){
 		return heightPhyMap[y][x];
 	}

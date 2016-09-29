@@ -1,6 +1,7 @@
 package com.mygdx.ai.leaf;
 
 import com.mygdx.ai.functional.Routineable;
+import com.mygdx.physics.PrecisePoint3;
 /**
  * @Succeeds once the firing sequence is complete
  * @Instafails if the actor has no ammo
@@ -8,9 +9,7 @@ import com.mygdx.ai.functional.Routineable;
 class Shoot implements Routineable// once initialized, the humanoid will only shoot at x,y when prompted
 {
 	// the actor will fire on x, y, failing before it starts if it doesn't have any ammo to begin with
-	private double x;
-	private double y;
-	private double z;
+	private final PrecisePoint3 target;
 	private final Shootable actor;
 	
 	// used for the sequencialable implementation
@@ -20,17 +19,16 @@ class Shoot implements Routineable// once initialized, the humanoid will only sh
 	{
 		actor = s;
 		end = false;
+		target = new PrecisePoint3();
 	}
-	void designateTarget(double x,double y,double z)
+	void designateTarget(PrecisePoint3 target)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.target.set(target);
 	}
 
 	@Override
 	public void startRoutine(){
-		actor.beginShoot(x,y,z);
+		actor.beginShoot(target);
 	}
 	
 	@Override
@@ -57,6 +55,11 @@ class Shoot implements Routineable// once initialized, the humanoid will only sh
 	public boolean failedRoutine() {
 		return false;
 	}
+
+	@Override
+	public void calculateInstaHeuristic() {
+		
+	}
 	
 	@Override
 	public boolean instaSucceededRoutine() {
@@ -69,10 +72,11 @@ class Shoot implements Routineable// once initialized, the humanoid will only sh
 	}
 	
 	interface Shootable{
-		public void beginShoot(double x,double y,double z);// it is up to the implementing class on how long to shoot
+		public void beginShoot(PrecisePoint3 target);// it is up to the implementing class on how long to shoot
 		public boolean hasAmmo();// fail if said actor does not have any ammo
 		public boolean finishedShooting(); // once the shooting and the animation and whatever "cooldown" effect have finished
 		public void completeShoot();
 		public void failShoot();
 	}
+
 }

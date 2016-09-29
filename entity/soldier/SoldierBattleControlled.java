@@ -7,6 +7,7 @@ import com.mygdx.control.Steerable;
 import com.mygdx.map.GameMap.Collidable;
 import com.mygdx.physics.MovableRectangle;
 import com.mygdx.physics.PrecisePoint;
+import com.mygdx.physics.PrecisePoint3;
 import com.mygdx.script.Scripter;
 
 import static com.mygdx.entity.soldier.SoldierBattleState.*;
@@ -133,18 +134,12 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	}
 
 	@Override
-	public void cShoot(int x, int y, int z) {
-		super.see((int)soldierBattleState.center.getCenterReference().x, (int)soldierBattleState.center.getCenterReference().y, (int)soldierBattleState.getHeight(), x,y,z);
+	public void cShoot(PrecisePoint target){
+		shootForPlayer(target);
 	}
 
 	@Override
 	public void cReload() {
-		
-	}
-
-	@Override
-	public void cFace(double x, double y) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -164,30 +159,18 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	}
 
 	@Override
-	public void cGrenade(double x, double y) {
+	public void cGrenade(PrecisePoint target) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void initiateControllable() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public PrecisePoint provideCenterForDebugger() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	
 	
 	
 	
 	
 	@Override
-	public void beginShoot(double x, double y, double z) {
+	public void beginShoot(PrecisePoint3 target) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -222,18 +205,18 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	}
 	@Override
 	public boolean aboutToCrossRightOf(int x) {
-		return soldierBattleState.centerFuture.x > x;
+		return collisionBox.getRight() > x;
 	}
 	@Override
 	public boolean aboutToCrossLeftOf(int x) {
-		return soldierBattleState.centerFuture.x < x;
+		return collisionBox.getLeft() < x;
 	}
 	@Override
 	public boolean aboutToCrossAbove(int y) {
-		return soldierBattleState.centerFuture.y > y;
+		return collisionBox.getTop() > y;
 	}
 	@Override
 	public boolean aboutToCrossBelow(int y) {
-		return soldierBattleState.centerFuture.y < y;
+		return collisionBox.getBot() < y;
 	}
 }

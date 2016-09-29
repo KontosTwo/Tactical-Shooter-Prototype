@@ -2,26 +2,21 @@ package com.mygdx.map;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Vector3;
 import com.mygdx.debug.Debugger;
 import com.mygdx.graphic.MapRenderer;
-import com.mygdx.misc.Pair;
 import com.mygdx.physics.MyVector3;
 import com.mygdx.physics.PrecisePoint;
+import com.mygdx.physics.PrecisePoint3;
 import com.mygdx.physics.VectorEquation;
 /**
  * Stores tile data and provides methods that allow
@@ -43,7 +38,7 @@ public final class GameMap {
 		public PrecisePoint getCollidablePosition();
 		public void stoppedbyCollision();
 	}
-	public interface RayBlockable{
+	public interface HitBoxable{
 		public MyVector3 getSides();
 		public PrecisePoint getCenter();
 	}
@@ -51,7 +46,7 @@ public final class GameMap {
 	public GameMap(){
 		renderer = new MapRenderer();
 		map = new MapData();
-		collidableList = new ArrayList<>();
+		collidableList = new ArrayList<>(1);
 	}
 	public void update(){
 		collisionCheck();
@@ -110,20 +105,26 @@ public final class GameMap {
 			}
 		}
 	}
-	public boolean canSee(int x1,int y1,int z1,int x2,int y2,int z2){
-		return raytracePossible(map.getHeightVisView(), x1, y1, z1, x2, y2, z2);
+	
+	public boolean canSee(PrecisePoint3 observer,PrecisePoint3 target){
+		return raytracePossible(map.getHeightVisView(), observer,target);
 	}
-	public boolean canShoot(int x1,int y1,int z1,int x2,int y2,int z2){
-		return raytracePossible(map.getHeightPhyView(), x1, y1, z1, x2, y2, z2);
+	
+	public boolean canShoot(PrecisePoint3 shooter,PrecisePoint3 target){
+		return raytracePossible(map.getHeightPhyView(), shooter,target);
 	}
-	private boolean raytracePossible(int[][] heightView,int x1,int y1,int z1,int x2,int y2,int z2){
+	
+	private boolean raytracePossible(int[][] heightView,PrecisePoint3 start,PrecisePoint3 target){
 		boolean possible = true;
 		
-		VectorEquation ray = new VectorEquation(x1,y1,z1,x2,y2,z2);
-		x1 = map.scaleToTileCoord(x1);
-		x2 = map.scaleToTileCoord(x2);
-		y1 = map.scaleToTileCoord(y1);
-		y2 = map.scaleToTileCoord(y2);
+		map.scaleToTerrainHeight(start);
+		map.scaleToTerrainHeight(target);
+		
+		VectorEquation ray = new VectorEquation(start,target);
+		int x1 = map.scaleToTileCoord(start.x);
+		int x2 = map.scaleToTileCoord(target.x);
+		int y1 = map.scaleToTileCoord(start.y);
+		int y2 = map.scaleToTileCoord(target.y);
 		
 		/*
 		 * Bresenham's algorithm for identifying
@@ -144,10 +145,13 @@ public final class GameMap {
 	    dy *= 2;
 	    traverse:
 	    for (; n > 0; --n){
+	    	
+	    	// the first tile that stops the ray will create an intersection
 	    	if(stoppedBy(createTileRayBlockable(x,y,heightView),ray,heightView)){
 	    		possible = false;
 	    		break traverse;
 	    	}
+	    	
 	        if(error > 0){
 	            x += x_inc;
 	            error -= dy;
@@ -163,7 +167,7 @@ public final class GameMap {
 	/**
 	 * Returns whether the ray intersects the obstacle
 	 */
-	private boolean stoppedBy(RayBlockable obstacle,VectorEquation ray,int[][] heightView){
+	private boolean stoppedBy(HitBoxable obstacle,VectorEquation ray,int[][] heightView){
 		
 		// find all the points where the ray intersects the obstacle
 		HashSet<PrecisePoint> rayHeuristic = ray.getIntersectionWithSquare(
@@ -205,8 +209,8 @@ public final class GameMap {
 	 * at coordinates (x,y) as a 3-D box
 	 * Accepts tile coordinates
 	 */
-	private RayBlockable createTileRayBlockable(int x,int y,int[][] heightView){
-		return new RayBlockable(){
+	private HitBoxable createTileRayBlockable(int x,int y,int[][] heightView){
+		return new HitBoxable(){
 			
 			@Override
 			public MyVector3 getSides() {
@@ -224,31 +228,40 @@ public final class GameMap {
 	 * path from (sx,sy) to (tx,ty), and a boolean signifying whether
 	 * the path exists
 	 * 
-	 * Uses map coordinates
+	 * Accepts map coordinates as parameters
 	 */
-	public Path findPath(int sx, int sy, int tx, int ty,int maxDistance) {		
+	public Path findPath(PrecisePoint start,PrecisePoint target,int maxDistance) {				
 		boolean pathPossible = true;
 		List<PrecisePoint> shortestPath = new LinkedList<PrecisePoint>();
 
-		sx = map.scaleToTileCoord(sx);
-		sy = map.scaleToTileCoord(sy);
-		tx = map.scaleToTileCoord(tx);
-		ty = map.scaleToTileCoord(ty);	
+		//double start = System.currentTimeMillis();
+		
+		
+		
+		
+		
+		int sx = map.scaleToTileCoord(start.x);
+		int sy = map.scaleToTileCoord(start.y);
+		int tx = map.scaleToTileCoord(target.x);
+		int ty = map.scaleToTileCoord(target.y);	
 		
 		if(!map.inBounds(tx, ty) || !map.createTileAt(tx, ty).walkable()){
 			pathPossible = false; 
 	    	return new Path(shortestPath,pathPossible,false);
 	    }
+		//TreeSet<Node> openList = new TreeSet<Node>(Node.createComparator());
 		Collection<Node> openList = new HashSet<Node>();
 		Collection<Node> closedList = new HashSet<Node>();
 	    Node startingNode = new Node(sx,sy);
 	    Node targetNode = new Node(tx,ty);
-	    
+	  
 	    openList.add(startingNode);
 	    calc:
         while (true) {
-            // considering the node closest to the target
+        	
+        	// considering the node closest to the target
         	Node currentNode = Node.lowestFInOpen(openList); 
+        	//Node currentNode = openList.first();
             closedList.add(currentNode); 
             openList.remove(currentNode); 
             
@@ -263,9 +276,8 @@ public final class GameMap {
             List<Node> adjacentNodes = getAdjacentNodes(currentNode,closedList);
             for (Node currentAdjNode : adjacentNodes) {
                 if(!openList.contains(currentAdjNode)) {                  
-                    currentNode.setAsParentAs(currentAdjNode);                    
-                    currentAdjNode.setGCost(startingNode); 
-                    currentAdjNode.setHCost(targetNode);
+                    currentNode.setAsParentAs(currentAdjNode);  
+                    currentAdjNode.calculateCost(startingNode, targetNode);
                     
                     // check to see whether the current node is within range of the startingNode
                     if(currentAdjNode.withinRangeOfOrigin(maxDistance)){      
@@ -274,7 +286,7 @@ public final class GameMap {
                 }
                 else if (currentAdjNode.moreCostlyThan(currentNode)){                   
                     currentNode.setAsParentAs(currentAdjNode);
-                    currentAdjNode.setGCost(startingNode); 
+                    currentAdjNode.calculateCost(startingNode, targetNode);
                 }
             }
             if (openList.isEmpty()) { 
@@ -282,6 +294,8 @@ public final class GameMap {
             	return new Path(shortestPath,pathPossible,shortestPath.isEmpty());
             }                     
         }
+	    //System.out.println(System.currentTimeMillis());
+	    //System.out.println(System.currentTimeMillis() - start);
 	    return new Path(shortestPath,pathPossible,shortestPath.isEmpty());
 	}
 	

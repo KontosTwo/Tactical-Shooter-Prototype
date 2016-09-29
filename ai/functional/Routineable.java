@@ -10,21 +10,40 @@ package com.mygdx.ai.functional;
  * complete the action
  */
 public interface Routineable{
-	public boolean instaSucceededRoutine();
+	public void calculateInstaHeuristic();
+	
 	/**
-	 * @Precondition: instaSucceeded returned false
+	 * @return if the routine has already succeeded
+	 * 
+	 * @precondition: calculateInstaHeuristic has been called
+	 */
+	public boolean instaSucceededRoutine();
+	
+	/**
+	 * @return if the routine has already failed 
+	 * 
+	 * @precondition: instaSucceeded returned false
 	 */
 	public boolean instaFailedRoutine();
+	
 	/**
-	 * @Precondition: instaSucceeded and instaFailed returned false
+	 * @return if the routine just succeeded
+	 * 
+	 * @precondition: instaSucceeded and instaFailed returned false
 	 */
 	public boolean succeededRoutine();
+	
 	/**
-	 * @Precondition: instaSucceeded, instaFailed, and succeeded returned false
+	 * @return if the routine just failed
+	 * 
+	 * @precondition: instaSucceeded, instaFailed, and succeeded returned false
 	 */ 
 	public boolean failedRoutine();
-
-	public void updateRoutine(float dt);// updating
+	
+	/**
+	 * @precondition: instaSucceeded, instaFailed, succeeded, and failed returned false
+	 */
+	public void updateRoutine(float dt);
 	
 	
 	

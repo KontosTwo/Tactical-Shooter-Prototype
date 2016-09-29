@@ -36,7 +36,7 @@ public class Sequence implements Routineable
 	@Override
 	public void startRoutine() 
 	{
-		Debugger.tick("Routine is starting");
+		//Debugger.tick("Routine is starting");
 		routineQueue.clear();
         routineQueue.addAll(routine);
         transverse();
@@ -62,7 +62,7 @@ public class Sequence implements Routineable
 	@Override
 	public void completeRoutine() 
 	{
-		Debugger.tick("Routine is complete");
+		//Debugger.tick("Routine is complete");
 		if(!routineQueue.isEmpty())
 		{
 			routineQueue.peek().completeRoutine();
@@ -182,6 +182,7 @@ public class Sequence implements Routineable
 		}
 	}
 
+	@Override
 	public boolean instaSucceededRoutine(){
 		if(routine.isEmpty()){
 			return true;
@@ -194,6 +195,7 @@ public class Sequence implements Routineable
 		}
 		return ret;
 	}
+	@Override
 	public boolean instaFailedRoutine(){
 		boolean ret = false;
 		search:
@@ -211,5 +213,10 @@ public class Sequence implements Routineable
 			}
 		}
 		return ret;
+	}
+	@Override
+	public void calculateInstaHeuristic() {
+		// TODO Auto-generated method stub
+		
 	}
 }

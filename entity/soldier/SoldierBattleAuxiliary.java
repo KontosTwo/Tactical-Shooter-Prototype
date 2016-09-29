@@ -6,6 +6,7 @@ import com.mygdx.ai.leaf.RoutineFactory;
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.map.Path;
+import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.Scripter;
 
 class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,AuxiliaryRoutineable
@@ -35,12 +36,12 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 	}
 
 	@Override
-	public void aMoveTo(double x, double y) {
-		script.pushSequence(RoutineFactory.createSequencialablePathTo(this,x,y));		
+	public void aMoveTo(PrecisePoint target) {
+		script.pushSequence(RoutineFactory.createSequencialablePathTo(this,target));		
 	}
 
 	@Override
-	public void aAttackMoveTo(double x, double y) {
+	public void aAttackMoveTo(PrecisePoint target) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -52,7 +53,7 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 	}
 
 	@Override
-	public void aTurn(double x, double y) {
+	public void aTurn(PrecisePoint target) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -63,11 +64,8 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 	}
 
 	@Override
-	public Path calculatePath(double x, double y) {
-		// TODO Auto-generated method stub
-		return findPath((int)soldierBattleState.center.getCenterReference().x,
-				(int)soldierBattleState.center.getCenterReference().y,
-				(int)x, (int)y,MAXPATHFINDINGDISTANCE);
+	public Path calculatePath(PrecisePoint target) {
+		return findPath(soldierBattleState.getCenter(),target,MAXPATHFINDINGDISTANCE);
 	}
 
 	@Override
