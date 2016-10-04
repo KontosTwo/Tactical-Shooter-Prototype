@@ -1,21 +1,21 @@
 package com.mygdx.map;
 
-final class Point 
+final class MapPoint 
 {
 
 	private int x;
 	private int y;
 	
-	Point(int x,int y)
+	MapPoint(int x,int y)
 	{
 		this.x = x;
 		this.y = y;
 	}
-	Point()
+	MapPoint()
 	{
 		this(0,0);
 	}
-	Point(Point p)
+	MapPoint(MapPoint p)
 	{
 		this.x = p.x;
 		this.y = p.y;
@@ -37,7 +37,11 @@ final class Point
 	{
 		this.x = x;
 	}
-	void set(Point p)
+	void set(int x,int y){
+		setX(x);
+		setY(y);
+	}
+	void set(MapPoint p)
 	{
 		this.x = p.x;
 		this.y = p.y;
@@ -55,14 +59,14 @@ final class Point
 	}
 	public boolean equals(Object o)
 	{
-		return ((Point)o).x == this.x &&  ((Point)o).y == this.y;
+		return ((MapPoint)o).x == this.x &&  ((MapPoint)o).y == this.y;
 	}
-	Point toMapCoord(int tileSize)
+	MapPoint toMapCoord(int tileSize)
 	{
-		return new Point((x * tileSize) + tileSize/2, (y * tileSize) + tileSize/2);
+		return new MapPoint((x * tileSize) + tileSize/2, (y * tileSize) + tileSize/2);
 	}
-	Point toTileCoord(int tileSize)
+	MapPoint toTileCoord(int tileSize)
 	{
-		return new Point((x / tileSize) , (y / tileSize) );
+		return new MapPoint((x / tileSize) , (y / tileSize) );
 	}
 }

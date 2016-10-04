@@ -1,7 +1,7 @@
 package com.mygdx.physics;
 
 
-public class PrecisePoint 
+public class PrecisePoint implements Comparable
 {
 	/*
 	 * precise coordinates
@@ -52,6 +52,9 @@ public class PrecisePoint
 	{
 		this(p.x,p.y);
 	}
+	public static PrecisePoint createMidpointof(PrecisePoint first,PrecisePoint second){
+		return new PrecisePoint((first.x + second.x)/2,(first.y + second.y)/2);
+	}
 	public String toString()
 	{
 		return "" + x + " " + y;
@@ -64,10 +67,11 @@ public class PrecisePoint
 		if(!(other instanceof PrecisePoint)){
 			return false;
 		}
-		if((Math.abs(((PrecisePoint)other).x - this.x) < .1) &&
-				Math.abs(((PrecisePoint)other).y - this.y) < .1){
+		if((Math.abs(((PrecisePoint)other).x - this.x) < .001) &&
+				Math.abs(((PrecisePoint)other).y - this.y) < .001){
 			return true;
 		}
+		
 		return false;
 	}
 	public int hashCode(){
@@ -75,5 +79,9 @@ public class PrecisePoint
 	    hash = (int) (71 * hash + this.x);
 	    hash = (int) (71 * hash + this.y);
 	    return hash;
+	}
+	@Override
+	public int compareTo(Object o) {
+		return Math.round(((PrecisePoint)o).x - this.x) + Math.round(((PrecisePoint)o).y - this.y);
 	}
 }

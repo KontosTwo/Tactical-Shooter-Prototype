@@ -1,8 +1,20 @@
 package com.mygdx.physics;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.misc.Pair;
 import com.sun.javafx.geom.Line2D;
 
@@ -13,6 +25,10 @@ public class VectorEquation{
 	private float vx;
 	private float vy;
 	private float vz;
+	
+	private VectorEquation(){
+		
+	}
 	
 	public VectorEquation(float x1,float y1,float z1,float x2,float y2,float z2){
 		setOrigin( x1, y1, z1);
@@ -30,7 +46,7 @@ public class VectorEquation{
 		this.az = az;
 	}
 	
-	public void setOrigin(Vector3 v){
+	public void setOrigin(PrecisePoint3 v){
 		this.ax = v.x;
 		this.ay = v.y;
 		this.az = v.z;
@@ -49,6 +65,25 @@ public class VectorEquation{
 	}
 	public PrecisePoint get2DOrigin(){
 		return new PrecisePoint(ax,ay);
+	}
+	public VectorEquation createUnitVector(){
+		float length = (float) Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2) + Math.pow(vz, 2));
+		VectorEquation vectorEq = new VectorEquation();
+		vectorEq.setOrigin(ax,ay,az);
+		vectorEq.setRay(vx/length,vy/length,vz/length);
+		return vectorEq;
+	}
+	
+	public void randomRotateXYAxis(float angle){
+		
+	}
+	
+	public void randomRotateZAxis(float angle){
+		
+	}
+	
+	private float getAngle(){
+		
 	}
 	/**
 	 * Precondition: the intersection between
@@ -72,25 +107,101 @@ public class VectorEquation{
 	{
 		return (az + ((x-ax)/vx)*vz);
 	}
+	/**
+	 * @return the intersection of this ray with the 2-D projection of a hitbox
+	 */
+	public Collection<PrecisePoint> getIntersectionWithSquare(HitBoxable obstacle){
+		return getIntersectionWithSquare(
+				obstacle.getBottomLeftCorner().x, 
+				obstacle.getBottomLeftCorner().x + obstacle.getSides().getX(), 
+				obstacle.getBottomLeftCorner().y,
+				obstacle.getBottomLeftCorner().y + obstacle.getSides().getY()
+		);
+	}
 	
-	public HashSet<PrecisePoint> getIntersectionWithSquare(float left,float right,float bottom,float top){
-		HashSet<PrecisePoint> result = new HashSet<PrecisePoint>(4);
+	/**
+	 * @return the intersection of this ray with the orthogonal square bounded
+	 * by the four parameters
+	 */
+	public Collection<PrecisePoint> getIntersectionWithSquare(float left,float right,float bottom,float top){
+		
+		/*
+		 * first, check if the square is too far away from the ray
+		 * if a certain side of the square is beyond the vertex of
+		 * the perpendicular ray, then the square cannot possibly
+		 * within range of the ray
+		 */
+		
+		if(vx > 0){
+			if(left > ax + vx){
+				return new ArrayList<>();
+			}
+			if(right < ax){
+				return new ArrayList<>();
+			}
+		}else if(vx < 0){
+			if(left > ax){
+				return new ArrayList<>();
+			}
+			if(right < ax + vx){
+				return new ArrayList<>();
+			}
+		}
+		
+		if(vy > 0){
+			if(bottom > ay + vy){
+				return new ArrayList<>();
+			}
+			if(top < ay){
+				return new ArrayList<>();
+			}
+		}else if(vy < 0){
+			if(bottom > ay){
+				return new ArrayList<>();
+			}
+			if(top < ay + vy){
+				return new ArrayList<>();
+			}
+		}
+		
+		Collection<PrecisePoint> result = new HashSet<PrecisePoint>();
+		
 		float topX = getXAtY(top);
 		if(topX >= left && topX <= right){
 			result.add(new PrecisePoint(topX,top));
 		}
+		
 		float bottomX = getXAtY(bottom);
 		if(bottomX >= left && bottomX <= right){
 			result.add(new PrecisePoint(bottomX,bottom));
 		}
+		
 		float rightY = getYAtX(right);
 		if(rightY >= bottom && rightY <= top){
 			result.add(new PrecisePoint(right,rightY));
 		}
+		
 		float leftY = getYAtX(left);
 		if(leftY >= bottom && leftY <= top){
 			result.add(new PrecisePoint(left,leftY));
-		}		
+		}	
+		
 		return result;
+	}
+	private static class OriginComparator implements Comparator<PrecisePoint>{
+		private final PrecisePoint origin;
+		
+		OriginComparator(PrecisePoint o){
+			origin = o;
+		}
+		@Override
+		public int compare(PrecisePoint o1, PrecisePoint o2) {
+			return (int) (Math.abs((o1.x - origin.x)) + Math.abs((o1.y - origin.y))
+					- (Math.abs((o2.x - origin.x)) + Math.abs((o2.y - origin.y))));
+		}
+	}
+	public String toString()
+	{
+		return "Origin: (" + ax + ", " + ay + ", " + az + ") || Vector: (" + vx +  ", " + vy + ", " +  vz + ")";
 	}
 }

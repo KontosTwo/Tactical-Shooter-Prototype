@@ -7,11 +7,14 @@ import java.util.List;
 
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
+import com.mygdx.debug.Debugger;
 import com.mygdx.entity.soldier.SoldierBattle.SoldierBattleMediator;
 import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.map.Path;
+import com.mygdx.physics.MyVector3;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.physics.PrecisePoint3;
+import com.mygdx.physics.Util;
 
 public class InteractionSoldierBattle implements SoldierBattleMediator
 {
@@ -37,8 +40,14 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 		 */
 		//public PrecisePoint3 refineTargetForNonPlayer(PrecisePoint target,Collection<HitBoxable> potentialTargets);
 	}
+	
 	public interface TacticalAction {
-		
+		/**
+		 * 
+		 * @return all hitboxes that are intersected by the shot vector ordered
+		 * from those closest from shooterVantage to those farthest away
+		 */
+		public List<HitBoxable> calculateTargetsHit(PrecisePoint3 shooterVantage,PrecisePoint3 target,Collection<HitBoxable> potentialTargets);
 	}
 
 	
@@ -103,8 +112,7 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 		
 		// calculating the location of the proper target
 		PrecisePoint3 refinedTarget = refineTargetForPlayer(initialTarget,potentialTargets);
-		
-		
+		System.out.println(refinedTarget);
 	}
 	
 	/**
@@ -115,20 +123,51 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	 * that is EXPECTED VISUALLY by the player
 	 * @edgecase The player aims at a region where two enemy soldiers overlap. 
 	 * The player may end up aiming at the enemy that is overlapped rather than
-	 *  the foremost overlapping one.
+	 * the foremost overlapping one, which is unexpected. Deal with it. 
 	 */
 	private PrecisePoint3 refineTargetForPlayer(PrecisePoint initialTarget,Collection<HitBoxable> potentialTargets){
-		PrecisePoint3 refinedTarget = new PrecisePoint3();
+		
+		/*
+		 * by default, if the initialTarget does not collide with any potentials, 
+		 * the refinedTarget becomes the initialTarget
+		 */
+		PrecisePoint3 refinedTarget = new PrecisePoint3(initialTarget.x,initialTarget.y,0);
+
+		searchForOverLap:
 		for(HitBoxable target : potentialTargets){
+			PrecisePoint targetBottomLeftCorner = target.getBottomLeftCorner();
+			MyVector3 targetDimensions = target.getSides();
 			
+			// determine if initialTarget overlaps the 2-D projection of the hitbox
+			if(Util.inBounds(initialTarget
+							, targetBottomLeftCorner.x
+							/*
+							 *  this is getZ because the hitbox's height should be
+							 *   the animation box's height
+							 */
+							, targetBottomLeftCorner.y + targetDimensions.getZ()
+							, targetBottomLeftCorner.x + targetDimensions.getX()
+							, targetBottomLeftCorner.y)){
+				
+				/*
+				 * the difference between the location of
+				 * of initialTarget.y and the bottom of hitbox
+				 * (which is equivalent to the bottom of the animation box)
+				 * is the zHeight
+				 */
+				float zHeight = Math.abs(initialTarget.y - targetBottomLeftCorner.y);
+				refinedTarget.set(targetBottomLeftCorner.x + targetDimensions.getX()/2
+						,targetBottomLeftCorner.y +targetDimensions.getY()/2
+						,zHeight);
+				
+				break searchForOverLap;
+			}
 		}
-		
-		
 		return refinedTarget;
 	}
 	
 	@Override
-	public boolean see(PrecisePoint3 observer,PrecisePoint3 target) {
+	public boolean canSee(PrecisePoint3 observer,PrecisePoint3 target) {
 		return infoGatherer.see(observer,target);
 	}
 	

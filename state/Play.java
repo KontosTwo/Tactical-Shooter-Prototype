@@ -69,7 +69,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		
 		EntityListener entityListener = new EntityListener();
 		
-		controller = entityListener.createPlayer(500, 500);
+		controller = entityListener.createPlayer(45, 45);
 		auxiliary = entityListener.createProtector(210,150);		//cam.focus(player);
 
 		
@@ -216,7 +216,6 @@ final class Play extends GameState implements PlayControlSwitchable
 		//if not playing, then click. Click will execute any clickable
 		Vector3 truePoint = new Vector3(screenX,screenY,0);
 		cam.unproject(truePoint);
-		
 		if(controlState.equals(ControlState.GAMEPLAY))
 		{
 			switch(command)
@@ -303,6 +302,8 @@ final class Play extends GameState implements PlayControlSwitchable
 		private void render(Camera cam)
 		{
 			em.render();
+			Debugger.render();
+			Debugger.update(.4f);
 			BatchCoordinator.coordinatedRender();
 		}
 		private void update(float dt)

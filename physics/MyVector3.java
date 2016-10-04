@@ -18,6 +18,12 @@ public class MyVector3
 	{
 		vector.set(x, y, z);
 	}
+	public void set(MyVector3 other){
+		this.vector.set(other.vector);
+	}
+	public void scale(float factor){
+		vector.scl(factor);
+	}
 	public void setZ(float z)
 	{
 		vector.z = z;
@@ -33,5 +39,8 @@ public class MyVector3
 	public float getX()
 	{
 		return vector.x;
+	}
+	public void rotate(){
+		
 	}
 }

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.maps.MapLayer;
@@ -40,7 +39,7 @@ public final class GameMap {
 	}
 	public interface HitBoxable{
 		public MyVector3 getSides();
-		public PrecisePoint getCenter();
+		public PrecisePoint getBottomLeftCorner();
 	}
 	
 	public GameMap(){
@@ -106,25 +105,32 @@ public final class GameMap {
 		}
 	}
 	
-	public boolean canSee(PrecisePoint3 observer,PrecisePoint3 target){
-		return raytracePossible(map.getHeightVisView(), observer,target);
+	public PrecisePoint3 calculateRayTraceImpactPhysical(PrecisePoint3 origin,PrecisePoint3 target){
+		return calculateRayTraceImpact(map.getHeightVisView(), origin,target);
 	}
 	
-	public boolean canShoot(PrecisePoint3 shooter,PrecisePoint3 target){
-		return raytracePossible(map.getHeightPhyView(), shooter,target);
+	public PrecisePoint3 calculateRayTraceImpactVisual(PrecisePoint3 origin,PrecisePoint3 target){
+		return calculateRayTraceImpact(map.getHeightPhyView(), origin,target);
 	}
 	
-	private boolean raytracePossible(int[][] heightView,PrecisePoint3 start,PrecisePoint3 target){
-		boolean possible = true;
+	private PrecisePoint3 calculateRayTraceImpact(int[][] heightView,PrecisePoint3 start,PrecisePoint3 target){
 		
+		/*
+		 *  scale the start and end coordinates to true 
+		 *  (terrain height added/considered) coordinates
+		 */
 		map.scaleToTerrainHeight(start);
 		map.scaleToTerrainHeight(target);
 		
+		// create the properly scaled ray
 		VectorEquation ray = new VectorEquation(start,target);
-		int x1 = map.scaleToTileCoord(start.x);
-		int x2 = map.scaleToTileCoord(target.x);
-		int y1 = map.scaleToTileCoord(start.y);
-		int y2 = map.scaleToTileCoord(target.y);
+		
+		// first, assume that the ray will end up at the *properly scaled* target
+		PrecisePoint3 impactLocation = new PrecisePoint3(target);
+		
+		MapPoint previousTile = new MapPoint(map.scaleToTileCoord(start.x),map.scaleToTileCoord(start.y));
+		MapPoint currentTile = new MapPoint();
+		MapPoint destinationTile = new MapPoint(map.scaleToTileCoord(target.x),map.scaleToTileCoord(target.y));
 		
 		/*
 		 * Bresenham's algorithm for identifying
@@ -133,6 +139,10 @@ public final class GameMap {
 		 * Source:
 		 * http://tech-algorithm.com/articles/drawing-line-using-bresenham-algorithm/
 		 */
+		int x1 = (int)start.x;
+		int x2 = (int)target.x;
+		int y1 = (int)start.y;
+		int y2 = (int)target.y;
 		int dx = Math.abs(x2 - x1);
 	    int dy = Math.abs(y2 - y1); 
 	    int x = x1;
@@ -145,13 +155,33 @@ public final class GameMap {
 	    dy *= 2;
 	    traverse:
 	    for (; n > 0; --n){
+	    	currentTile.set(map.scaleToTileCoord(x),map.scaleToTileCoord(y));
 	    	
-	    	// the first tile that stops the ray will create an intersection
-	    	if(stoppedBy(createTileRayBlockable(x,y,heightView),ray,heightView)){
-	    		possible = false;
+	    	/*
+	    	 *  if bresenham's algo reaches the destination tile, then the
+	    	 *  ray's destination remains the target
+	    	 */
+	    	if(currentTile.equals(destinationTile)){
 	    		break traverse;
 	    	}
 	    	
+	    	// perform the raycasting check only if a new tile different from the previousTile is accessed
+	    	if(!currentTile.equals(previousTile)){
+	    		
+	    		// check to see if the current tile obstructs the ray
+	    		if(stoppedBy(createTileRayBlockable(map.scaleToTileCoord(x),map.scaleToTileCoord(y),heightView),ray,heightView)){
+		    		
+	    			/*
+	    			 *  if so, the impact location is set to the current location
+	    			 *  Height of the ray at the location
+	    			 */
+	    			impactLocation.set(x, y, ray.getZFromXOrY(x));
+		    		break traverse;
+	    		}
+	    		previousTile.set(currentTile);
+	    	}	    	
+	    	
+	    	// Bresenham stuff. Don't touch
 	        if(error > 0){
 	            x += x_inc;
 	            error -= dy;
@@ -161,49 +191,45 @@ public final class GameMap {
 	            error += dx;
 	        }
 	    }
-		return possible;
+		return impactLocation;
 	}
 
 	/**
 	 * Returns whether the ray intersects the obstacle
 	 */
 	private boolean stoppedBy(HitBoxable obstacle,VectorEquation ray,int[][] heightView){
-		
-		// find all the points where the ray intersects the obstacle
-		HashSet<PrecisePoint> rayHeuristic = ray.getIntersectionWithSquare(
-				obstacle.getCenter().x, 
-				obstacle.getCenter().x + obstacle.getSides().getX(), 
-				obstacle.getCenter().y,
-				obstacle.getCenter().y + obstacle.getSides().getY()
-		);
+
+		Collection<PrecisePoint> rayHeuristic = ray.getIntersectionWithSquare(obstacle);
 		ArrayList<PrecisePoint> intersections = new ArrayList<>(rayHeuristic);
 		PrecisePoint intersectionCenter = new PrecisePoint();
 		
 		// determining which points, if any, exist
-		if(intersections.size() == 0){
+		if(intersections.size() == 0){			
 			return false;
 		}
 		else if(intersections.size() == 1){
 			intersectionCenter = intersections.get(0);
 		}else{
-			intersectionCenter.x = ((intersections.get(0).x + intersections.get(1).x)/2);
-			intersectionCenter.y = ((intersections.get(0).y + intersections.get(1).y)/2);
+			intersectionCenter = PrecisePoint.createMidpointof(intersections.get(0), intersections.get(1));
 		}
+		
+		return rayStoppedAtLocation(ray,intersectionCenter,heightView);
+	}
+	
+	private boolean rayStoppedAtLocation(VectorEquation ray,PrecisePoint location,int[][] heightView){
 		
 		// obtaining the heights of the obstacle and at the ray
 		float heightOfRayAtObstacle = Math.abs(
-			ray.getZFromXOrY(intersectionCenter.x)
+			ray.getZFromXOrY(location.x)
 		);
 		float heightOfMapAtObstacle = 
-				heightView[map.scaleToTileCoord(intersectionCenter.y)]
-						[map.scaleToTileCoord(intersectionCenter.x)];
-		
+				heightView[map.scaleToTileCoord(location.y)]
+						[map.scaleToTileCoord(location.x)];
+
 		// if the obstacle's height is higher than that of the ray, the obstacle "stops" the ray
-		if(heightOfMapAtObstacle > heightOfRayAtObstacle){
-			Debugger.mark(intersectionCenter.x, intersectionCenter.y);
-		}
 		return heightOfMapAtObstacle > heightOfRayAtObstacle ;
 	}
+	
 	/**
 	 * Creates a representation of the terrain
 	 * at coordinates (x,y) as a 3-D box
@@ -218,7 +244,7 @@ public final class GameMap {
 			}
 
 			@Override
-			public PrecisePoint getCenter() {
+			public PrecisePoint getBottomLeftCorner() {
 				return new PrecisePoint(map.scaleToMapCoord(x),map.scaleToMapCoord(y));
 			}
 		};
@@ -306,7 +332,7 @@ public final class GameMap {
 		 * every valid node adjacent to center to
 		 * adjacentNodes
 		 */
-		Consumer<Point> function = point ->{
+		Consumer<MapPoint> function = point ->{
 			Node adjNode = new Node(center.getX() + point.getX(),center.getY() + point.getY());
 			if(inBounds(adjNode) && walkableFromAToB(center,adjNode) && !closedList.contains(adjNode)){
 				adjacentNodes.add(adjNode);
@@ -319,8 +345,7 @@ public final class GameMap {
 	/**
 	 * Uses tile coordinates
 	 */
-	private boolean walkableFromAToB(int sx,int sy,int tx,int ty)
-	{
+	private boolean walkableFromAToB(int sx,int sy,int tx,int ty){
 		return walkableFromAToB(map.createTileAt(sx, sy),map.createTileAt(tx, ty));
 	}
 	private boolean walkableFromAToB(Tile x,Tile y){

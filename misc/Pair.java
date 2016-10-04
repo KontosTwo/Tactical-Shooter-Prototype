@@ -1,24 +1,41 @@
 package com.mygdx.misc;
 
 
-public class Pair<X, Y> 
-{ 
-  public X x; 
-  public Y y; 
+public class Pair<X, Y> { 
+	
+  private X first; 
+  private Y second; 
+  private boolean firstIsAssigned;
+  private boolean secondIsAssigned;
   
-  public Pair() 
-  { 
-	  x = null;
-	  y = null;
+  public Pair() { 
+	  first = null;
+	  second = null;
+	  firstIsAssigned = false;
+	  secondIsAssigned = false;
   } 
-  public Pair(X x,Y y)
-  {
-	  this.x = x;
-	  this.y = y;
+  public void setFirst(X value){
+	  firstIsAssigned = true;
+	  first = value;
   }
-  public String toString()
-  {
-	  return "" + x.toString() + " " + y.toString();
+  public void setSecond(Y value){
+	  secondIsAssigned = true;
+	  second = value;
+  }
+  public boolean firstIsAssigned(){
+	  return firstIsAssigned;
+  }
+  public boolean secondIsAssigned(){
+	  return secondIsAssigned;
+  }
+  public X getFirst(){
+	  return first;
+  }
+  public Y getSecond(){
+	  return second;
+  }
+  public String toString(){
+	  return "" + first.toString() + " " + second.toString();
   }
 } 
 

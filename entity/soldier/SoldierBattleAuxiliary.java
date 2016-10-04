@@ -31,7 +31,7 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 	}
 
 	@Override
-	protected void addToSighted() {
+	protected void addToSighted(SoldierBattle other) {
 		
 	}
 

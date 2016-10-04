@@ -40,7 +40,7 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	}
 
 	@Override
-	protected void addToSighted() {
+	protected void addToSighted(SoldierBattle other) {
 		
 	}
 	

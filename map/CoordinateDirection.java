@@ -17,13 +17,13 @@ import java.util.function.Consumer;
 	LEFT(-1,0),
 	UPLEFT(-1,1);
 	
-	private Point vector;
+	private MapPoint vector;
 	
 	private CoordinateDirection(int x,int y){
-		vector = new Point(x,y);
+		vector = new MapPoint(x,y);
 	}
 	
-	static void iterateAdjacent(Consumer<Point> function){
+	static void iterateAdjacent(Consumer<MapPoint> function){
 		for(CoordinateDirection direction : CoordinateDirection.values()){
 			function.accept(direction.vector);
 		}

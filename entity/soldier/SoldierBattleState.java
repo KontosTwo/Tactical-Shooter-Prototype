@@ -36,8 +36,8 @@ final class SoldierBattleState
 	private int reloadProgress;
 	private int shootingProgress;
 
-	private static final int BODYX = 10;
-	private static final int BODYY = 10;
+	private static final int BODYX = 20;
+	private static final int BODYY = 20;
 	private static final int BODYZ = 70;
 
 	private static final int CRAWLSPEED = 1;
@@ -117,8 +117,8 @@ final class SoldierBattleState
 			}
 
 			@Override
-			public PrecisePoint getCenter() {
-				return new PrecisePoint(center.getCenterReference().x,center.getCenterReference().y);
+			public PrecisePoint getBottomLeftCorner() {
+				return new PrecisePoint(center.getCenterReference().x - BODYX/2,center.getCenterReference().y - BODYY/2);
 			}
 		};
 	}
@@ -256,7 +256,10 @@ final class SoldierBattleState
 			dataPathBuilder.append(height.toString());
 			dataPathBuilder.append(".txt");
 		}	
-		return new Pair<String,String>(animePathBuiler.toString(),dataPathBuilder.toString());
+		Pair<String,String> animationFilePath = new Pair<>();
+		animationFilePath.setFirst(animePathBuiler.toString());
+		animationFilePath.setSecond(dataPathBuilder.toString());
+		return animationFilePath;
 	}	
 
 	private enum Allegiance

@@ -21,7 +21,6 @@ final class Node {
 	Node(int x,int y){
 		this.x = x;
 		this.y = y;
-		Debugger.mark(x*30, y*30);
 		gCost = 0;
 		hCost = 0;
 		fCost = 0;
