@@ -1,5 +1,5 @@
 # Didymos
-10/5/16 - all commits now funnel into a separate private repository, so the source code reflected in this repository is outdated as of 10/5/16. If you wish to view theup-to-date private repository, please send an email. Apologies for any inconveniences, and thank you. 
+10/5/16 - all commits now funnel into a separate private repository, so the source code reflected in this repository is outdated as of 10/5/16. If you are wish to view the up-to-date private repository, please send an email to "li.vincent98@gmail.com". Apologies for any inconveniences.
 
 Tactical 2-D Shooter under development
 - Developed in Java using the Eclipse IDE
