@@ -20,11 +20,11 @@ import com.mygdx.debug.Debugger;
  * @author Vincent Li
  *
  */
-final class Survival implements Routineable
-{
+final class Survival implements Routineable{
+	
  	private final List<Routineable> routineBank;
-    private final Queue<Routineable> survivalRoutineQueue;
     private final List<Survivalable> condition;
+    private final Queue<Routineable> survivalRoutineQueue;
     
     Survival(List<RoutineSurvivalable> routineList,Routineable aspirational) {
         routineBank = new LinkedList<Routineable>(routineList);
@@ -33,10 +33,10 @@ final class Survival implements Routineable
         routineBank.add(new AlwaysExecute(aspirational));
         
         survivalRoutineQueue = new LinkedList<Routineable>();
-        condition = new LinkedList<>();
+        condition = new LinkedList<>(routineList);
     }
      
-     static Survival build(Routineable aspirational,RoutineSurvivalable... rs){
+    static Survival build(Routineable aspirational,RoutineSurvivalable... rs){
 		List <RoutineSurvivalable> routineList = new LinkedList<>();
 		for(int i = 0; i < rs.length; i ++){
 			routineList.add(rs[i]);
@@ -108,21 +108,17 @@ final class Survival implements Routineable
 		}
 		return false;
 	}
-	private boolean succeededAfterTransverseInstaSucceeded()
-	{
+	private boolean succeededAfterTransverseInstaSucceeded(){
 		LinkedList<Routineable> copy = new LinkedList<>(survivalRoutineQueue);
 		copy.poll();
 		Iterator <Routineable> iterator = copy.iterator();
 		search:
-		while(iterator.hasNext())
-		{
+		while(iterator.hasNext()){
 			Routineable i = iterator.next();
-			if(i.instaSucceededRoutine())
-			{
+			if(i.instaSucceededRoutine()){
 				iterator.remove();
 			}
-			else
-			{
+			else{
 				break search;
 			}
 		}
@@ -130,22 +126,17 @@ final class Survival implements Routineable
 	}
 
 	@Override
-	public boolean failedRoutine() 
-	{
-		if(!conditionUpheld())
-		{
+	public boolean failedRoutine() {
+		if(!conditionUpheld()){
 			return true;
 		}
-		else if(survivalRoutineQueue.isEmpty())
-		{
+		else if(survivalRoutineQueue.isEmpty()){
 			return false;
 		}
-		else if(survivalRoutineQueue.peek().failedRoutine())
-		{
+		else if(survivalRoutineQueue.peek().failedRoutine()){
 			return true;
 		}
-		else if(survivalRoutineQueue.peek().succeededRoutine())
-		{
+		else if(survivalRoutineQueue.peek().succeededRoutine()){
 			return failedAfterTransverseInstaFailed();
 		}
 		return false;
@@ -212,7 +203,6 @@ final class Survival implements Routineable
 
 	@Override
 	public void calculateInstaHeuristic() {
-		// TODO Auto-generated method stub
 		
 	}
 }

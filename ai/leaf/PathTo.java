@@ -89,45 +89,4 @@ final class PathTo implements Routineable{
 		public Path calculatePath(PrecisePoint destination);
 	}
 }
-	/*@Override
-	public void startSequence() {
-		List<PrecisePoint> pathPoint = pathHeuristic.getPath();	
-		List <MoveTo> pathMoveTo = moveTo.duplicate(pathPoint.size());
-		for(int i = 0; i < pathPoint.size(); i ++){
-			pathMoveTo.get(i).designateDestination(pathPoint.get(i).x, pathPoint.get(i).y);
-		}
-		sequenceForPath = new Sequence(pathMoveTo);
-		sequenceForPath.startRoutine();	
-	}
 
-	@Override
-	public void updateSequence(float dt) {
-		sequenceForPath.updateRoutine(dt);
-	}
-
-	@Override
-	public boolean completed() {
-		return sequenceForPath.succeededRoutine();
-	}
-
-	@Override
-	public void completeSequence() {
-		sequenceForPath.completeRoutine();
-		actor.completePathTo();
-	}
-
-	@Override
-	public void cancelSequence() {
-		sequenceForPath.cancelRoutine();
-	}
-
-	@Override
-	public void calculateInstaCompleted() {
-		pathHeuristic = actor.calculatePath(destX, destY);
-	}
-	@Override
-	public boolean sequenceInstaCompleted() {
-		return pathHeuristic.alreadyAtDestionation() || !pathHeuristic.pathIsPossible() ;
-	}
-}
-*/

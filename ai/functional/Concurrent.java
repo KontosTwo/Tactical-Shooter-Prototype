@@ -32,26 +32,20 @@ public class Concurrent implements Routineable
 		routineQueue.forEach(r -> r.startRoutine());
 	}
 	@Override
-	public void updateRoutine(float dt) 
-	{
-		routineQueue.forEach(r ->
-		{
-			if(r.succeededRoutine())
-			{
+	public void updateRoutine(float dt) {
+		routineQueue.forEach(r ->{
+			if(r.succeededRoutine()){
 				r.completeRoutine();
 				routineQueue.remove(r);
 			}
-			else if(r.failedRoutine())
-			{
+			else if(r.failedRoutine()){
 				r.cancelRoutine();
 				routineQueue.remove(r);
 			}
-			else
-			{
+			else{
 				r.updateRoutine(dt);
 			}	
-		}			
-		);
+		});
 	}
 
 	@Override

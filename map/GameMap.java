@@ -105,32 +105,39 @@ public final class GameMap {
 		}
 	}
 	
-	public PrecisePoint3 calculateRayTraceImpactPhysical(PrecisePoint3 origin,PrecisePoint3 target){
-		return calculateRayTraceImpact(map.getHeightVisView(), origin,target);
+	public boolean rayTraceVisualPossible(PrecisePoint3 origin,PrecisePoint3 target){
+		PrecisePoint3 terrainImpactLocation = calculateRayTerrainIntersection(map.getHeightVisView(), origin,target);
+		return map.scaleToRelativeHeight(terrainImpactLocation).equals(target);
 	}
 	
-	public PrecisePoint3 calculateRayTraceImpactVisual(PrecisePoint3 origin,PrecisePoint3 target){
-		return calculateRayTraceImpact(map.getHeightPhyView(), origin,target);
+	public boolean rayTracePhysicalPossible(PrecisePoint3 origin,PrecisePoint3 target){
+		PrecisePoint3 terrainImpactLocation = calculateRayTerrainIntersection(map.getHeightPhyView(), origin,target);
+		return map.scaleToRelativeHeight(terrainImpactLocation).equals(target);
 	}
-	
-	private PrecisePoint3 calculateRayTraceImpact(int[][] heightView,PrecisePoint3 start,PrecisePoint3 target){
+	/**
+	 * 
+	 * @param heightView
+	 * @param start
+	 * @param target
+	 * @return The terrain coordinates of where the ray intersects the heightView
+	 */
+	private PrecisePoint3 calculateRayTerrainIntersection(final int[][] heightView,final PrecisePoint3 start,final PrecisePoint3 target){
 		
 		/*
 		 *  scale the start and end coordinates to true 
 		 *  (terrain height added/considered) coordinates
 		 */
-		map.scaleToTerrainHeight(start);
-		map.scaleToTerrainHeight(target);
-		
+		PrecisePoint3 newStart = map.scaleToTerrainHeight(start);
+		PrecisePoint3 newTarget = map.scaleToTerrainHeight(target);
 		// create the properly scaled ray
-		VectorEquation ray = new VectorEquation(start,target);
+		VectorEquation ray = new VectorEquation(newStart,newTarget);
 		
 		// first, assume that the ray will end up at the *properly scaled* target
-		PrecisePoint3 impactLocation = new PrecisePoint3(target);
+		PrecisePoint3 impactLocation = new PrecisePoint3(newTarget);
 		
-		MapPoint previousTile = new MapPoint(map.scaleToTileCoord(start.x),map.scaleToTileCoord(start.y));
+		MapPoint previousTile = new MapPoint(map.scaleToTileCoord(newStart.x),map.scaleToTileCoord(newStart.y));
 		MapPoint currentTile = new MapPoint();
-		MapPoint destinationTile = new MapPoint(map.scaleToTileCoord(target.x),map.scaleToTileCoord(target.y));
+		MapPoint destinationTile = new MapPoint(map.scaleToTileCoord(newTarget.x),map.scaleToTileCoord(newTarget.y));
 		
 		/*
 		 * Bresenham's algorithm for identifying
@@ -139,10 +146,10 @@ public final class GameMap {
 		 * Source:
 		 * http://tech-algorithm.com/articles/drawing-line-using-bresenham-algorithm/
 		 */
-		int x1 = (int)start.x;
-		int x2 = (int)target.x;
-		int y1 = (int)start.y;
-		int y2 = (int)target.y;
+		int x1 = (int)newStart.x;
+		int x2 = (int)newTarget.x;
+		int y1 = (int)newStart.y;
+		int y2 = (int)newTarget.y;
 		int dx = Math.abs(x2 - x1);
 	    int dy = Math.abs(y2 - y1); 
 	    int x = x1;
@@ -156,11 +163,6 @@ public final class GameMap {
 	    traverse:
 	    for (; n > 0; --n){
 	    	currentTile.set(map.scaleToTileCoord(x),map.scaleToTileCoord(y));
-	    	
-	    	/*
-	    	 *  if bresenham's algo reaches the destination tile, then the
-	    	 *  ray's destination remains the target
-	    	 */
 	    	if(currentTile.equals(destinationTile)){
 	    		break traverse;
 	    	}
@@ -168,9 +170,9 @@ public final class GameMap {
 	    	// perform the raycasting check only if a new tile different from the previousTile is accessed
 	    	if(!currentTile.equals(previousTile)){
 	    		
-	    		// check to see if the current tile obstructs the ray
-	    		if(stoppedBy(createTileRayBlockable(map.scaleToTileCoord(x),map.scaleToTileCoord(y),heightView),ray,heightView)){
-		    		
+	    		// check to see if the current tile's dimensions obstructs the ray
+		    	if(ray.getIntersectionWithBox(createTileRayBlockable(map.scaleToTileCoord(x),map.scaleToTileCoord(y),heightView)).size() > 0){
+	
 	    			/*
 	    			 *  if so, the impact location is set to the current location
 	    			 *  Height of the ray at the location
@@ -193,10 +195,29 @@ public final class GameMap {
 	    }
 		return impactLocation;
 	}
-
-	/**
+	public List<HitBoxable> findIntersectionBoxesThroughPhyTerrain(PrecisePoint3 origin,PrecisePoint3 target,final Collection<HitBoxable> obstacles){
+		return findIntersectedBoxes(origin,target,obstacles,map.getHeightPhyView());
+	}
+	private List<HitBoxable> findIntersectedBoxes(PrecisePoint3 origin,PrecisePoint3 target,final Collection<HitBoxable> obstacles,int[][] heightView){
+		List<HitBoxable> intersected = new ArrayList<HitBoxable>(obstacles.size());
+		PrecisePoint3 newOrigin = map.scaleToTerrainHeight(origin);
+		PrecisePoint3 newTarget = map.scaleToTerrainHeight(target);
+		
+		// constaining the target by terrain
+		PrecisePoint3 targetConstrainedByTerrain = calculateRayTerrainIntersection(heightView,newOrigin,newTarget);
+		
+		VectorEquation ray = new VectorEquation(newOrigin,targetConstrainedByTerrain);
+		obstacles.forEach(obstacle ->{
+			if(ray.getIntersectionWithBox(obstacle).size() > 0){
+				intersected.add(obstacle);
+			}
+		});
+		return intersected;
+	}
+/*
+	**
 	 * Returns whether the ray intersects the obstacle
-	 */
+	 *
 	private boolean stoppedBy(HitBoxable obstacle,VectorEquation ray,int[][] heightView){
 
 		Collection<PrecisePoint> rayHeuristic = ray.getIntersectionWithSquare(obstacle);
@@ -229,7 +250,7 @@ public final class GameMap {
 		// if the obstacle's height is higher than that of the ray, the obstacle "stops" the ray
 		return heightOfMapAtObstacle > heightOfRayAtObstacle ;
 	}
-	
+	*/
 	/**
 	 * Creates a representation of the terrain
 	 * at coordinates (x,y) as a 3-D box
@@ -260,12 +281,6 @@ public final class GameMap {
 		boolean pathPossible = true;
 		List<PrecisePoint> shortestPath = new LinkedList<PrecisePoint>();
 
-		//double start = System.currentTimeMillis();
-		
-		
-		
-		
-		
 		int sx = map.scaleToTileCoord(start.x);
 		int sy = map.scaleToTileCoord(start.y);
 		int tx = map.scaleToTileCoord(target.x);

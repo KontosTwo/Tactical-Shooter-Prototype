@@ -43,4 +43,16 @@ public class MyVector3
 	public void rotate(){
 		
 	}
+	public boolean equals(Object other){
+		if(other == null){
+			return false;
+		}
+		if(!(other instanceof MyVector3)){
+			return false;
+		}
+		return this.vector.equals(((MyVector3)other).vector);
+	}
+	public int hashCode(){
+		return vector.hashCode();
+	}
 }

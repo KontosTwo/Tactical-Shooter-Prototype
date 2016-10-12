@@ -4,6 +4,7 @@ import com.mygdx.ai.leaf.ControlledRoutineable;
 import com.mygdx.control.Control;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.control.Steerable;
+import com.mygdx.entity.effect.LaserSight;
 import com.mygdx.map.GameMap.Collidable;
 import com.mygdx.physics.MovableRectangle;
 import com.mygdx.physics.PrecisePoint;
@@ -20,12 +21,14 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	private final Control control;
 	private final Scripter script;
 	private final MovableRectangle collisionBox;
+	private final LaserSight laserSight;
 	
 	private SoldierBattleControlled(SoldierBattleMediator mediator,SoldierBattleState state){
 		super(mediator,state);
 		control = new Control(this);
 		script = new Scripter();
 		collisionBox = new MovableRectangle(state.center.getCenterReference(),XHITBOX,YHITBOX);
+		laserSight = new LaserSight();
 	}
 	static SoldierBattleControlled createControlled(SoldierBattleMediator mediator){
 		return new SoldierBattleControlled(mediator,SoldierBattleState.createProtectorState());
@@ -37,6 +40,14 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 		if(control.isActive() && script.isActive()){
 			script.cancelScript();
 		}
+		updateLaserSight();
+	}
+	public void render(){
+		super.render();
+		laserSight.render();
+	}
+	private void updateLaserSight(){
+		laserSight.setOrigin(soldierBattleState.getVantagePoint());
 	}
 
 	@Override
@@ -136,6 +147,7 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	@Override
 	public void cShoot(PrecisePoint target){
 		shootForPlayer(target);
+		//System.out.println(canSee(new PrecisePoint3(target.x,target.y,0)));
 	}
 
 	@Override
@@ -163,7 +175,10 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 		// TODO Auto-generated method stub
 		
 	}
-
+	@Override
+	public void cMouseMoveTo(PrecisePoint location) {
+		laserSight.setTarget(location);
+	}
 	
 	
 	
@@ -219,4 +234,5 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	public boolean aboutToCrossBelow(int y) {
 		return collisionBox.getBot() < y;
 	}
+	
 }

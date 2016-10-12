@@ -7,10 +7,9 @@ import java.util.Queue;
 
 import com.mygdx.debug.Debugger;
 
-public class Sequence implements Routineable
-{
-    private final List<Routineable> routine;
-    private Queue<Routineable> routineQueue;
+public class Sequence implements Routineable{
+    protected final List<Routineable> routine;
+    protected final Queue<Routineable> routineQueue;
     
      
     /*
@@ -18,13 +17,21 @@ public class Sequence implements Routineable
      * in other areas such as cutscenes and game scripts
      */
     
-	public Sequence(List<? extends Routineable> Routine) 
-    {
+	public Sequence(List<? extends Routineable> Routine) {
         routine = new LinkedList<Routineable>(Routine);
         routineQueue = new LinkedList<Routineable>();
     }
-	public static Sequence build(Routineable... rs)
-	{
+	
+	public Sequence(Routineable... rs){
+		LinkedList <Routineable> routineList = new LinkedList<Routineable>();
+		for(int i = 0; i < rs.length; i ++){
+			routineList.add(rs[i]);
+		}
+		routine = new LinkedList<Routineable>(routineList);
+        routineQueue = new LinkedList<Routineable>();
+	}
+
+	public static Sequence build(Routineable... rs){
 		LinkedList <Routineable> routineList = new LinkedList<Routineable>();
 		for(int i = 0; i < rs.length; i ++)
 		{
@@ -60,39 +67,28 @@ public class Sequence implements Routineable
 	}
 
 	@Override
-	public void completeRoutine() 
-	{
-		//Debugger.tick("Routine is complete");
-		if(!routineQueue.isEmpty())
-		{
+	public void completeRoutine() {
+		if(!routineQueue.isEmpty()){
 			routineQueue.peek().completeRoutine();
 		}
 		routineQueue.clear();
 	}
 
 	@Override
-	public void cancelRoutine() 
-	{
+	public void cancelRoutine() {
 		routineQueue.peek().cancelRoutine();
 	}
 
 	@Override
-	public boolean succeededRoutine() 
-	{
-		/*
-		 * rewrite a way to check if succeeded
-		 */
-		//Debugger.tick(routineQueue.peek().getClass().getName());
-		if(routineQueue.isEmpty())
-		{
+	public boolean succeededRoutine() {
+		if(routineQueue.isEmpty()){
 			return true;
-		}
-		else if(routineQueue.peek().succeededRoutine())
-		{
+		}else if(routineQueue.peek().succeededRoutine()){
 			return succeededAfterTransverseInstaSucceeded();
 		}
 		return false;
 	}
+	
 	private boolean succeededAfterTransverseInstaSucceeded()
 	{
 		LinkedList<Routineable> copy = new LinkedList<>(routineQueue);
@@ -115,18 +111,14 @@ public class Sequence implements Routineable
 	}
 
 	@Override
-	public boolean failedRoutine() 
-	{
-		if(routineQueue.isEmpty())
-		{
+	public boolean failedRoutine() {
+		if(routineQueue.isEmpty()){
 			return false;
 		}
-		else if(routineQueue.peek().failedRoutine())
-		{
+		else if(routineQueue.peek().failedRoutine()){
 			return true;
 		}
-		else if(routineQueue.peek().succeededRoutine())
-		{
+		else if(routineQueue.peek().succeededRoutine()){
 			return failedAfterTransverseInstaFailed();
 		}
 		return false;

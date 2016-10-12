@@ -159,17 +159,28 @@ final class MapData {
 		return (int)(mapCoord/tileSize);
 	}
 	/**
+	 * Accepts relative coordinates.
+	 * @param relativeHeight
+	 * @param mapCoordX
+	 * @param mapCoordY
+	 * @return A new PrecisePoint3 with the z value scaled for terrain
+	 */
+	PrecisePoint3 scaleToTerrainHeight(PrecisePoint3 location){
+		PrecisePoint3 scaledPoint = new PrecisePoint3(location);
+		scaledPoint.z += getHeightOfTerrain(scaleToTileCoord(location.x),scaleToTileCoord(location.y));
+		return scaledPoint;
+	}
+	/**
 	 * Accepts map coordinates.
 	 * @param relativeHeight
 	 * @param mapCoordX
 	 * @param mapCoordY
-	 * @return the z value scaled for terrain
+	 * @return A new PrecisePoint3 with the z value scaled back to relative form
 	 */
-	void scaleToTerrainHeight(PrecisePoint3 location){
-		location.z += getHeightOfTerrain(scaleToTileCoord(location.x),scaleToTileCoord(location.y));
-	}
-	void scaleToRelativeHeight(PrecisePoint3 location){
-		location.z -= getHeightOfTerrain(scaleToTileCoord(location.x),scaleToTileCoord(location.y));
+	PrecisePoint3 scaleToRelativeHeight(PrecisePoint3 location){
+		PrecisePoint3 scaledPoint = new PrecisePoint3(location);
+		scaledPoint.z -= getHeightOfTerrain(scaleToTileCoord(location.x),scaleToTileCoord(location.y));
+		return scaledPoint;
 	}
 	
 	/**

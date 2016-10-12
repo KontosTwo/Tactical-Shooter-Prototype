@@ -70,7 +70,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		EntityListener entityListener = new EntityListener();
 		
 		controller = entityListener.createPlayer(45, 45);
-		auxiliary = entityListener.createProtector(210,150);		//cam.focus(player);
+		auxiliary = entityListener.createProtector(450,450);		//cam.focus(player);
 
 		
 		cam.focus(controller);
@@ -259,6 +259,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		Vector3 truePoint = new Vector3(screenX,screenY,0);
 		cam.unproject(truePoint);
 		mousePosition.set(truePoint.x,truePoint.y);
+		controller.cMouseMoveTo(new PrecisePoint(truePoint.x,truePoint.y));
 		return false;
 	}
 	@Override

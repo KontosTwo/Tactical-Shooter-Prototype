@@ -18,7 +18,7 @@ abstract class SoldierBattle {
 	
 	interface SoldierBattleMediator{
 		public boolean canSee(PrecisePoint3 observer,PrecisePoint3 target);
-		public void shootForPlayer(SoldierBattle shooter,float accuracy,PrecisePoint target);
+		public void shootForPlayer(SoldierBattle shooter,float accuracy,PrecisePoint3 shooterVantage,PrecisePoint target);
 		public Path findPath(PrecisePoint start,PrecisePoint target,int maxDistance);
 	}
 
@@ -36,7 +36,7 @@ abstract class SoldierBattle {
 
 	}
 	
-	final void render(){
+	void render(){
 		animator.render();
 	}
 	
@@ -65,7 +65,7 @@ abstract class SoldierBattle {
 	
 	protected final void shootForPlayer(PrecisePoint target){
 		soldierBattleState.face(target.x,target.y);
-		soldierMediator.shootForPlayer(this, soldierBattleState.getCurrentAccuracy(), target);
+		soldierMediator.shootForPlayer(this, soldierBattleState.getCurrentAccuracy(), soldierBattleState.getVantagePoint(),target);
 	}
 	
 	
@@ -82,7 +82,15 @@ abstract class SoldierBattle {
 		animator.update(dt);	
 	}
 	
+	final void damageUsingMainWeapon(SoldierBattle other){
+		System.out.println(this.toString() + " shooting: " + other.toString());
+	}
+	
 	HitBoxable getBody(){
 		return soldierBattleState.getBody();
+	}
+	
+	public String toString(){
+		return soldierBattleState.toString();
 	}
 }

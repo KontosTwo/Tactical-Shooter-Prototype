@@ -54,8 +54,6 @@ class AlwaysExecute implements Routineable{
 
 	@Override
 	public void calculateInstaHeuristic() {
-		// TODO Auto-generated method stub
 		
 	}
-	
 }

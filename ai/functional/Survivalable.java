@@ -1,6 +1,5 @@
 package com.mygdx.ai.functional;
 
-interface Survivalable 
-{
+interface Survivalable {
 	public boolean conditionUpheld();
 }

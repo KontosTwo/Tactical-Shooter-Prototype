@@ -14,6 +14,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.debug.Debugger;
 import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.misc.Pair;
 import com.sun.javafx.geom.Line2D;
@@ -25,7 +26,7 @@ public class VectorEquation{
 	private float vx;
 	private float vy;
 	private float vz;
-	
+
 	private VectorEquation(){
 		
 	}
@@ -82,9 +83,9 @@ public class VectorEquation{
 		
 	}
 	
-	private float getAngle(){
+	//private float getAngle(){
 		
-	}
+	//}
 	/**
 	 * Precondition: the intersection between
 	 * this vector and the vertical line Y = y
@@ -99,13 +100,27 @@ public class VectorEquation{
 	 * this vector and the horizontal line X = x
 	 * exists
 	 */
-	private float getYAtX(float x)
-	{
+	private float getYAtX(float x){
 		return (ay + ((x-ax)/vx)*vy);
 	}
-	public float getZFromXOrY(float x)
-	{
+	public float getZFromXOrY(float x){
 		return (az + ((x-ax)/vx)*vz);
+	}
+	
+	public Collection<PrecisePoint3> getIntersectionWithBox(HitBoxable obstacle){
+		Collection<PrecisePoint> intersections2D =  getIntersectionWithSquare(obstacle);
+		Collection<PrecisePoint3> intersections3D = new ArrayList<>(intersections2D.size());
+		float obstacleHeight = obstacle.getSides().getZ();
+		intersections2D.forEach(point2D ->{
+			/*
+			 *  only add the point if the height of the obstacle is higher than the vector's
+			 *  z value at the intersection. 
+			 */
+			if(obstacleHeight > getZFromXOrY(point2D.x)){
+				intersections3D.add(new PrecisePoint3(point2D.x,point2D.y,getZFromXOrY(point2D.x)));
+			}
+		});
+		return intersections3D;
 	}
 	/**
 	 * @return the intersection of this ray with the 2-D projection of a hitbox
@@ -148,6 +163,9 @@ public class VectorEquation{
 			}
 		}
 		
+		/*
+		 * next, check each side for intersection with ray
+		 */
 		if(vy > 0){
 			if(bottom > ay + vy){
 				return new ArrayList<>();
@@ -188,18 +206,7 @@ public class VectorEquation{
 		
 		return result;
 	}
-	private static class OriginComparator implements Comparator<PrecisePoint>{
-		private final PrecisePoint origin;
-		
-		OriginComparator(PrecisePoint o){
-			origin = o;
-		}
-		@Override
-		public int compare(PrecisePoint o1, PrecisePoint o2) {
-			return (int) (Math.abs((o1.x - origin.x)) + Math.abs((o1.y - origin.y))
-					- (Math.abs((o2.x - origin.x)) + Math.abs((o2.y - origin.y))));
-		}
-	}
+	
 	public String toString()
 	{
 		return "Origin: (" + ax + ", " + ay + ", " + az + ") || Vector: (" + vx +  ", " + vy + ", " +  vz + ")";

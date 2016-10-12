@@ -2,8 +2,11 @@ package com.mygdx.entity.soldier;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
@@ -101,18 +104,33 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	}
 
 	@Override
-	public void shootForPlayer(SoldierBattle shooter, float accuracy, PrecisePoint initialTarget) {
+	public void shootForPlayer(SoldierBattle shooter, float accuracy, PrecisePoint3 shooterVantage,PrecisePoint initialTarget) {
 		
-		// collecting all potential targets
-		Collection <HitBoxable> potentialTargets = new ArrayList<>(enemies.size() + 1);
-		enemies.forEach(e -> potentialTargets.add(e.getBody()));
+		// map each hitboxable to its owner for quick and easy retrieval
+		HashMap<HitBoxable,SoldierBattle> hitboxOwnership = new HashMap<>();
+		
+		// collecting all potential targets ordered by how far they are from the shooter's vantage
+		Collection <HitBoxable> potentialTargets = new ArrayList<>();
+		enemies.forEach(enemy ->{
+			 HitBoxable enemyHitbox = enemy.getBody();
+			 potentialTargets.add(enemyHitbox);
+			 hitboxOwnership.put(enemyHitbox, enemy);
+		});
 		
 		// in case you ever want to shoot your partner... for testing purposes
-		potentialTargets.add(auxiliary.getBody());
+		HitBoxable auxiliaryHitbox = auxiliary.getBody();
+		potentialTargets.add(auxiliaryHitbox);
+		hitboxOwnership.put(auxiliaryHitbox, auxiliary);
 		
 		// calculating the location of the proper target
 		PrecisePoint3 refinedTarget = refineTargetForPlayer(initialTarget,potentialTargets);
-		System.out.println(refinedTarget);
+		
+		// for as many targetsHits as the shooter's bullet can pierce, have the shooter damage them
+		List<HitBoxable> targetsHit = actionMaker.calculateTargetsHit(shooterVantage, refinedTarget, potentialTargets);
+		targetsHit.forEach(hitbox ->{
+			SoldierBattle victim = hitboxOwnership.get(hitbox);
+			shooter.damageUsingMainWeapon(victim);
+		});
 	}
 	
 	/**

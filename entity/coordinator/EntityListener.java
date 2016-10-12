@@ -1,10 +1,9 @@
 package com.mygdx.entity.coordinator;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
@@ -15,11 +14,8 @@ import com.mygdx.map.GameMap;
 import com.mygdx.map.GameMap.Collidable;
 import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.map.Path;
-import com.mygdx.misc.Pair;
-import com.mygdx.physics.MovableBox;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.physics.PrecisePoint3;
-import com.mygdx.physics.VectorEquation;
 
 public final class EntityListener implements TacticalAction,TacticalInfoGatherer
 {
@@ -46,6 +42,14 @@ public final class EntityListener implements TacticalAction,TacticalInfoGatherer
 		gameMap.update();
 	}
 	public void render(){
+		/*
+		 * 
+		 * 
+		 * 
+		 * 
+		 * add all entities into a list of render requests
+		 * sorted by their y coordinate
+		 */
 		soldierManager.render();
 		gameMap.render();
 	}
@@ -60,44 +64,39 @@ public final class EntityListener implements TacticalAction,TacticalInfoGatherer
 
 	@Override
 	public boolean see(PrecisePoint3 observer,PrecisePoint3 target) {
-		return gameMap.calculateRayTraceImpactPhysical(observer,target).equals(target);
+		return gameMap.rayTraceVisualPossible(observer,target);
 	}
 	
 	@Override
 	public List<HitBoxable> calculateTargetsHit(PrecisePoint3 shooterVantage,
 				PrecisePoint3 target, Collection<HitBoxable> potentialTargets) {
+		// first, apply deviation to the origin
 		//PrecisePoint3 targetConttrainedByInaccuracy = gameMap.c
 		
-		// calculates where the ray will hit the terrain. 
-		PrecisePoint3 targetConstrainedByTerrain = gameMap.calculateRayTraceImpactPhysical(shooterVantage, target);
+		List <HitBoxable> orderedTargetsHit = gameMap.findIntersectionBoxesThroughPhyTerrain(shooterVantage, target, potentialTargets);
 		
+		// sort based on distance from shooterVantage
+		Collections.sort(orderedTargetsHit,new HitBoxComparator(shooterVantage.create2DProjection()));
 		
-		final class HitBoxComparator implements Comparator<HitBoxable>{
-		
-			private final PrecisePoint origin;
-			
-			private HitBoxComparator(PrecisePoint origin){
-				this.origin = origin;
-			}
-			
-			/**
-			 * Compares each PrecisePoint's Manhattan distance to the origin
-			 */
-			@Override
-			public int compare(HitBoxable o1, HitBoxable o2) {
-				return (int) ((Math.abs(o1.getBottomLeftCorner().x - origin.x) + Math.abs(o1.getBottomLeftCorner().y - origin.y))
-						- (Math.abs(o2.getBottomLeftCorner().x - origin.x) + Math.abs(o2.getBottomLeftCorner().y - origin.y)));
-			}
-		}
-		
-		PriorityQueue<HitBoxable> targetsHit = new PriorityQueue<>(new HitBoxComparator(shooterVantage.create2DProjection()));
-		//VectorEquation shotRay = new VectorEquation();
-		for(HitBoxable hb : potentialTargets){
-			
-		}
-		
-		
-		return null;
+		return orderedTargetsHit;
 	}
-
+	
+	
+	final class HitBoxComparator implements Comparator<HitBoxable>{
+		
+		private final PrecisePoint origin;
+		
+		private HitBoxComparator(PrecisePoint origin){
+			this.origin = origin;
+		}
+		
+		/**
+		 * Compares each PrecisePoint's Manhattan distance to the origin
+		 */
+		@Override
+		public int compare(HitBoxable o1, HitBoxable o2) {
+			return (int) ((Math.abs(o1.getBottomLeftCorner().x - origin.x) + Math.abs(o1.getBottomLeftCorner().y - origin.y))
+					- (Math.abs(o2.getBottomLeftCorner().x - origin.x) + Math.abs(o2.getBottomLeftCorner().y - origin.y)));
+		}
+	}
 }

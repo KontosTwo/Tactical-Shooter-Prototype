@@ -40,8 +40,6 @@ public class Camera extends OrthographicCamera implements CameraBoundaryProvider
 			case FOCUSED:
 					PrecisePoint focusPoint = cameraHog.provideCenterCamera();
 					
-					
-					//unproject(lead);
 					this.position.x = (focusPoint.x + lead.x)/2;		
 					this.position.y= (focusPoint.y + lead.y)/2;
 					break;

@@ -32,7 +32,7 @@ public class Wait implements Routineable
 	
 	@Override
 	public void completeRoutine() {
-		Debugger.tick("Wait is complete");
+		Debugger.tick("Completing Wait");
 	}
 	
 	@Override

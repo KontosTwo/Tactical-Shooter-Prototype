@@ -48,9 +48,9 @@ public class Selector implements Routineable
 		@Override
 		public void updateRoutine(float dt) 
 		{
-			if(routineQueue.peek().succeededRoutine())
+			if(routineQueue.peek().failedRoutine())
 			{
-				routineQueue.peek().completeRoutine();
+				routineQueue.peek().cancelRoutine();
 				routineQueue.poll();
 				transverse();
 				routineQueue.peek().startRoutine();
@@ -79,37 +79,27 @@ public class Selector implements Routineable
 		}
 
 		@Override
-		public boolean failedRoutine() 
-		{
-			/*
-			 * rewrite a way to check if succeeded
-			 */
-			//Debugger.tick(routineQueue.peek().getClass().getName());
-			if(routineQueue.isEmpty())
-			{
+		public boolean failedRoutine() {
+			if(routineQueue.isEmpty()){
 				return true;
 			}
-			else if(routineQueue.peek().succeededRoutine())
-			{
+			else if(routineQueue.peek().failedRoutine()){
 				return failedAfterTransverseInstaFailed();
 			}
 			return false;
 		}
-		private boolean failedAfterTransverseInstaFailed()
-		{
+		
+		private boolean failedAfterTransverseInstaFailed(){
 			LinkedList<Routineable> copy = new LinkedList<>(routineQueue);
 			copy.poll();
 			Iterator <Routineable> iterator = copy.iterator();
 			search:
-			while(iterator.hasNext())
-			{
+			while(iterator.hasNext()){
 				Routineable i = iterator.next();
-				if(i.instaSucceededRoutine())
-				{
+				if(i.instaFailedRoutine()){
 					iterator.remove();
 				}
-				else
-				{
+				else{
 					break search;
 				}
 			}
@@ -119,16 +109,13 @@ public class Selector implements Routineable
 		@Override
 		public boolean succeededRoutine() 
 		{
-			if(routineQueue.isEmpty())
-			{
+			if(routineQueue.isEmpty()){
 				return false;
 			}
-			else if(routineQueue.peek().succeededRoutine())
-			{
+			else if(routineQueue.peek().succeededRoutine()){
 				return true;
 			}
-			else if(routineQueue.peek().failedRoutine())
-			{
+			else if(routineQueue.peek().failedRoutine()){
 				return succeededAfterTransverseInstaSucceeded();
 			}
 			return false;
@@ -226,8 +213,6 @@ public class Selector implements Routineable
 		}
 		@Override
 		public void calculateInstaHeuristic() {
-			// TODO Auto-generated method stub
 			
-		}
-		
+		}	
 }

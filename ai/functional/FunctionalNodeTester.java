@@ -17,11 +17,17 @@ public class FunctionalNodeTester {
 	@Test
 	public void test() {
 		RoutineTester tester = new RoutineTester();
-		tester.startRoutine();
-		while(!tester.doneOnce()){
-			Debugger.update(4);;
+		tester.calculateRoutine();
 
-			tester.update(5);
+		if(tester.instaCompleted()){
+			
+		}else{
+			tester.startRoutine();
+			while(!tester.doneOnce()){
+				Debugger.update(4);
+	
+				tester.update(5);
+			}
 		}
 	}
 	private static class RoutineTester{
@@ -48,7 +54,9 @@ public class FunctionalNodeTester {
 		
 		
 		
-		
+		public boolean instaCompleted(){
+			return routine.instaFailedRoutine() || routine.instaSucceededRoutine();
+		}
 		
 		
 		public void update(float dt) 
@@ -89,22 +97,32 @@ public class FunctionalNodeTester {
 		{
 			routineActive = b;
 		}
-		public void startRoutine()
+		public void calculateRoutine()
 		{
 			routineActive = true;
 			
-			List<Routineable> Routine = new LinkedList<>();
+
+			List<Routineable> list = new LinkedList<>();
+
+
+			//selector1.add(new AlwaysSucceed(new Wait(10)));
 
 	
-			Routine.add(new InstaFail());
-
-
-			routine = new Selector(Routine);
+			//selector1.add(new AlwaysSucceed(new Wait(10)));
+			list.add(new InstaSucceed());
+			list.add(new Wait(10));
+			list.add(new InstaSucceed());
+			Survival listRoutine = new Sequence(list);
+			
+			Routineable finalRoutine = Sequence.build(new Wait(10),new InstaFail());
+			//Routine.add(new AlwaysSucceed(new Wait(10)));
+			routine = finalRoutine;
 			
 			System.out.println("InstaSucceeded " + routine.instaSucceededRoutine());
 			System.out.println("InstaFailed " + routine.instaFailedRoutine());
+		}
+		public void startRoutine(){
 			routine.startRoutine();
 		}
 	}
-
 }

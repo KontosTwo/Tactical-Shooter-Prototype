@@ -41,7 +41,7 @@ final class AlwaysSucceed implements Routineable
 
 	@Override
 	public boolean instaSucceededRoutine() {
-		return false;
+		return routine.instaFailedRoutine() || routine.instaSucceededRoutine();
 	}
 
 	@Override

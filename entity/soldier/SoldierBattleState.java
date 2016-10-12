@@ -36,17 +36,17 @@ final class SoldierBattleState
 	private int reloadProgress;
 	private int shootingProgress;
 
-	private static final int BODYX = 20;
-	private static final int BODYY = 20;
-	private static final int BODYZ = 70;
+	private static final int BODYX = 10;
+	private static final int BODYY = 10;
+	private static final int BODYZ = 50;
 
 	private static final int CRAWLSPEED = 1;
 	private static final int STANDSPEED = 4;
-	private static final int STANDHEIGHT = 70;
-	private static final int CROUCHHEIGHT = 40;
+	private static final int STANDHEIGHT = 60;
+	private static final int CROUCHHEIGHT = 30;
 	private static final int CRAWLHEIGHT = 10;
-	private static final int STANDGUNHEIGHT = 70;
-	private static final int CROUCHGUNHEIGHT = 40;
+	private static final int STANDGUNHEIGHT = 50;
+	private static final int CROUCHGUNHEIGHT = 30;
 	private static final int CRAWLGUNHEIGHT = 10;
 	private static final int HEADHEIGHT = 50;
 
@@ -98,7 +98,7 @@ final class SoldierBattleState
 		return direction.bearingDifference(otherDirection) <= FIELDOFVISION;
 	}
 	MyVector3 getSides() {
-		return new MyVector3(BODYX,BODYY,BODYZ);
+		return new MyVector3(BODYX,BODYY,body.getHeight());
 	}
 
 	PrecisePoint getCenter() {
@@ -106,19 +106,40 @@ final class SoldierBattleState
 	}
 	
 	PrecisePoint3 getVantagePoint(){
-		return new PrecisePoint3(center.getCenterReference().x,center.getCenterReference().y,BODYZ);
+		return new PrecisePoint3(center.getCenterReference().x,center.getCenterReference().y,body.getHeight());
 	}
 	
 	HitBoxable getBody(){
 		return new HitBoxable(){
 			@Override
 			public MyVector3 getSides() {
-				return new MyVector3(BODYX,BODYY,BODYZ);
+				return new MyVector3(BODYX,BODYY,body.getHeight());
 			}
 
 			@Override
 			public PrecisePoint getBottomLeftCorner() {
 				return new PrecisePoint(center.getCenterReference().x - BODYX/2,center.getCenterReference().y - BODYY/2);
+			}
+			
+			@Override
+			public boolean equals(Object other){
+				if(other == null){
+					return false;
+				}
+				if(!(other instanceof HitBoxable)){
+					return false;
+				}
+				HitBoxable otherHitbox = (HitBoxable)other;
+				return getBottomLeftCorner().equals(otherHitbox.getBottomLeftCorner())
+						&& getSides().equals(otherHitbox.getSides());
+			}
+			
+			@Override
+			public int hashCode(){
+				int hash = 7;
+			    hash = (int) (71 * hash + getSides().hashCode());
+			    hash = (int) (71 * hash + getBottomLeftCorner().hashCode());
+			    return hash;
 			}
 		};
 	}
@@ -374,5 +395,7 @@ final class SoldierBattleState
 			this.armor = armor;
 		}
 	}
-
+	public String toString(){
+		return id.toString();
+	}
 }

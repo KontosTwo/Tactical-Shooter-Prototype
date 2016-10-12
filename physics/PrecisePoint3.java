@@ -48,4 +48,11 @@ public class PrecisePoint3 {
 		}
 		return false;
 	}
+	public int hashCode(){
+		int hash = 7;
+	    hash = (int) (71 * hash + this.x);
+	    hash = (int) (71 * hash + this.y);
+	    hash = (int) (71 * hash + this.z);
+	    return hash;
+	}
 }

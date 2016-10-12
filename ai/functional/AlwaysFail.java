@@ -40,13 +40,12 @@ final class AlwaysFail implements Routineable
 
 	@Override
 	public boolean instaSucceededRoutine() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean instaFailedRoutine() {
-		return false;
+		return routine.instaFailedRoutine() || routine.instaSucceededRoutine();
 	}
 
 	@Override

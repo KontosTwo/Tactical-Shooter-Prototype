@@ -14,5 +14,5 @@ public interface PlayerControllable extends CameraHoggable{
 	public void cCrouch();
 	public void cLay();
 	public void cGrenade(PrecisePoint target);
-
+	public void cMouseMoveTo(PrecisePoint location);
 }

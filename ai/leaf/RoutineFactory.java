@@ -23,50 +23,8 @@ abstract public class RoutineFactory {
     	 shootRoutine.designateTarget(new PrecisePoint3(target.x,target.y,0));
     	 return createSequencialableAdapterFrom(shootRoutine);
      }
-	 
-	/**
-	 * @param  A Routineable instance
-	 * @return An adapter for Sequencialable
-	 */
-    private static Sequencialable createSequencialableAdapterFrom(Routineable routine){
-    	return new Sequencialable(){
-
-			@Override
-			public void startSequence() {
-				routine.startRoutine();
-			}
-
-			@Override
-			public void updateSequence(float dt) {
-				routine.updateRoutine(dt);
-			}
-
-			@Override
-			public boolean completed() {
-				return routine.succeededRoutine() || routine.failedRoutine();
-			}
-
-			@Override
-			public void completeSequence() {
-				routine.completeRoutine();
-			}
-
-			@Override
-			public void cancelSequence() {
-				routine.cancelRoutine();
-			}
-
-			@Override
-			public void calculateInstaCompleted() {
-				routine.calculateInstaHeuristic();
-			}
-
-			@Override
-			public boolean sequenceInstaCompleted() {
-				return routine.instaFailedRoutine() || routine.instaSucceededRoutine();
-			}   		
-    	};
-    }
+	
+    
 	
 	static PathTo createPathTo(PathToable aa)
     {
@@ -98,43 +56,4 @@ abstract public class RoutineFactory {
      {
     	 return new Wait(tick);
      }
-     
-  
-    
-    /*
-     * public static factory methods begin here
-     */
-    /*public static Routineable createRifleManRoutine(RiflemanRoutineable r)
-    {
-    	// assemble all routines here. 
-    	//Sequence base = Sequence.buildSequence(new InstaSucceed(),new Wait(1),Sequence.buildSequence(new InstaSucceed(),new Wait(1),new InstaSucceed()),new InstaSucceed());
-    
-    	Routineable base = new Wait();
-    	    	
-    	
-    	return base;
-    }
-   /* public static Sequencialable createPathToSeq(double x,double y,PathToable aa)
-    {
-	   	 
-	   	 PathTo ret = new PathTo(aa,createMoveTo(aa));
-	   	 ret.designateDestination(x, y);
-	   	 return ret;
-    }
-    public static Sequencialable createBurstShootSeq(float x,float y,float z,RiflemanRoutineable aa)
-    {
-    	BurstShoot burstShoot = new BurstShoot(aa,createShoot(aa));
-    	burstShoot.designateTarget(x, y,z);
-    	return burstShoot;
-    }
-    public static Sequencialable createShootSeq(double x,double y,double z,RiflemanRoutineable aa)
-    {
-    	Shoot shoot = new Shoot(aa);
-    	shoot.designateTarget(x, y,z);
-    	return shoot;
-    }
-    public static Reload createReloadSeq(RiflemanRoutineable aa)
-    {
-   	 return new Reload(aa);
-    }*/
 }
