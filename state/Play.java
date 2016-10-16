@@ -105,7 +105,10 @@ final class Play extends GameState implements PlayControlSwitchable
 		{		
 			cam.update();
 			level.update(dt);
+			
+			//controller.cMouseMoveTo(cam.unproject(mousePosition));
 		}
+		
 	}
 
 	@Override
@@ -256,10 +259,7 @@ final class Play extends GameState implements PlayControlSwitchable
 	public boolean mouseMoved(int screenX, int screenY) 
 	{
 		super.mouseMoved(screenX, screenY);
-		Vector3 truePoint = new Vector3(screenX,screenY,0);
-		cam.unproject(truePoint);
-		mousePosition.set(truePoint.x,truePoint.y);
-		controller.cMouseMoveTo(new PrecisePoint(truePoint.x,truePoint.y));
+		mousePosition.set(screenX,Game.V_HEIGHT - screenY);
 		return false;
 	}
 	@Override

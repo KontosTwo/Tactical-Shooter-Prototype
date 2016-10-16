@@ -1,6 +1,5 @@
 package com.mygdx.ai.functional;
 
-import com.mygdx.debug.Debugger;
 /**
  * Handles the execution the AI for a given actor. 
  * Different actors supplied to the factory methods
@@ -9,10 +8,10 @@ import com.mygdx.debug.Debugger;
  */
 public final class RoutineExecuter{
 	
-	private Survival survivalRoutine;
+	private Survival routine;
 	private boolean routineActive;
 
-	private RoutineExecuter(){
+	public RoutineExecuter(){
 		routineActive = false;
 	}
 	
@@ -22,24 +21,29 @@ public final class RoutineExecuter{
 	
 	public void update(float dt) {	
 		if(routineActive){
-			// continuously run the survival routine
-			if(survivalRoutine.succeededRoutine()){
-				survivalRoutine.completeRoutine();
-				survivalRoutine.startRoutine();
+			if(routine.isReady()){
+				if(routine.instaFailedRoutine() || routine.instaSucceededRoutine()){
+					return;
+				}else{
+					routine.startRoutine();
+				}
+			}else if(routine.succeededRoutine()){
+				routine.completeRoutine();
+				routine.finish();
 			}
-			else if(survivalRoutine.failedRoutine()){
-				survivalRoutine.cancelRoutine();
-				survivalRoutine.startRoutine();
+			else if(routine.failedRoutine()){
+				routine.cancelRoutine();
+				routine.finish();
 			}
 			else{
-				survivalRoutine.updateRoutine(dt);
+				routine.updateRoutine(dt);
 			}
 		}
 	}
 	
 	public void stop(){
 		if(routineActive){
-			survivalRoutine.cancelRoutine();
+			routine.cancelRoutine();
 			routineActive = false;
 		}
 	}
@@ -54,9 +58,9 @@ public final class RoutineExecuter{
 	
 	public void start(){
 		if(routineActive){
-			survivalRoutine.cancelRoutine();
+			routine.cancelRoutine();
 		}
 		routineActive = true;
-		survivalRoutine.startRoutine();
+		routine.startRoutine();
 	}
 }

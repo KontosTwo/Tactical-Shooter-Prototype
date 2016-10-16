@@ -11,12 +11,6 @@ public class Sequence implements Routineable{
     protected final List<Routineable> routine;
     protected final Queue<Routineable> routineQueue;
     
-     
-    /*
-     * due to the generic nature of this class, it can find use
-     * in other areas such as cutscenes and game scripts
-     */
-    
 	public Sequence(List<? extends Routineable> Routine) {
         routine = new LinkedList<Routineable>(Routine);
         routineQueue = new LinkedList<Routineable>();

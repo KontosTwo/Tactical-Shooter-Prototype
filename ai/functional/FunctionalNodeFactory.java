@@ -47,4 +47,59 @@ public class FunctionalNodeFactory {
 			}   		
     	};
     }
+    
+    static RoutineSurvivalable assemble(Routineable r,Survivalable s){
+    	return new RoutineSurvivalable(){
+    		private final Routineable routine = r;
+    		private final Survivalable condition = s;
+    		
+			@Override
+			public void calculateInstaHeuristic() {routine.calculateInstaHeuristic();}
+
+			@Override
+			public boolean instaSucceededRoutine() {
+				return routine.instaSucceededRoutine();
+			}
+
+			@Override
+			public boolean instaFailedRoutine() {
+				return routine.instaFailedRoutine();
+			}
+
+			@Override
+			public boolean succeededRoutine() {
+				return routine.succeededRoutine();
+			}
+
+			@Override
+			public boolean failedRoutine() {
+				return routine.failedRoutine();
+			}
+
+			@Override
+			public void updateRoutine(float dt) {
+				routine.updateRoutine(dt);
+			}
+
+			@Override
+			public void startRoutine() {
+				routine.startRoutine();
+			}
+
+			@Override
+			public void completeRoutine() {
+				routine.completeRoutine();
+			}
+
+			@Override
+			public void cancelRoutine() {
+				routine.cancelRoutine();
+			}
+
+			@Override
+			public boolean conditionUpheld() {
+				return condition.conditionUpheld();
+			}
+    	};
+    }
 }

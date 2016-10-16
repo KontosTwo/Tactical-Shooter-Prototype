@@ -58,6 +58,11 @@ public class Camera extends OrthographicCamera implements CameraBoundaryProvider
 		
 		
 	}
+	public PrecisePoint unproject(PrecisePoint point){
+		Vector3 truePoint = super.unproject(new Vector3(point.x,point.y,0));
+		point.set(truePoint.x, truePoint.y);
+		return point;
+	}
 	public void focus(CameraHoggable ch)
 	{
 		cameraHog = ch;

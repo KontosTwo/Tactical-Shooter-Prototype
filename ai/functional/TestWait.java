@@ -1,17 +1,19 @@
-package com.mygdx.ai.leaf;
+package com.mygdx.ai.functional;
 
 import com.mygdx.ai.functional.Routineable;
 import com.mygdx.debug.Debugger;
 /**
  * @Succeeds once a designated amount of time has passed
  */
-public class Wait implements Routineable
+public class TestWait implements Routineable
 {
 	private int tickQuota;
 	private int tickCount;
+	private String name;
 		
-	 public Wait(int wait){
+	 public TestWait(int wait,String name){
 		setWaitTime(wait);
+		this.name = name;
 	}
 	
 	void setWaitTime(int wait){
@@ -25,18 +27,18 @@ public class Wait implements Routineable
 	@Override
 	public void startRoutine() {
 		tickCount = 0;
-		Debugger.tick("Wait is starting");
+		Debugger.tick(name + " is starting");
 	}
 	
 	@Override
 	public void updateRoutine(float dt) {
 		tickCount ++;
-		Debugger.tick("Wait is updating for " + tickCount + " out of " + tickQuota );
+		Debugger.tick(name + " is updating for " + tickCount + " out of " + tickQuota );
 	}
 	
 	@Override
 	public void completeRoutine() {
-		Debugger.tick("Completing Wait");
+		Debugger.tick("Completing "+ name);
 	}
 	
 	@Override

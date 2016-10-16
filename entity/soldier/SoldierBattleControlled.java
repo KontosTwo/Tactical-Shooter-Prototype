@@ -44,7 +44,7 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	}
 	public void render(){
 		super.render();
-		laserSight.render();
+		//laserSight.render();
 	}
 	private void updateLaserSight(){
 		laserSight.setOrigin(soldierBattleState.getVantagePoint());

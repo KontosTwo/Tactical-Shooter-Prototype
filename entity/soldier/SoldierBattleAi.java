@@ -1,9 +1,21 @@
 package com.mygdx.entity.soldier;
 
-class SoldierBattleAi 
-{
-	interface AiMediator
-	{
+import com.mygdx.ai.functional.RoutineExecuter;
+
+final class SoldierBattleAi extends SoldierBattle{
+	private final RoutineExecuter ai;
+	
+	SoldierBattleAi(SoldierBattleMediator sbm, SoldierBattleState sbs) {
+		super(sbm, sbs);
+		ai = new RoutineExecuter();
+	}
+
+	interface AiMediator{
+		
+	}
+
+	@Override
+	protected void addToSighted(SoldierBattle other) {
 		
 	}
 }

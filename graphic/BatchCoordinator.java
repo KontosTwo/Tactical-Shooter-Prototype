@@ -31,7 +31,7 @@ public final class BatchCoordinator
 	
 	private enum BatchType
 	{
-		NIGHT(.4f,.4f,.4f,1f),
+		NIGHT(1f,.7f,.7f,1f),
 		DAY(1f,0f,0f,1f),
 		GAS(1f,1f,1f,1f);
 		
