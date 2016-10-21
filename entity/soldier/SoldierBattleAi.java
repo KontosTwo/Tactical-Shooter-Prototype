@@ -7,7 +7,7 @@ final class SoldierBattleAi extends SoldierBattle{
 	
 	SoldierBattleAi(SoldierBattleMediator sbm, SoldierBattleState sbs) {
 		super(sbm, sbs);
-		ai = new RoutineExecuter();
+		ai = RoutineExecuter.createRiflemanRoutine();
 	}
 
 	interface AiMediator{

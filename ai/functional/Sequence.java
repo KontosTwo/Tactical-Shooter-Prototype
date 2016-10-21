@@ -37,7 +37,7 @@ public class Sequence implements Routineable{
 	@Override
 	public void startRoutine() 
 	{
-		//Debugger.tick("Routine is starting");
+		Debugger.tick("Sequence is starting");
 		routineQueue.clear();
         routineQueue.addAll(routine);
         transverse();
@@ -71,6 +71,7 @@ public class Sequence implements Routineable{
 	@Override
 	public void cancelRoutine() {
 		routineQueue.peek().cancelRoutine();
+		routineQueue.clear();
 	}
 
 	@Override
@@ -83,21 +84,17 @@ public class Sequence implements Routineable{
 		return false;
 	}
 	
-	private boolean succeededAfterTransverseInstaSucceeded()
-	{
+	private boolean succeededAfterTransverseInstaSucceeded(){
 		LinkedList<Routineable> copy = new LinkedList<>(routineQueue);
 		copy.poll();
 		Iterator <Routineable> iterator = copy.iterator();
 		search:
-		while(iterator.hasNext())
-		{
+		while(iterator.hasNext()){
 			Routineable i = iterator.next();
-			if(i.instaSucceededRoutine())
-			{
+			if(i.instaSucceededRoutine()){
 				iterator.remove();
 			}
-			else
-			{
+			else{
 				break search;
 			}
 		}

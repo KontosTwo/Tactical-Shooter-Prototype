@@ -24,6 +24,10 @@ public class TestWait implements Routineable
 		}
 	}
 	
+	void reset(){
+		tickCount = 0;
+	}
+	
 	@Override
 	public void startRoutine() {
 		tickCount = 0;
@@ -39,6 +43,7 @@ public class TestWait implements Routineable
 	@Override
 	public void completeRoutine() {
 		Debugger.tick("Completing "+ name);
+		tickCount = 0;
 	}
 	
 	@Override
@@ -58,7 +63,7 @@ public class TestWait implements Routineable
 
 	@Override
 	public boolean instaSucceededRoutine() {
-		return false;
+		return succeededRoutine();
 	}
 	
 	@Override

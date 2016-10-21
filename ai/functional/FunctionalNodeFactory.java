@@ -100,6 +100,11 @@ public class FunctionalNodeFactory {
 			public boolean conditionUpheld() {
 				return condition.conditionUpheld();
 			}
+			
+			@Override 
+			public String toString(){
+				return condition.toString();
+			}
     	};
     }
 }

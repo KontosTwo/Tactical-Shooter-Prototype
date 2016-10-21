@@ -11,7 +11,7 @@ public final class RoutineExecuter{
 	private Survival routine;
 	private boolean routineActive;
 
-	public RoutineExecuter(){
+	private RoutineExecuter(){
 		routineActive = false;
 	}
 	
@@ -19,7 +19,7 @@ public final class RoutineExecuter{
 		return new RoutineExecuter();
 	}
 	
-	public void update(float dt) {	
+	public void update(float dt){	
 		if(routineActive){
 			if(routine.isReady()){
 				if(routine.instaFailedRoutine() || routine.instaSucceededRoutine()){

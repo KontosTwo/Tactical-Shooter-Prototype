@@ -9,6 +9,13 @@ import com.mygdx.map.Path;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.script.Scripter.Sequencialable;
 /**
+ * WARNING
+ * WARNING
+ * WARNING
+ * 
+ * Never put pathTo into a Selector, Survival, or Sequence
+ * due to how PathTo calculates instaSucceed/Fail, 
+ * 
  * @Instafails if the path is not possible
  * @Succeeds once the path has been completed
  * @author Vincent Li
