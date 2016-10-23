@@ -1,6 +1,7 @@
 package com.mygdx.entity.soldier;
 
 
+import com.mygdx.ai.leaf.SoldierRoutineable;
 import com.mygdx.graphic.Animator;
 import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.map.Path;
@@ -8,7 +9,7 @@ import com.mygdx.misc.Pair;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.physics.PrecisePoint3;
 
-abstract class SoldierBattle {
+abstract class SoldierBattle implements SoldierRoutineable{
 	private final Animator animator;
 	protected final SoldierBattleState soldierBattleState;
 	private final SoldierBattleMediator soldierMediator;
@@ -86,8 +87,37 @@ abstract class SoldierBattle {
 		System.out.println(this.toString() + " shooting: " + other.toString());
 	}
 	
-	HitBoxable getBody(){
+	final HitBoxable getBody(){
 		return soldierBattleState.getBody();
+	}
+	
+
+	
+	
+	@Override
+	public void beginShoot(PrecisePoint3 target) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public boolean hasAmmo() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean finishedShooting() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public void completeShoot() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void failShoot() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public String toString(){

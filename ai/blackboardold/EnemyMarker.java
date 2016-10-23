@@ -1,9 +1,10 @@
-package com.mygdx.ai.blackboard;
+package com.mygdx.ai.blackboardold;
 
 import java.util.*;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.ai.blackboard.MarkableEnemy;
 import com.mygdx.physics.PrecisePoint;
 
 final class EnemyMarker

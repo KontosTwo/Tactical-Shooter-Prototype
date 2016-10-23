@@ -1,5 +1,9 @@
 package com.mygdx.state;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -22,7 +26,6 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	// resizing this does not change the window, but the scaling -_-
 	public static final int V_WIDTH = 1700;
 	public static final int V_HEIGHT = 1000;
-	
 	private static final float STEP = 1 / 60f; // used to determinet he frequency of game ticks
 	
 	private float accum;// used to pace the game ticks
@@ -35,9 +38,11 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	private Camera cam;
 	private Viewport viewport;
 	
+	private FrameRateBuffer framerate;
 		
 	public void create() 
 	{
+		framerate = new FrameRateBuffer();
 		//sb = new SpriteBatch(); // spritebatch must be instantiated in create()
 		
 		//sb = BatchRepo.createNightShader();
@@ -55,6 +60,8 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	public void render() 
 	{
 		accum += Gdx.graphics.getDeltaTime();
+		framerate.pushFrameRate((int)(1/accum));
+		System.out.println(framerate.getFrameRate());
 		while(accum >= STEP) 
 		{
 			accum -= STEP;
@@ -134,6 +141,31 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	{
 		private static final long serialVersionUID = 1L;
 		
+	}
+	
+	private static final class FrameRateBuffer{
+		private final ArrayDeque<Integer> frameRates;
+		private static final int sampleSize = 10;
+		
+		FrameRateBuffer(){
+			frameRates = new ArrayDeque<Integer>(sampleSize);
+			for(int i = 0; i < sampleSize; i ++){
+				frameRates.add(1);
+			}
+		}
+		
+		void pushFrameRate(int frameRate){
+			frameRates.push(frameRate);
+			frameRates.pollLast();
+		}
+		
+		int getFrameRate(){
+			int frameRate = 0;
+			for(int i : frameRates){
+				frameRate += i;
+			}
+			return frameRate/sampleSize;
+		}
 	}
 }
 interface GameModeSwitchable

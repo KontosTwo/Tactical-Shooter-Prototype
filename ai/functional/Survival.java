@@ -2,6 +2,8 @@ package com.mygdx.ai.functional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mygdx.debug.Debugger;
 /**
  * Conditionally and sequencially executes a list of RoutineSurvivalables. Takes
  * a list of Survival routines and a single aspirational routine as arguments. Each
@@ -34,12 +36,13 @@ public final class Survival extends Sequence implements Routineable{
 	
 	@Override
 	public boolean succeededRoutine(){
-		return super.succeededRoutine() && conditionUpheld();
+		return super.succeededRoutine();
 	}
 	
 	@Override
 	public boolean failedRoutine() {
-		return !conditionUpheld() || super.failedRoutine() || routineQueue.peek().succeededRoutine() ? !nextConditionUpheld() : false;
+		return !conditionUpheld() || super.failedRoutine()
+				|| routineQueue.peek().succeededRoutine() ? !nextConditionUpheld() : false;
 	}
 
 	private boolean conditionUpheld(){
@@ -47,6 +50,7 @@ public final class Survival extends Sequence implements Routineable{
 		int stoppingPoint =  routine.indexOf(routineQueue.peek());
 		search:
 		for(int i = 0; i < stoppingPoint; i ++){
+			//Debugger.tick("Checking for current conditions #" + i + ": " + condition.get(i).toString());
 			if(!condition.get(i).conditionUpheld()){
 				upheld = false;
 				break search;
@@ -63,27 +67,48 @@ public final class Survival extends Sequence implements Routineable{
 		 *  has already failed
 		 */
 		int stoppingPoint =  routine.indexOf(routineQueue.peek()) + 1;
+		//System.out.print("Stopping point is" + stoppingPoint);
 		search:
 		for(int i = 0; i < stoppingPoint; i ++){
+			//Debugger.tick("Checking for next conditions #" + i + ": " + condition.get(i).toString());
 			if(!condition.get(i).conditionUpheld()){
 				upheld = false;
 				break search;
 			}
 		}
+		//System.out.println(upheld);
 		return upheld;
 	}
 
 	
-	/*
-	 * Survival never instaCompletes because it is designed to ensure 
-	 * that, should all other routines instaComplete, one, and only one,
-	 * routine will still execute - and that's the aspirational routine
-	 */
 	@Override
 	public boolean instaFailedRoutine(){
-		return false;
+		return super.instaFailedRoutine() || aPreviousConditionFailed();
+	}
+	
+	private boolean aPreviousConditionFailed(){
+
+		int stoppingPoint = 0;
+		while(routine.get(stoppingPoint).instaSucceededRoutine()){
+			stoppingPoint ++;
+		}
+		
+		boolean oneFailed = false;
+		search:
+		for(int i = 0; i < stoppingPoint; i ++){
+			if(!condition.get(i).conditionUpheld()){
+				oneFailed = true;
+				break search;
+			}
+		}
+		return oneFailed;
 	}
 
+	/*
+	 * Survival never instaSucceeds because it is designed to ensure 
+	 * that, should all other routines instaSucceeds, one, and only one,
+	 * routine will still execute - and that's the aspirational routine
+	 */
 	@Override
 	public boolean instaSucceededRoutine(){
 		return false;
@@ -94,6 +119,7 @@ public final class Survival extends Sequence implements Routineable{
 		super.startRoutine();
 		readyToStart = false;
 	}
+	
 	
 	boolean isReady(){
 		return readyToStart;

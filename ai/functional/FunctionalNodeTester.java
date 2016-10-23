@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.mygdx.ai.leaf.RiflemanRoutineable;
-import com.mygdx.ai.leaf.RoutineFactory;
 import com.mygdx.debug.Debugger;
 
 public class FunctionalNodeTester {
@@ -19,37 +17,46 @@ public class FunctionalNodeTester {
 	@Test
 	public void test() {
 		condition = new LinkedList<>();
-		Expire expire1 = new Expire(15);		
-		Expire expire2 = new Expire(15);
-
-		condition.add(expire1);
-		condition.add(expire2);
+		Expire expire1 = new Expire(20);
+		Expire expire2 = new Expire(25);
+		Expire expire3 = new Expire(35);
+		Expire expire4 = new Expire(45);
+		Expire expire5 = new Expire(55);
+		Expire expire6 = new Expire(65);
+		
+		TestWait wait1 = new TestWait(5,"first");
+		TestWait wait2 = new TestWait(5,"second");
+		TestWait wait3 = new TestWait(5,"third");
+		TestWait wait4 = new TestWait(5,"fourth");
+		TestWait wait5 = new TestWait(5,"fifth");
+		TestWait wait6 = new TestWait(5,"sixth");
 		
 		RoutineTester tester = new RoutineTester();
 				
 		List<RoutineSurvivalable> survivalList = new ArrayList<>();
-		survivalList.add(FunctionalNodeFactory.assemble(new TestWait(5,"first"), expire1));
-		survivalList.add(FunctionalNodeFactory.assemble(new TestWait(5,"second"), expire2));
-		
+
+		condition.add(expire1);
+		condition.add(expire2);
+		condition.add(expire3);
+		condition.add(expire4);
+		condition.add(expire5);
+		condition.add(expire6);
+		survivalList.add(FunctionalNodeFactory.assemble(Sequence.build(new InstaSucceed(),new TestWait(5)), expire1));
+
+		survivalList.add(FunctionalNodeFactory.assemble(Sequence.build(new InstaSucceed(),new TestWait(5)), () -> true));
+		survivalList.add(FunctionalNodeFactory.assemble(Sequence.build(new InstaSucceed(),new TestWait(5)), () -> true));
 		Survival survival = Survival.build(survivalList,new TestWait(5,"aspirational"));
 		
 		tester.calculateRoutine(survival);
 		
-		if(tester.instaCompleted()){
-			
-		}else{
-			tester.startRoutine();
-			for(int i = 0; i < 20; i ++){
-				Debugger.update(4);
-				condition.forEach(c -> c.update());
-				tester.update(5);
-			}
+		
+		tester.startRoutine();
+		for(int i = 0; i < 25; i ++){
+			Debugger.update(4);
+			condition.forEach(c -> c.update());
+			tester.update(5);
 		}
 		
-		System.out.println(expire1);
-		System.out.println(expire2);
-		expire1.reset();
-		expire2.reset();
 		for(int i = 0; i < 20; i ++){
 			Debugger.update(4);
 			condition.forEach(c -> c.update());
@@ -108,6 +115,7 @@ public class FunctionalNodeTester {
 				{
 					routine.updateRoutine(dt);
 				}
+				
 			}
 		}
 		
@@ -149,7 +157,7 @@ public class FunctionalNodeTester {
 		@Override
 		public boolean conditionUpheld() {
 			if(num>=max){
-				Debugger.tick("Condition for Expire failed due to value being at: " + num);
+				//Debugger.tick("Condition for Expire failed due to value being at: " + num);
 			}
 			return num < max;
 		}
@@ -160,7 +168,11 @@ public class FunctionalNodeTester {
 		void reset(){
 			num = 0;
 		}
-		
+		void set(int to)
+		{
+			num = to;
+		}
+		@Override
 		public String toString(){
 			return "" + num;
 		}

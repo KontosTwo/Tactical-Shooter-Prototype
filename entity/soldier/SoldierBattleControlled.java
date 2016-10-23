@@ -1,6 +1,6 @@
 package com.mygdx.entity.soldier;
 
-import com.mygdx.ai.leaf.ControlledRoutineable;
+import com.mygdx.ai.leaf.SoldierRoutineable;
 import com.mygdx.control.Control;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.control.Steerable;
@@ -13,8 +13,8 @@ import com.mygdx.script.Scripter;
 
 import static com.mygdx.entity.soldier.SoldierBattleState.*;
 
-final class SoldierBattleControlled extends SoldierBattle implements PlayerControllable,Steerable,Collidable
-,ControlledRoutineable{	
+class SoldierBattleControlled extends SoldierBattle implements PlayerControllable,Steerable,Collidable
+{	
 	
 	private static final int XHITBOX = 10;
 	private static final int YHITBOX = 10;
@@ -182,33 +182,6 @@ final class SoldierBattleControlled extends SoldierBattle implements PlayerContr
 	
 	
 	
-	
-	
-	@Override
-	public void beginShoot(PrecisePoint3 target) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public boolean hasAmmo() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public boolean finishedShooting() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public void completeShoot() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void failShoot() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	public PrecisePoint getCollidablePosition() {

@@ -1,4 +1,4 @@
-package com.mygdx.ai.blackboard;
+package com.mygdx.ai.blackboardold;
 
 import java.util.Comparator;
 import java.util.Iterator;

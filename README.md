@@ -8,3 +8,5 @@ Tactical 2-D Shooter under development
 - All other resources implemented by original code
 
 Take control of two soldiers and defeat vast enemy forces in a variety of tactical scenarios. Features a smart, tactical behavior tree for AI and a diverse, exploitable terrain that encourages you to think tactically
+
+Developed by Vincent Li

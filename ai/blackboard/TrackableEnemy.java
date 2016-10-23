@@ -1,7 +1,18 @@
 package com.mygdx.ai.blackboard;
 
-public interface TrackableEnemy
-{
+import com.mygdx.physics.PrecisePoint3;
+
+class TrackableEnemy{
+	private final PrecisePoint3 target;
+	
+	TrackableEnemy(PrecisePoint3 p){
+		target = p;
+	}
+	
+	PrecisePoint3 getPosition(){
+		return target;
+	}
+	
 	/*
 	 * change of plan, do not code this whole
 	 * "enemy comparer" thing

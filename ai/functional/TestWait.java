@@ -10,12 +10,20 @@ public class TestWait implements Routineable
 	private int tickQuota;
 	private int tickCount;
 	private String name;
-		
-	 public TestWait(int wait,String name){
-		setWaitTime(wait);
-		this.name = name;
-	}
+	private static int serialNum;
 	
+	static{
+		serialNum = 1;
+	}
+	 public TestWait(int wait){
+		setWaitTime(wait);
+		this.name = "Routine number "+serialNum + ": ";
+		serialNum ++;
+	}
+	 public TestWait(int wait,String name){
+			setWaitTime(wait);
+			this.name = name;
+		}
 	void setWaitTime(int wait){
 		tickQuota = wait;
 		if(wait <= 0){
