@@ -1,6 +1,8 @@
 package com.mygdx.entity.soldier;
 
 
+import com.mygdx.ai.blackboard.EnemyMarker.Markable;
+import com.mygdx.ai.blackboard.EnemyTracker.Trackable;
 import com.mygdx.ai.leaf.SoldierRoutineable;
 import com.mygdx.graphic.Animator;
 import com.mygdx.map.GameMap.HitBoxable;
@@ -9,7 +11,7 @@ import com.mygdx.misc.Pair;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.physics.PrecisePoint3;
 
-abstract class SoldierBattle implements SoldierRoutineable{
+abstract class SoldierBattle implements SoldierRoutineable,Trackable,Markable{
 	private final Animator animator;
 	protected final SoldierBattleState soldierBattleState;
 	private final SoldierBattleMediator soldierMediator;
@@ -21,10 +23,6 @@ abstract class SoldierBattle implements SoldierRoutineable{
 		public boolean canSee(PrecisePoint3 observer,PrecisePoint3 target);
 		public void shootForPlayer(SoldierBattle shooter,float accuracy,PrecisePoint3 shooterVantage,PrecisePoint target);
 		public Path findPath(PrecisePoint start,PrecisePoint target,int maxDistance);
-	}
-
-	public interface Attacker{
-		
 	}
 	
 	SoldierBattle(SoldierBattleMediator sbm,SoldierBattleState sbs){
@@ -67,6 +65,14 @@ abstract class SoldierBattle implements SoldierRoutineable{
 	protected final void shootForPlayer(PrecisePoint target){
 		soldierBattleState.face(target.x,target.y);
 		soldierMediator.shootForPlayer(this, soldierBattleState.getCurrentAccuracy(), soldierBattleState.getVantagePoint(),target);
+	}
+	
+	protected final void shootForAi(SoldierBattle victim){
+		
+		/*
+		 * This works hand-in-hand with the generics of EnemyMarker and EnemyTracker
+		 * This also works with the refineTargetForAi method. 
+		 */
 	}
 	
 	

@@ -18,7 +18,7 @@ import com.mygdx.physics.PrecisePoint;
 
 public final class EnemyManager
 {
-	/*private List<EnemyMarker> recognizedEnemy;		
+	private List<EnemyMarker> recognizedEnemy;		
 	private List<EnemyTracker> sightedEnemy;
 	
 	private static final int ENEMYREVEALRADIUS = 50; 
@@ -244,5 +244,5 @@ public final class EnemyManager
 		recognizedEnemy.addFirst(new EnemyMarker(h,soldier,delayedCenter));
 
 	}
-	*/
+	
 }

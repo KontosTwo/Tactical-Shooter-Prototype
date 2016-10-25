@@ -4,13 +4,13 @@ import java.util.*;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.ai.blackboard.MarkableEnemy;
+import com.mygdx.ai.blackboard.Markable;
 import com.mygdx.physics.PrecisePoint;
-
+/*
 final class EnemyMarker
 {
 	private PrecisePoint position;
-	private MarkableEnemy target;
+	private Markable target;
 	private int age;
 	private final static int  MAXAGE = 200000;// time for an EnemyMarker to expire
 	private final static int REVEALTIME = 300; // time to notify other soldiers that this enemyMarker is moot	
@@ -19,7 +19,7 @@ final class EnemyMarker
 	private HashSet<Object> tracker;// these are all the objects that are tracking the Markable
 	private int timeUntilQuit;
 		
-	EnemyMarker(MarkableEnemy tracked,Object seeker)
+	EnemyMarker(Markable tracked,Object seeker)
 	{ 
 		target = tracked;
 		this.position = new PrecisePoint(tracked.getPosition());
@@ -36,7 +36,7 @@ final class EnemyMarker
 		tracker = new HashSet<>();
 		timeUntilQuit = 0;
 		pendAsUser(seeker);
-	}*/
+	}
 	PrecisePoint getPosition()
 	{
 		return target.getPosition();
@@ -66,7 +66,7 @@ final class EnemyMarker
 		return tracker.size() == 0;
 	}
 
-	boolean tooCloseTo(MarkableEnemy m)// if you expose yourself too close to one of your previous hitmarkers, the enemy will still treat you as one soldier
+	boolean tooCloseTo(Markable m)// if you expose yourself too close to one of your previous hitmarkers, the enemy will still treat you as one soldier
 	{
 		return Math.abs(m.getPosition().x - this.position.x) < ENEMYGUESSRADIUS && Math.abs(m.getPosition().y - this.position.y) < ENEMYGUESSRADIUS;
 	}
@@ -74,7 +74,7 @@ final class EnemyMarker
 	{
 		return Math.abs(delayedCenter.x - this.position.x) < ENEMYGUESSRADIUS && Math.abs(delayedCenter.y - this.position.y) < ENEMYGUESSRADIUS;
 	}
-	boolean assumedCloseTo(MarkableEnemy m)// if you expose yourself close to where you have previously revealed yourself, the enemy assumes you are the previous revelaed
+	boolean assumedCloseTo(Markable m)// if you expose yourself close to where you have previously revealed yourself, the enemy assumes you are the previous revelaed
 	{
 		return Math.abs(m.getPosition().x - this.position.x) < ENEMYASSUMERADIUS && Math.abs(m.getPosition().y - this.position.y) < ENEMYASSUMERADIUS;
 	}
@@ -105,4 +105,4 @@ final class EnemyMarker
 					Math.sqrt(Math.pow(Math.abs(o2.position.x - observer.x),2) + Math.pow(Math.abs(o2.position.y - observer.y),2)));
 		}	
 	}
-}
+}*/
