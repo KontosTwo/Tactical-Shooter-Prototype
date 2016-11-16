@@ -6,8 +6,7 @@ import java.util.List;
 
 import com.mygdx.physics.PrecisePoint3;
 import com.mygdx.ai.blackboard.AiEnemyManager.AiEnemyCognizable;
-import com.mygdx.ai.blackboard.EnemyMarker.Markable;
-import com.mygdx.ai.blackboard.EnemyTracker.Trackable;
+import com.mygdx.debug.Debugger;
 
 /**
  * An implementation of a Blackboard that describes the behavior and information-gathering
@@ -22,7 +21,7 @@ public final class AiEnemyManager <O extends AiEnemyCognizable,T extends Trackab
 	public interface AiEnemyCognizable{
 		public boolean aiSeeDirectly(PrecisePoint3 target);
 		public boolean aiSeeThroughTerrain(PrecisePoint3 target);
-		public PrecisePoint3 getPositionForAi();
+		public PrecisePoint3 getPositionForCognizable();
 	}
 	
 	private final AiEnemyCognizable observer;
@@ -37,13 +36,15 @@ public final class AiEnemyManager <O extends AiEnemyCognizable,T extends Trackab
 	
 	public void update(){
 		removeOutOfSightEnemies();
+		visibleEnemies.forEach(e -> Debugger.mark(e.getTargetLocation().create2DProjection()));
+		System.out.println(visibleEnemies.size());
 	}
 	
 	private void removeOutOfSightEnemies(){
 		Iterator<EnemyTracker<T>> iterator = visibleEnemies.iterator();
 		while(iterator.hasNext()){
-			EnemyTracker<T> current = iterator.next();
-			if(observer.aiSeeDirectly(current.getTargetLocation()) == false){
+			EnemyTracker<T> currentTrackableEnemy = iterator.next();
+			if(observer.aiSeeDirectly(currentTrackableEnemy.getTargetLocation()) == false){
 				iterator.remove();
 			}
 		}

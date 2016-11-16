@@ -1,14 +1,10 @@
 package com.mygdx.ai.blackboard;
 
 import com.mygdx.physics.PrecisePoint3;
-import com.mygdx.ai.blackboard.EnemyTracker.Trackable;
 
 
-public final class EnemyTracker <T extends Trackable>{
+final class EnemyTracker <T extends Trackable>{
 	
-	public interface Trackable{
-		public PrecisePoint3 getLocationForBlackBoard();
-	}
 	
 	private final T enemy;
 	

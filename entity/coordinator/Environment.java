@@ -16,27 +16,42 @@ import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.map.Path;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.physics.PrecisePoint3;
+import com.mygdx.script.EnvironmentBuilder;
 
-public final class EntityListener implements TacticalAction,TacticalInfoGatherer
+public final class Environment implements TacticalAction,TacticalInfoGatherer,EnvironmentBuilder
 {
 	private final InteractionSoldierBattle soldierManager;
 	//private final ListOfGasClouds gas;
 	private final GameMap gameMap;
 
-	public EntityListener(){
+	public Environment(){
 		soldierManager = new InteractionSoldierBattle(this,this);
 		gameMap = new GameMap();
 	}
+	
+	@Override
 	public PlayerControllable createPlayer(int x,int y){
 		PlayerControllable player = soldierManager.createPlayer(x, y);
 		gameMap.treatAsCollidable((Collidable)player);
 		return player;
 	}
-	public Auxiliarable createProtector(int x, int y) {
+	
+	@Override
+	public Auxiliarable createAuxiliary(int x, int y) {
 		Auxiliarable aux = soldierManager.createAuxiliary(x, y);
 		return aux;
 	}
-
+	
+	@Override
+	public void createRifleman(int x,int y){
+		soldierManager.createRifleman(x, y);
+	}
+	
+	@Override
+	public void loadLevel(String name){
+		gameMap.loadLevel(name);
+	}
+	
 	public void update(float dt){
 		soldierManager.update(dt);
 		gameMap.update();
@@ -54,9 +69,6 @@ public final class EntityListener implements TacticalAction,TacticalInfoGatherer
 		gameMap.render();
 	}
 
-	public void loadLevel(int level) {
-		gameMap.loadLevel(level);
-	}
 	@Override
 	public Path findPath(PrecisePoint start,PrecisePoint target,int maxDistance) {
 		return gameMap.findPath(start,target,maxDistance);

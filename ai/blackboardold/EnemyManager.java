@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.misc.TimeCapsule;
 import com.mygdx.misc.Pair;
 import com.mygdx.physics.PrecisePoint;
-
+/*
 public final class EnemyManager
 {
 	private List<EnemyMarker> recognizedEnemy;		
@@ -246,3 +246,4 @@ public final class EnemyManager
 	}
 	
 }
+*/

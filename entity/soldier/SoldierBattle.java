@@ -1,8 +1,8 @@
 package com.mygdx.entity.soldier;
 
 
-import com.mygdx.ai.blackboard.EnemyMarker.Markable;
-import com.mygdx.ai.blackboard.EnemyTracker.Trackable;
+import com.mygdx.ai.blackboard.Markable;
+import com.mygdx.ai.blackboard.Trackable;
 import com.mygdx.ai.leaf.SoldierRoutineable;
 import com.mygdx.graphic.Animator;
 import com.mygdx.map.GameMap.HitBoxable;
@@ -97,6 +97,10 @@ abstract class SoldierBattle implements SoldierRoutineable,Trackable,Markable{
 		return soldierBattleState.getBody();
 	}
 	
+	final void teleportTo(PrecisePoint location){
+		soldierBattleState.getCenter().set(location);
+	}
+	
 
 	
 	
@@ -124,6 +128,11 @@ abstract class SoldierBattle implements SoldierRoutineable,Trackable,Markable{
 	public void failShoot() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public PrecisePoint3 getLocationForBlackBoard(){
+		return soldierBattleState.getVantagePoint();
 	}
 	
 	public String toString(){

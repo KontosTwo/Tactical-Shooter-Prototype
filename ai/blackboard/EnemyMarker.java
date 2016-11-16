@@ -1,16 +1,8 @@
 package com.mygdx.ai.blackboard;
 
-import com.mygdx.physics.PrecisePoint3;
-import com.mygdx.ai.blackboard.EnemyMarker.Markable;
 
+final class EnemyMarker<E extends Markable>{
 
-
-public final class EnemyMarker<E extends Markable>{
-	
-	public interface Markable {
-		public PrecisePoint3 getLocationForBlackBoard();
-	}
-	
 	private final E enemy;
 	
 	private static int enemyDisappearRadius;

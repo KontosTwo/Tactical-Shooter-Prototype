@@ -9,10 +9,8 @@ import com.mygdx.physics.PrecisePoint;
  * Controls the rendering and characteristics of an animation
  *
  */
-public final class Animator 
-{
-	public interface CameraBoundaryProvider
-	{
+public final class Animator {
+	public interface CameraBoundaryProvider{
 		public float getLeftBoundary();
 		public float getRightBoundary();
 		public float getTopBoundary();

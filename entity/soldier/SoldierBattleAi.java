@@ -12,25 +12,30 @@ final class SoldierBattleAi extends SoldierBattle implements AiEnemyCognizable{
 	private final RoutineExecuter ai;
 	private final AiEnemyManager<SoldierBattleAi,SoldierBattle> enemyManager;
 	
-	SoldierBattleAi(SoldierBattleMediator sbm, SoldierBattleState sbs) {
+	private SoldierBattleAi(SoldierBattleMediator sbm, SoldierBattleState sbs) {
 		super(sbm, sbs);
 		ai = RoutineExecuter.createRiflemanRoutine();
 		enemyManager = new AiEnemyManager<>(this);
 	}
-
-	interface AiMediator{
-		
+	
+	static SoldierBattleAi createRifleman(SoldierBattleMediator sbm){
+		return new SoldierBattleAi(sbm,SoldierBattleState.createProtectorState());
 	}
 
 	@Override
+	void update(float dt){
+		super.update(dt);
+		enemyManager.update();
+	}
+	
+	@Override
 	protected void addToSighted(SoldierBattle other) {
-		
+		enemyManager.spotEnemy(other);
 	}
 
 	@Override
 	public boolean aiSeeDirectly(PrecisePoint3 target) {
-		// TODO Auto-generated method stub
-		return false;
+		return canSee(target);
 	}
 
 	@Override
@@ -40,10 +45,11 @@ final class SoldierBattleAi extends SoldierBattle implements AiEnemyCognizable{
 	}
 
 	@Override
-	public PrecisePoint3 getPositionForAi() {
-		// TODO Auto-generated method stub
-		return null;
+	public PrecisePoint3 getPositionForCognizable() {
+		return soldierBattleState.getVantagePoint();
 	}
-
-
+	
+	public String toString(){
+		return enemyManager.toString();
+	}
 }

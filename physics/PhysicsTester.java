@@ -21,7 +21,7 @@ public class PhysicsTester {
 	float vx = 0;
 	float vy = 100;
 	
-	@Test
+	
 	public void test() 
 	{
 		VectorEquation vector = new VectorEquation(0,0,0,0,-3,-4);

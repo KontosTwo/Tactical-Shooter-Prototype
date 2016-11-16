@@ -77,6 +77,12 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 		return newAux;
 	}
 	
+	public void createRifleman(int x, int y){
+		SoldierBattleAi newRif = SoldierBattleAi.createRifleman(this);
+		newRif.soldierBattleState.center.teleportTo(x, y);
+		enemies.add(newRif);
+	}
+	
 	public void render(){
 		
 		player.render();
@@ -91,7 +97,7 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	private void updateSoldiers(float dt){
 		player.update(dt);
 		auxiliary.update(dt);
-		enemies.forEach(e -> update(dt));
+		enemies.forEach(e -> e.update(dt));
 	}
 	
 	private void soldierScanBattleField(){

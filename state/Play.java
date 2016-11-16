@@ -15,7 +15,7 @@ import com.mygdx.camera.Camera;
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.debug.Debugger;
-import com.mygdx.entity.coordinator.EntityListener;
+import com.mygdx.entity.coordinator.Environment;
 import com.mygdx.entity.soldier.InteractionSoldierBattle;
 import com.mygdx.graphic.Animator;
 import com.mygdx.graphic.BatchCoordinator;
@@ -67,11 +67,12 @@ final class Play extends GameState implements PlayControlSwitchable
 		
 		BatchCoordinator.createBatch(cam);
 		
-		EntityListener entityListener = new EntityListener();
+		Environment entityListener = new Environment();
 		
 		controller = entityListener.createPlayer(45, 45);
-		auxiliary = entityListener.createProtector(450,450);		//cam.focus(player);
+		auxiliary = entityListener.createAuxiliary(450,450);		//cam.focus(player);
 
+		entityListener.createRifleman(700, 700);
 		
 		cam.focus(controller);
 		mousePosition = new PrecisePoint();
@@ -219,6 +220,8 @@ final class Play extends GameState implements PlayControlSwitchable
 		//if not playing, then click. Click will execute any clickable
 		Vector3 truePoint = new Vector3(screenX,screenY,0);
 		cam.unproject(truePoint);
+
+		Debugger.poke(truePoint.x, truePoint.y);
 		if(controlState.equals(ControlState.GAMEPLAY))
 		{
 			switch(command)
@@ -282,24 +285,24 @@ final class Play extends GameState implements PlayControlSwitchable
 	
 	private static class Level
 	{
-		private EntityListener em;
+		private Environment em;
 		private Script script;
 		private int level;
 
 		
-		private Level(EntityListener em)
+		private Level(Environment em)
 		{
 			List <Sequencialable>list = new LinkedList<Sequencialable>();
 			script = new Script(list);
 			this.em = em;
 			level = 0;
-			load(level);
+			load("level0");
 		}		
-		private void load(int level)
+		private void load(String level)
 		{
 			em.loadLevel(level);
-			script.loadScript(level);
 		}
+		
 		private void render(Camera cam)
 		{
 			em.render();
