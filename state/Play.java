@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.camera.Camera;
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
+import com.mygdx.control.AiTestable;
 import com.mygdx.debug.Debugger;
 import com.mygdx.entity.coordinator.Environment;
 import com.mygdx.entity.soldier.InteractionSoldierBattle;
@@ -33,6 +34,7 @@ final class Play extends GameState implements PlayControlSwitchable
 	
 	private PlayerControllable controller;
 	private Auxiliarable auxiliary;
+	private AiTestable teleportee;
 	
 	// Control State Variables
 	private Command command;	
@@ -46,6 +48,7 @@ final class Play extends GameState implements PlayControlSwitchable
 		GRENADE,
 		MOVE,
 		FOLLOW,
+		DEBUGMOVETO,
 		CUTSCENE
 		;
 	}
@@ -71,8 +74,8 @@ final class Play extends GameState implements PlayControlSwitchable
 		
 		controller = entityListener.createPlayer(45, 45);
 		auxiliary = entityListener.createAuxiliary(450,450);		//cam.focus(player);
-
-		entityListener.createRifleman(700, 700);
+		teleportee = entityListener.createRifleman(700, 700);
+		
 		
 		cam.focus(controller);
 		mousePosition = new PrecisePoint();
@@ -161,6 +164,9 @@ final class Play extends GameState implements PlayControlSwitchable
 				case Keys.NUM_3:
 					command = Command.GRENADE;
 					break;
+				case Keys.NUM_4:
+					command = Command.DEBUGMOVETO;
+					break;
 				case Keys.L:
 					cam.focus(controller);
 					break; 
@@ -221,7 +227,6 @@ final class Play extends GameState implements PlayControlSwitchable
 		Vector3 truePoint = new Vector3(screenX,screenY,0);
 		cam.unproject(truePoint);
 
-		Debugger.poke(truePoint.x, truePoint.y);
 		if(controlState.equals(ControlState.GAMEPLAY))
 		{
 			switch(command)
@@ -232,6 +237,9 @@ final class Play extends GameState implements PlayControlSwitchable
 							break;
 				case GRENADE: //controller.cGrenade((int)truePoint.x, (int)truePoint.y);;
 							break;
+				case DEBUGMOVETO: teleportee.debugMoveTo(new PrecisePoint(truePoint.x,truePoint.y));
+					System.out.println("asdf");
+				break;
 				default:
 			}
 		}

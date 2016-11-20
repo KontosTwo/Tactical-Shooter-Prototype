@@ -61,7 +61,7 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	{
 		accum += Gdx.graphics.getDeltaTime();
 		framerate.pushFrameRate((int)(1/accum));
-		System.out.println(framerate.getFrameRate());
+		//System.out.println(framerate.getFrameRate());
 		while(accum >= STEP) 
 		{
 			accum -= STEP;

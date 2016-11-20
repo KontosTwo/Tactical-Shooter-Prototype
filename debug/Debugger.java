@@ -13,6 +13,10 @@ public class Debugger
 	private static Set<Marker> markers;
 	private static Collection<Marker> temporaryMarkers;
 	
+	private enum MarkerType{
+		
+	}
+	
 	static
 	{
 		tick = 0;
@@ -38,14 +42,17 @@ public class Debugger
 	{
 		System.out.println(tick + " " + message);
 	}
-	public static void mark(PrecisePoint location){
-		mark(location.x,location.y);
+	public static void mark(PrecisePoint location,String name){
+		mark(location.x,location.y,name);
 	}
-	public static void mark(double x,double y)
+	public static void mark(double x,double y,String name)
 	{
-		markers.add(new Marker(x,y));
+		markers.add(new Marker(x,y,name));
 	}
-	public static void poke(double x,double y){
-		temporaryMarkers.add(new Marker(x,y));
+	public static void poke(double x,double y,String filepath){
+		temporaryMarkers.add(new Marker(x,y,filepath));
+	}
+	public static void poke(PrecisePoint locaiton,String filepath){
+		temporaryMarkers.add(new Marker(locaiton.x,locaiton.y,filepath));
 	}
 }

@@ -1,6 +1,8 @@
 package com.mygdx.physics;
 
-
+/**
+ * A 2-D point that uses floats instead of doubles
+ */
 public class PrecisePoint implements Comparable
 {
 	/*
@@ -58,6 +60,12 @@ public class PrecisePoint implements Comparable
 	public String toString()
 	{
 		return "" + x + " " + y;
+	}
+	public static double manhattanDistance(PrecisePoint a,PrecisePoint b){
+		return Math.abs(a.x - b.x) + Math.abs(a.y - b.y); 
+	}
+	public static double euclideanDistance(PrecisePoint a,PrecisePoint b){
+		return Math.sqrt(Math.pow(Math.abs(a.x - b.x),2) + Math.pow(Math.abs(a.y - b.y),2)); 
 	}
 	public boolean equals(Object other)
 	{

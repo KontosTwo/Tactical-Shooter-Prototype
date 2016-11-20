@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
+import com.mygdx.control.AiTestable;
 import com.mygdx.entity.soldier.InteractionSoldierBattle;
 import com.mygdx.entity.soldier.InteractionSoldierBattle.TacticalAction;
 import com.mygdx.entity.soldier.InteractionSoldierBattle.TacticalInfoGatherer;
@@ -43,8 +44,9 @@ public final class Environment implements TacticalAction,TacticalInfoGatherer,En
 	}
 	
 	@Override
-	public void createRifleman(int x,int y){
-		soldierManager.createRifleman(x, y);
+	public AiTestable createRifleman(int x,int y){
+		AiTestable tele = soldierManager.createRifleman(x, y);
+		return tele;
 	}
 	
 	@Override

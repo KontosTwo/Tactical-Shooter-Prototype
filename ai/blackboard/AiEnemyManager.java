@@ -36,8 +36,9 @@ public final class AiEnemyManager <O extends AiEnemyCognizable,T extends Trackab
 	
 	public void update(){
 		removeOutOfSightEnemies();
-		visibleEnemies.forEach(e -> Debugger.mark(e.getTargetLocation().create2DProjection()));
-		System.out.println(visibleEnemies.size());
+		visibleEnemies.forEach(e -> Debugger.poke(e.getTargetLocation().create2DProjection(),"full.png"));
+		predictedEnemies.forEach(e -> Debugger.poke(e.getTargetLocation().create2DProjection(),"full2.png"));
+
 	}
 	
 	private void removeOutOfSightEnemies(){
@@ -45,8 +46,24 @@ public final class AiEnemyManager <O extends AiEnemyCognizable,T extends Trackab
 		while(iterator.hasNext()){
 			EnemyTracker<T> currentTrackableEnemy = iterator.next();
 			if(observer.aiSeeDirectly(currentTrackableEnemy.getTargetLocation()) == false){
+				// create a new enemymarker where the visible enemy had disappeared
+				checkAddToPredicted(currentTrackableEnemy.getTarget());
 				iterator.remove();
 			}
+		}
+	}
+	
+	private void checkAddToPredicted(T enemy){
+		boolean canAdd = true;
+		EnemyMarker<T> newEnemyMarker = new EnemyMarker<>(enemy);
+		for(EnemyMarker<T> currentEnemy : predictedEnemies){
+			// enemymarkers cannot be placed too close to each other
+			if(newEnemyMarker.canAppearNextTo(currentEnemy)){
+				canAdd = false;
+			}
+		};
+		if(canAdd){
+			predictedEnemies.add(newEnemyMarker);
 		}
 	}
 	
@@ -63,6 +80,31 @@ public final class AiEnemyManager <O extends AiEnemyCognizable,T extends Trackab
 		}
 		
 		//otherwise, add to visible
-		visibleEnemies.add(new EnemyTracker<T>(enemy));
+		EnemyTracker<T> newEnemyTracker = new EnemyTracker<T>(enemy);
+		visibleEnemies.add(newEnemyTracker);
+		replacePredictedEnemyWithVisible(newEnemyTracker);
+	}
+	
+	/*
+	 * If a visible enemy is found, it is assumed to be the nearest 
+	 * predicted. 
+	 */
+	private void replacePredictedEnemyWithVisible(EnemyTracker<T> enemyTracker){
+		Iterator<EnemyMarker<T>> iterator = predictedEnemies.iterator();
+		search:
+		while(iterator.hasNext()){
+			EnemyMarker<T> currentMarkableEnemy = iterator.next();
+			if(currentMarkableEnemy.canDisappearNextTo(enemyTracker)){
+				iterator.remove();
+				break search;
+			}
+		}
+	}
+	
+	@Override
+	public String toString(){
+		String string = "";
+		
+		return string;
 	}
 }

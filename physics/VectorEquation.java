@@ -19,6 +19,10 @@ import com.mygdx.map.GameMap.HitBoxable;
 import com.mygdx.misc.Pair;
 import com.sun.javafx.geom.Line2D;
 
+/**
+ * A representation of a vector. Has both a 3D point and ray. Supports operations
+ * that are used in computing line of sight/penetration.
+ */
 public class VectorEquation{
 	private float ax;
 	private float ay;

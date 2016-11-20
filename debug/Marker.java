@@ -8,10 +8,10 @@ class Marker
 	private Animator animator;
 	private PrecisePoint center;
 	
-	Marker(double x,double y)
+	Marker(double x,double y,String filepath)
 	{
 		center = new PrecisePoint(x,y);
-		animator = new Animator(center,"full.png","animation/data/static.txt");
+		animator = new Animator(center,filepath,"animation/data/static.txt");
 		animator.setDimensions(10, 10);
 	}
 	

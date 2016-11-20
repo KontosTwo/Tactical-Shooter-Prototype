@@ -10,6 +10,7 @@ import java.util.PriorityQueue;
 
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
+import com.mygdx.control.AiTestable;
 import com.mygdx.debug.Debugger;
 import com.mygdx.entity.soldier.SoldierBattle.SoldierBattleMediator;
 import com.mygdx.map.GameMap.HitBoxable;
@@ -77,10 +78,11 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 		return newAux;
 	}
 	
-	public void createRifleman(int x, int y){
+	public AiTestable createRifleman(int x, int y){
 		SoldierBattleAi newRif = SoldierBattleAi.createRifleman(this);
 		newRif.soldierBattleState.center.teleportTo(x, y);
 		enemies.add(newRif);
+		return newRif;
 	}
 	
 	public void render(){

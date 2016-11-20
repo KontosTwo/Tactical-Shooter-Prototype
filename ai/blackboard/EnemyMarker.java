@@ -1,9 +1,12 @@
 package com.mygdx.ai.blackboard;
 
+import com.mygdx.physics.PrecisePoint;
+import com.mygdx.physics.PrecisePoint3;
+
 
 final class EnemyMarker<E extends Markable>{
 
-	private final E enemy;
+	private final PrecisePoint3 location;
 	
 	private static int enemyDisappearRadius;
 	private static int enemyAppearRadius;
@@ -12,7 +15,7 @@ final class EnemyMarker<E extends Markable>{
 	
 	static{
 		enemyDisappearRadius = 60;
-		enemyAppearRadius = 30;
+		enemyAppearRadius = 60;
 	}
 	public static void setParameters(int disappearRadius,int appearRadius){
 		enemyDisappearRadius = disappearRadius;
@@ -20,15 +23,25 @@ final class EnemyMarker<E extends Markable>{
 	}
 	
 	EnemyMarker(E e){
-		enemy = e;
+		location = new PrecisePoint3(e.getLocationForBlackBoard());
+	}
+
+	PrecisePoint3 getTargetLocation(){
+		return location;
 	}
 	
-	E getEnemy(){
-		return enemy;
+	boolean canAppearNextTo(EnemyMarker<E> other){
+		return PrecisePoint.euclideanDistance(this.location.create2DProjection()
+				, other.location.create2DProjection()) < enemyAppearRadius;
+	}
+	
+	boolean canDisappearNextTo(EnemyTracker other){
+		return PrecisePoint.euclideanDistance(this.location.create2DProjection()
+				, other.getTargetLocation().create2DProjection()) < enemyDisappearRadius;
 	}
 	
 	@Override
 	public int hashCode(){
-		return enemy.hashCode();
+		return location.hashCode();
 	}
 }
