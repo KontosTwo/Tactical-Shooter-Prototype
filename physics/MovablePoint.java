@@ -59,9 +59,9 @@ public class MovablePoint
 	{
 		return x1*x2 > 0;
 	}
-	 public void orientVelocity(double x,double y)
+	 public void orientVelocity(PrecisePoint location)
 	{
-		 double angle = Math.atan2((y - center.y),(x - center.x));
+		 double angle = Math.atan2((location.y - center.y),(location.x - center.x));
 		unitVelocity.set((float)Math.cos(angle),(float)Math.sin(angle));
 	}
 	 

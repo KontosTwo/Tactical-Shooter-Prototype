@@ -1,5 +1,6 @@
 package com.mygdx.entity.soldier;
 
+import com.mygdx.ai.leaf.RoutineFactory;
 import com.mygdx.ai.leaf.SoldierRoutineable;
 import com.mygdx.control.Control;
 import com.mygdx.control.PlayerControllable;
@@ -36,10 +37,14 @@ class SoldierBattleControlled extends SoldierBattle implements PlayerControllabl
 	public void update(float dt){
 		super.update(dt);
 		control.update(dt);
-		script.update(dt);
+		
 		if(control.isActive() && script.isActive()){
 			script.cancelScript();
 		}
+		if(script.isActive()){
+			script.update(dt);
+		}
+
 		updateLaserSight();
 	}
 	public void render(){
@@ -146,13 +151,12 @@ class SoldierBattleControlled extends SoldierBattle implements PlayerControllabl
 
 	@Override
 	public void cShoot(PrecisePoint target){
-		shootForPlayer(target);
-		//System.out.println(canSee(new PrecisePoint3(target.x,target.y,0)));
+		script.pushSequence(RoutineFactory.createSequencialableShootBurst(this, target,soldierBattleState.weaponState.getBurstAmount()));
 	}
 
 	@Override
 	public void cReload() {
-		
+		script.pushSequence(RoutineFactory.createSequencialableReload(this));
 	}
 
 	@Override
@@ -208,4 +212,9 @@ class SoldierBattleControlled extends SoldierBattle implements PlayerControllabl
 		return collisionBox.getBot() < y;
 	}
 	
+	@Override
+	public void beginShoot(PrecisePoint3 target) {
+		super.beginShoot(target);
+		shootForPlayer(target.create2DProjection());
+	}
 }

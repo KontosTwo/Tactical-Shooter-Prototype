@@ -21,7 +21,8 @@ abstract class SoldierBattle implements SoldierRoutineable,Trackable,Markable{
 	
 	interface SoldierBattleMediator{
 		public boolean canSee(PrecisePoint3 observer,PrecisePoint3 target);
-		public void shootForPlayer(SoldierBattle shooter,float accuracy,PrecisePoint3 shooterVantage,PrecisePoint target);
+		public void shootAt(SoldierBattle shooter,float accuracy,PrecisePoint3 shooterVantage,PrecisePoint3 target);
+		public PrecisePoint3 refineTargetForPlayer(PrecisePoint target);
 		public Path findPath(PrecisePoint start,PrecisePoint target,int maxDistance);
 	}
 	
@@ -61,10 +62,10 @@ abstract class SoldierBattle implements SoldierRoutineable,Trackable,Markable{
 				,target);
 	}
 	
-	
 	protected final void shootForPlayer(PrecisePoint target){
-		soldierBattleState.face(target.x,target.y);
-		soldierMediator.shootForPlayer(this, soldierBattleState.getCurrentAccuracy(), soldierBattleState.getVantagePoint(),target);
+		System.out.println("player shoots");
+		PrecisePoint3 refinedTarget = soldierMediator.refineTargetForPlayer(target);
+		soldierMediator.shootAt(this, soldierBattleState.getCurrentAccuracy(), soldierBattleState.getVantagePoint(),refinedTarget);
 	}
 	
 	protected final void shootForAi(SoldierBattle victim){
@@ -101,34 +102,75 @@ abstract class SoldierBattle implements SoldierRoutineable,Trackable,Markable{
 		soldierBattleState.getCenter().set(location);
 	}
 	
-
-	
-	
+	// Shootable
 	@Override
-	public void beginShoot(PrecisePoint3 target) {
-		// TODO Auto-generated method stub
-		
+	public void beginShoot(PrecisePoint3 target){
+		soldierBattleState.face(target.create2DProjection());
+		soldierBattleState.weaponState.beginShoot();
+		soldierBattleState.setToShooting();
 	}
-	@Override
-	public boolean hasAmmo() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 	@Override
 	public boolean finishedShooting() {
-		// TODO Auto-generated method stub
-		return false;
+		return soldierBattleState.weaponState.finishedShooting();
 	}
+	
 	@Override
 	public void completeShoot() {
-		// TODO Auto-generated method stub
-		
+		soldierBattleState.setToIdle();
+		soldierBattleState.weaponState.completeShoot();
+	}
+	
+	@Override
+	public void cancelShoot() {
+		soldierBattleState.setToIdle();
+		soldierBattleState.weaponState.cancelShooting();
+	}
+	
+	@Override
+	public boolean hasAmmo() {
+		return soldierBattleState.weaponState.hasAmmo();
+	}
+	
+	//ShootBurstable
+	@Override
+	public boolean hasAmmoForBurst(){
+		return soldierBattleState.weaponState.hasAmmo();
 	}
 	@Override
-	public void failShoot() {
-		// TODO Auto-generated method stub
-		
+	public void cancelBurst(){
+		soldierBattleState.weaponState.cancelBurst();
 	}
+	
+	// Reloadable
+	@Override
+	public void beginReload() {
+		soldierBattleState.weaponState.beginReload();
+		soldierBattleState.setToReloading();
+	}
+
+	@Override
+	public boolean finishedReload() {
+		return soldierBattleState.weaponState.finishedReloading();
+	}
+
+	@Override
+	public void completeReload() {
+		soldierBattleState.weaponState.completeReload();
+		soldierBattleState.setToIdle();
+	}
+
+	@Override
+	public void cancelReload() {
+		soldierBattleState.weaponState.cancelReloading();
+		soldierBattleState.setToIdle();
+	}
+
+	@Override
+	public boolean doesNotNeedToReload() {
+		return soldierBattleState.weaponState.atFullCapacity();
+	}
+	
 	
 	@Override
 	public PrecisePoint3 getLocationForBlackBoard(){

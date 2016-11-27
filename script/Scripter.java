@@ -63,7 +63,7 @@ public class Scripter{
 		if(sequence.sequenceInstaCompleted()){
 			sequenceIsRunning = false;
 		}else{
-			sequence.startSequence();		
+			sequence.startSequence();	
 			sequenceIsRunning = true;
 		}
 		

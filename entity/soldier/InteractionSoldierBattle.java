@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
@@ -112,29 +113,17 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	}
 
 	@Override
-	public void shootForPlayer(SoldierBattle shooter, float accuracy, PrecisePoint3 shooterVantage,PrecisePoint initialTarget) {
+	public void shootAt(SoldierBattle shooter, float accuracy, PrecisePoint3 shooterVantage,PrecisePoint3 target) {
 		
 		// map each hitboxable to its owner for quick and easy retrieval
-		HashMap<HitBoxable,SoldierBattle> hitboxOwnership = new HashMap<>();
-		
-		// collecting all potential targets ordered by how far they are from the shooter's vantage
-		Collection <HitBoxable> potentialTargets = new ArrayList<>();
-		enemies.forEach(enemy ->{
-			 HitBoxable enemyHitbox = enemy.getBody();
-			 potentialTargets.add(enemyHitbox);
-			 hitboxOwnership.put(enemyHitbox, enemy);
-		});
-		
-		// in case you ever want to shoot your partner... for testing purposes
-		HitBoxable auxiliaryHitbox = auxiliary.getBody();
-		potentialTargets.add(auxiliaryHitbox);
-		hitboxOwnership.put(auxiliaryHitbox, auxiliary);
+		Set<HitBoxable> potentialTargets = getPotentialTargetsFor(shooter).keySet();
+		HashMap<HitBoxable,SoldierBattle> hitboxOwnership = getPotentialTargetsFor(shooter);
 		
 		// calculating the location of the proper target
-		PrecisePoint3 refinedTarget = refineTargetForPlayer(initialTarget,potentialTargets);
+		//PrecisePoint3 refinedTarget = refineTargetForPlayer(initialTarget,potentialTargets);
 		
 		// for as many targetsHits as the shooter's bullet can pierce, have the shooter damage them
-		List<HitBoxable> targetsHit = actionMaker.calculateTargetsHit(shooterVantage, refinedTarget, potentialTargets);
+		List<HitBoxable> targetsHit = actionMaker.calculateTargetsHit(shooterVantage, target, potentialTargets);
 		targetsHit.forEach(hitbox ->{
 			SoldierBattle victim = hitboxOwnership.get(hitbox);
 			shooter.damageUsingMainWeapon(victim);
@@ -147,10 +136,51 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 	 * @return The 3-D coordinates of the target. All dimensions
 	 * have been modified by the TacticalInfoGatherer to a 3-D coordinate
 	 * that is EXPECTED VISUALLY by the player
-	 * @edgecase The player aims at a region where two enemy soldiers overlap. 
+	 * @edgecase The player aims at a region where two enemy soldiers visually overlap. 
 	 * The player may end up aiming at the enemy that is overlapped rather than
 	 * the foremost overlapping one, which is unexpected. Deal with it. 
 	 */
+	@Override
+	public PrecisePoint3 refineTargetForPlayer(PrecisePoint initialTarget) {
+		/*
+		 * by default, if the initialTarget does not collide with any potentials, 
+		 * the refinedTarget becomes the initialTarget
+		 */
+		PrecisePoint3 refinedTarget = new PrecisePoint3(initialTarget.x,initialTarget.y,0);
+
+		searchForOverLap:
+		for(HitBoxable target : getPotentialTargetsFor(player).keySet()){
+			PrecisePoint targetBottomLeftCorner = target.getBottomLeftCorner();
+			MyVector3 targetDimensions = target.getSides();
+			
+			// determine if initialTarget overlaps the 2-D projection of the hitbox
+			if(Util.inBounds(initialTarget
+							, targetBottomLeftCorner.x
+							/*
+							 *  this is getZ because the hitbox's height should be
+							 *   the animation box's height
+							 */
+							, targetBottomLeftCorner.y + targetDimensions.getZ()
+							, targetBottomLeftCorner.x + targetDimensions.getX()
+							, targetBottomLeftCorner.y)){
+				
+				/*
+				 * the difference between the location of
+				 * of initialTarget.y and the bottom of hitbox
+				 * (which is equivalent to the bottom of the animation box)
+				 * is the zHeight
+				 */
+				float zHeight = Math.abs(initialTarget.y - targetBottomLeftCorner.y);
+				refinedTarget.set(targetBottomLeftCorner.x + targetDimensions.getX()/2
+						,targetBottomLeftCorner.y +targetDimensions.getY()/2
+						,zHeight);
+				
+				break searchForOverLap;
+			}
+		}
+		return refinedTarget;
+	}
+	
 	private PrecisePoint3 refineTargetForPlayer(PrecisePoint initialTarget,Collection<HitBoxable> potentialTargets){
 		
 		/*
@@ -190,6 +220,27 @@ public class InteractionSoldierBattle implements SoldierBattleMediator
 			}
 		}
 		return refinedTarget;
+	}
+	
+	private HashMap<HitBoxable,SoldierBattle> getPotentialTargetsFor(SoldierBattle shooter){
+		ArrayList<SoldierBattle> targets = new ArrayList<>();
+		targets.addAll(enemies);
+		targets.add(player);
+		targets.add(auxiliary);
+		
+		// remove the shooter. Can't shoot yourself
+		targets.remove(shooter);
+		
+		ArrayList<HitBoxable> targetHitBoxes = new ArrayList<>();
+		targets.forEach(target -> {
+			targetHitBoxes.add(target.getBody());
+		});
+		
+		HashMap<HitBoxable,SoldierBattle> hitboxOwnership = new HashMap<>();
+		for(int i = 0; i < targets.size(); i ++){
+			hitboxOwnership.put(targetHitBoxes.get(i),targets.get(i));
+		}
+		return hitboxOwnership;
 	}
 	
 	@Override

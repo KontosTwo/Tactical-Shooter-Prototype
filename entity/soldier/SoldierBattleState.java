@@ -23,19 +23,13 @@ final class SoldierBattleState
 	State state;
 	Height height;
 
-	private final Weapon weapon;
 	private final Armor armor;
 	private final Identification id;
 	private final Allegiance allegiance;
 
-	int unsteadiness;// the inaccuracy of the gun due to a multitude of factors such as psychological pressure or having ran
-	int ammo;
-	int gunHeight;
-	int currentHp;
+	final WeaponState weaponState;
 
-	private int reloadProgress;
-	private int shootingProgress;
-
+	// dimensions of the body
 	private static final int BODYX = 10;
 	private static final int BODYY = 10;
 	private static final int BODYZ = 50;
@@ -45,21 +39,18 @@ final class SoldierBattleState
 	private static final int STANDHEIGHT = 60;
 	private static final int CROUCHHEIGHT = 30;
 	private static final int CRAWLHEIGHT = 10;
-	private static final int STANDGUNHEIGHT = 50;
-	private static final int CROUCHGUNHEIGHT = 30;
-	private static final int CRAWLGUNHEIGHT = 10;
 	private static final int HEADHEIGHT = 50;
 
 	// how wide in (degrees/45) the field of vision is. 
 	private static final int FIELDOFVISION = 1;
 
-	private SoldierBattleState(Weapon weapon,Armor armor,Identification id, Allegiance allegiance)
+	private SoldierBattleState(WeaponState weaponSTate,Armor armor,Identification id, Allegiance allegiance)
 	{
 		centerPrevious = new PrecisePoint();
 		center = new MovablePoint();
 		centerFuture = new PrecisePoint();
 		body = new MovableBox(center.getCenterReference(),BODYX,BODYY,BODYZ);
-		stand();
+		
 
 		// initializing the state
 		direction = Direction.down;
@@ -69,17 +60,17 @@ final class SoldierBattleState
 		height = Height.stand;
 		heightPrev = Height.stand;
 		/////////////////
-
-		reloadProgress = 0;
-		shootingProgress = 0;
-		this.weapon = weapon;
+		
+		this.weaponState = weaponSTate;
 		this.armor = armor;
 		this.id = id;
 		this.allegiance = allegiance;
+		
+		stand();
 	}
 	static SoldierBattleState createProtectorState()
 	{
-		return new SoldierBattleState(Weapon.TSOKOS,Armor.FEDARMOR,Identification.auxiliary,Allegiance.epeirot);
+		return new SoldierBattleState(WeaponState.createTsokos(),Armor.FEDARMOR,Identification.auxiliary,Allegiance.epeirot);
 	}
 
 	void update()
@@ -87,10 +78,11 @@ final class SoldierBattleState
 		centerPrevious.set(center.getCenterReference());
 		center.update();
 		centerFuture.set(center.createProjectedLocation());
+		weaponState.update();
 	}
 	float getCurrentAccuracy()
 	{
-		return weapon.accuracy;
+		return weaponState.getAccuracy();
 	}
 	boolean facingTowards(final PrecisePoint observerLocation,final PrecisePoint targetLocation)
 	{
@@ -149,7 +141,7 @@ final class SoldierBattleState
 		body.setHeight(STANDHEIGHT);
 		center.setSpeed(STANDSPEED);
 		height = Height.stand;
-		gunHeight = STANDGUNHEIGHT;
+		weaponState.stand();
 	}
 	void move()
 	{
@@ -160,21 +152,27 @@ final class SoldierBattleState
 		body.setHeight(CROUCHHEIGHT);
 		center.setSpeed(0);
 		height = Height.crouch;
-		gunHeight = CROUCHGUNHEIGHT;
+		weaponState.crouch();
 	}
 	void lay()
 	{
 		body.setHeight(CRAWLHEIGHT);
 		center.setSpeed(CRAWLSPEED);
 		height = Height.lay;
-		gunHeight = CRAWLGUNHEIGHT;
+		weaponState.lay();
 	}
-	void idle()
-	{
+	void setToShooting(){
+		state = State.shoot;
+	}
+	void setToReloading(){
+		state = State.reload;
+		crouch();
+	}
+	void setToIdle(){
 		state = State.still;
 	}
-	void face(double x,double y){
-		direction = getDirectionBetweenTwoPoints(center.getCenterReference(),new PrecisePoint(x,y));
+	void face(PrecisePoint location){
+		direction = getDirectionBetweenTwoPoints(center.getCenterReference(),location);
 	}
 
 	private static Direction getDirectionBetweenTwoPoints(PrecisePoint origin,PrecisePoint target)
@@ -259,7 +257,14 @@ final class SoldierBattleState
 		}
 		if(state.equals(State.reload) || state.equals(State.dead))
 		{
-			//animePath = id.toString().concat(state.toString());
+			animePathBuiler.append("animation/soldier/");
+			animePathBuiler.append(id.toString());
+			animePathBuiler.append("/unidirectional/");
+			animePathBuiler.append(state.toString());
+			animePathBuiler.append(".png");
+			dataPathBuilder.append("animation/data/soldier");
+			dataPathBuilder.append(state.toString());
+			dataPathBuilder.append(".txt");
 		}
 		else
 		{
@@ -338,37 +343,7 @@ final class SoldierBattleState
 		lay,		
 		;
 	}
-	private enum Weapon
-	{
-		GAUSSRIFLE(2,5,1,1,6,150,10,2,1), // Fed Assault Rifle. Ayane's weapon
-		TSOKOS(7,9,7,2,14,170,10,3,0), // Fed fully automatic shotgun. Chanion's weapon
-		;
-
-		private final int pierce;
-		private final int damage;
-		private final float accuracy;
-		private final int radius;
-		private final int rate;
-		private final int reload;
-		private final int capacity;
-		private final int burst;
-		private final int burstDev;
-
-
-		Weapon(int pierce,int damage,float accuracy,int radius,int rate,int reload,int capacity,int burst,int burstDev)
-		{
-			this.pierce = pierce;
-			this.damage = damage;
-			this.accuracy = accuracy;
-			this.radius = radius;
-			this.rate = rate;
-			this.reload = reload;
-			this.capacity = capacity;
-			this.burst = burst;
-			this.burstDev = burstDev;
-		}
-
-	}
+	
 	private enum Identification
 	{
 		controller,

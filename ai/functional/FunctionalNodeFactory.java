@@ -1,5 +1,7 @@
 package com.mygdx.ai.functional;
 
+import java.util.List;
+
 import com.mygdx.script.Scripter.Sequencialable;
 
 public class FunctionalNodeFactory {
@@ -106,5 +108,17 @@ public class FunctionalNodeFactory {
 				return condition.toString();
 			}
     	};
+    }
+    
+    public static Routineable createSequence(List<Routineable> routineableList){
+    	return new Sequence(routineableList);
+    }
+    
+    public static Routineable createSelector(List<Routineable> routineableList){
+    	return new Selector(routineableList);
+    }
+    
+    public static Routineable createSurvival(List<RoutineSurvivalable> survivalRoutine,Routineable aspirational){
+    	return Survival.build(survivalRoutine,aspirational);
     }
 }

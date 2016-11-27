@@ -5,7 +5,9 @@ import com.mygdx.ai.functional.FunctionalNodeFactory;
 import com.mygdx.ai.functional.Routineable;
 import com.mygdx.ai.leaf.MoveTo.MoveToable;
 import com.mygdx.ai.leaf.PathTo.PathToable;
+import com.mygdx.ai.leaf.Reload.Reloadable;
 import com.mygdx.ai.leaf.Shoot.Shootable;
+import com.mygdx.ai.leaf.ShootBurst.ShootBurstable;
 import com.mygdx.physics.PrecisePoint;
 import com.mygdx.physics.PrecisePoint3;
 import com.mygdx.script.Scripter.Sequencialable;
@@ -25,7 +27,16 @@ abstract public class RoutineFactory {
     	 return FunctionalNodeFactory.createSequencialableAdapterFrom(shootRoutine);
      }
 	
-    
+	 public static Sequencialable createSequencialableShootBurst(ShootBurstable shootActor,PrecisePoint target,int times){
+    	 ShootBurst shootRoutine = new ShootBurst(shootActor);
+    	 shootRoutine.designateTarget(new PrecisePoint3(target.x,target.y,0));
+    	 shootRoutine.setTimes(times);
+    	 return FunctionalNodeFactory.createSequencialableAdapterFrom(shootRoutine);
+     }
+	 
+	 public static Sequencialable createSequencialableReload(Reloadable reloadActor){
+    	 return FunctionalNodeFactory.createSequencialableAdapterFrom(new Reload(reloadActor));
+     }
 	
 	static PathTo createPathTo(PathToable aa)
     {

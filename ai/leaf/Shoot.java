@@ -1,6 +1,9 @@
 package com.mygdx.ai.leaf;
 
+import java.util.ArrayList;
+
 import com.mygdx.ai.functional.Routineable;
+import com.mygdx.ai.functional.Sequence;
 import com.mygdx.physics.PrecisePoint3;
 /**
  * @Succeeds once the firing sequence is complete
@@ -43,7 +46,7 @@ class Shoot implements Routineable// once initialized, the humanoid will only sh
 	
 	@Override
 	public void cancelRoutine() {
-		actor.failShoot();
+		actor.cancelShoot();
 	}
 	
 	@Override
@@ -53,7 +56,7 @@ class Shoot implements Routineable// once initialized, the humanoid will only sh
 	
 	@Override
 	public boolean failedRoutine() {
-		return false;
+		return !actor.hasAmmo();
 	}
 
 	@Override
@@ -76,7 +79,6 @@ class Shoot implements Routineable// once initialized, the humanoid will only sh
 		public boolean hasAmmo();// fail if said actor does not have any ammo
 		public boolean finishedShooting(); // once the shooting and the animation and whatever "cooldown" effect have finished
 		public void completeShoot();
-		public void failShoot();
+		public void cancelShoot();
 	}
-
 }

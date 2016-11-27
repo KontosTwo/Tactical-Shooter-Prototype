@@ -36,8 +36,8 @@ public final class AiEnemyManager <O extends AiEnemyCognizable,T extends Trackab
 	
 	public void update(){
 		removeOutOfSightEnemies();
-		visibleEnemies.forEach(e -> Debugger.poke(e.getTargetLocation().create2DProjection(),"full.png"));
-		predictedEnemies.forEach(e -> Debugger.poke(e.getTargetLocation().create2DProjection(),"full2.png"));
+		visibleEnemies.forEach(e -> Debugger.poke(e.getTargetLocation().create2DProjection(),"beige"));
+		predictedEnemies.forEach(e -> Debugger.poke(e.getTargetLocation().create2DProjection(),"teal"));
 
 	}
 	
@@ -54,7 +54,7 @@ public final class AiEnemyManager <O extends AiEnemyCognizable,T extends Trackab
 	}
 	
 	private void checkAddToPredicted(T enemy){
-		boolean canAdd = true;
+		/*boolean canAdd = true;
 		EnemyMarker<T> newEnemyMarker = new EnemyMarker<>(enemy);
 		for(EnemyMarker<T> currentEnemy : predictedEnemies){
 			// enemymarkers cannot be placed too close to each other
@@ -64,7 +64,8 @@ public final class AiEnemyManager <O extends AiEnemyCognizable,T extends Trackab
 		};
 		if(canAdd){
 			predictedEnemies.add(newEnemyMarker);
-		}
+		}*/
+		predictedEnemies.add(new EnemyMarker<T>(enemy));
 	}
 	
 	public void spotEnemy(T enemy){

@@ -178,6 +178,7 @@ public final class GameMap {
 	    			 *  Height of the ray at the location
 	    			 */
 	    			impactLocation.set(x, y, ray.getZFromXOrY(x));
+	    			Debugger.mark(x, y, "beige");
 		    		break traverse;
 	    		}
 	    		previousTile.set(currentTile);

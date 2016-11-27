@@ -7,6 +7,7 @@ import com.mygdx.control.Auxiliarable;
 import com.mygdx.control.PlayerControllable;
 import com.mygdx.map.Path;
 import com.mygdx.physics.PrecisePoint;
+import com.mygdx.physics.PrecisePoint3;
 import com.mygdx.script.Scripter;
 
 class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,AuxiliaryRoutineable
@@ -60,7 +61,7 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 
 	@Override
 	public void completePathTo() {
-		soldierBattleState.idle();
+		soldierBattleState.setToIdle();
 	}
 
 	@Override
@@ -69,9 +70,9 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 	}
 
 	@Override
-	public void beginMoveTo(double x, double y) {
-		soldierBattleState.center.orientVelocity(x,y);
-		soldierBattleState.face(x,y);
+	public void beginMoveTo(PrecisePoint destination) {
+		soldierBattleState.center.orientVelocity(destination);
+		soldierBattleState.face(destination);
 		soldierBattleState.move();
 	}
 
@@ -84,11 +85,31 @@ class SoldierBattleAuxiliary extends SoldierBattle implements Auxiliarable,Auxil
 	@Override
 	public void stopMoveTo() {
 		soldierBattleState.center.stopVelocity();
-		soldierBattleState.idle();
+		soldierBattleState.setToIdle();
 	}
 	@Override
-	public boolean finishedMoveTo(double x, double y) {
-		return  /*soldierBattleState.center.reachTarget(x,y) ||*/ soldierBattleState.center.distanceFrom(x, y) < MAXDISTANCEFROMTILECHECKINGDISTANCE;
+	public boolean finishedMoveTo(PrecisePoint destination) {
+		return  /*soldierBattleState.center.reachTarget(x,y) ||*/ soldierBattleState.center.distanceFrom(destination.x, destination.y) < MAXDISTANCEFROMTILECHECKINGDISTANCE;
+	}
+	@Override
+	public void beginShoot(PrecisePoint3 target) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public boolean finishedShooting() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public void completeShoot() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void cancelShoot() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

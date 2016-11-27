@@ -64,4 +64,5 @@ final class SoldierBattleAi extends SoldierBattle implements AiEnemyCognizable,A
 	public void debugMoveTo(PrecisePoint location){
 		soldierBattleState.center.getCenterReference().set(location);
 	}
+
 }

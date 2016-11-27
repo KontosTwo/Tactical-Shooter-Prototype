@@ -47,12 +47,25 @@ public class Debugger
 	}
 	public static void mark(double x,double y,String name)
 	{
-		markers.add(new Marker(x,y,name));
+		markers.add(new Marker(x,y,getMarkerFilePathFromName(name)));
 	}
-	public static void poke(double x,double y,String filepath){
-		temporaryMarkers.add(new Marker(x,y,filepath));
+	public static void poke(double x,double y,String name){
+		temporaryMarkers.add(new Marker(x,y,getMarkerFilePathFromName(name)));
 	}
-	public static void poke(PrecisePoint locaiton,String filepath){
-		temporaryMarkers.add(new Marker(locaiton.x,locaiton.y,filepath));
+	public static void poke(PrecisePoint location,String filepath){
+		poke(location.x,location.y,filepath);
+	}
+	
+	private static String getMarkerFilePathFromName(String name){
+		String filepath = "";
+		switch(name){
+			case "beige" : filepath = "full.png";
+				break;
+			case "teal" : filepath = "full2.png";
+				break;
+			default: filepath = "full2.png";
+				break;
+		}
+		return filepath;
 	}
 }

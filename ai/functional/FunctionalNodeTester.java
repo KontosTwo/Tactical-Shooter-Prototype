@@ -14,7 +14,6 @@ public class FunctionalNodeTester {
 
 	private List<Expire> condition;
 	
-	@Test
 	public void test() {
 		condition = new LinkedList<>();
 		Expire expire1 = new Expire(20);
@@ -63,6 +62,19 @@ public class FunctionalNodeTester {
 			tester.update(5);
 		}
 	}
+/*
+	@Test
+	public void test2(){
+		Repeater repeater = new Repeater(new TestWait(5));
+		repeater.setTimes(5);
+		repeater.startRoutine();
+		while(!repeater.succeededRoutine()){
+			repeater.updateRoutine(3);
+			Debugger.update(3);
+		}
+		repeater.completeRoutine();
+		
+	}*/
 	
 	private static class RoutineTester{
 		private Survival routine;
