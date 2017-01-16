@@ -86,10 +86,10 @@ final class MapData {
 				for(int col = 0; col < currentTerrainLayer.getWidth(); col++) {
 					if(currentTerrainLayer.getCell(col, row) != null){
 						MapProperties properties = currentTerrainLayer.getCell(col, row).getTile().getProperties();
-						int heightPhy = Integer.parseInt(properties.get("heightPhy", String.class));
-						int heightVis = Integer.parseInt(properties.get("heightVis", String.class));
-						boolean walkable = Boolean.parseBoolean((properties.get("walkable", String.class)));
-						boolean ramp = Boolean.parseBoolean((properties.get("ramp", String.class)));
+						int heightPhy = properties.get("heightPhy", Integer.class);
+						int heightVis = properties.get("heightVis", Integer.class);
+						boolean walkable = properties.get("walkable", Boolean.class);
+						boolean ramp = properties.get("ramp", Boolean.class);
 						if(terrainAlreadySet[row][col]){
 							System.err.println("Overlapping of terrain tiles found (in cartesian coordinates) at " + col + ", " + row);
 							System.exit(1);
@@ -120,8 +120,8 @@ final class MapData {
 						MapProperties properties = currentTerrainLayer.getCell(col, row).getTile().getProperties();
 						int heightPhy = Integer.parseInt(properties.get("heightPhy", String.class));
 						int heightVis = Integer.parseInt(properties.get("heightVis", String.class));
-						boolean walkable = Boolean.parseBoolean((properties.get("walkable", String.class)));
-						boolean ramp = Boolean.parseBoolean((properties.get("ramp", String.class)));
+						boolean walkable = properties.get("walkable", Boolean.class);
+						boolean ramp = properties.get("ramp", Boolean.class);
 						if(obstacleAlreadySet[row][col]){
 							System.err.println("Overlapping of obstacle tiles found (in cartesian coordinates) at " + col + ", " + row);
 							System.exit(1);

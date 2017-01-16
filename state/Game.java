@@ -24,8 +24,8 @@ import com.mygdx.graphic.BatchCoordinator;
 public class Game implements ApplicationListener,GameModeSwitchable
 {
 	// resizing this does not change the window, but the scaling -_-
-	public static final int V_WIDTH = 1700;
-	public static final int V_HEIGHT = 1000;
+	public static final int V_WIDTH = 1000;
+	public static final int V_HEIGHT = 800;
 	private static final float STEP = 1 / 60f; // used to determinet he frequency of game ticks
 	
 	private float accum;// used to pace the game ticks
@@ -88,6 +88,7 @@ public class Game implements ApplicationListener,GameModeSwitchable
 	public void resize(int w, int h) 
 	{
 	    viewport.update(w, h);
+	    cam.update();
 	}
 	public void pause() 
 	{

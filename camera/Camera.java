@@ -1,121 +1,56 @@
 package com.mygdx.camera;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.graphic.Animator.CameraBoundaryProvider;
+import com.mygdx.physics.MyMath;
 import com.mygdx.physics.MyVector2;
 import com.mygdx.physics.PrecisePoint;
 
-public class Camera extends OrthographicCamera implements CameraBoundaryProvider
-{
-	private CameraHoggable cameraHog;
-	private PrecisePoint lead;
-	private State state;
-	private byte speed;
-	private MyVector2 velocityUnit;
-	private PrecisePoint waypoint;
+public class Camera implements CameraBoundaryProvider {
 	private Vector3 CameraBoundaryProviderHelper;
-	
-	public Camera()
-	{
+	private final CameraActionCreator actionFactory;
+	private final OrthographicCamera camera;
+
+	public Camera() {
 		super();
-		state = State.IDLE;
-		velocityUnit = new MyVector2(0,0);
-		waypoint = new PrecisePoint();
-		lead = new PrecisePoint();
 		CameraBoundaryProviderHelper = new Vector3();
+		actionFactory = new CameraActionCreator(this);
+		camera = new OrthographicCamera();
 	}
-	public Camera(float x,float y)
-	{
-		super(x,y);
+
+	public void update() {
+
 	}
-	public void update()
-	{
-		super.update();
-		switch(state)
-		{
-			case IDLE:
-					break;
-			case FOCUSED:
-					PrecisePoint focusPoint = cameraHog.provideCenterCamera();
-					
-					this.position.x = (focusPoint.x + lead.x)/2;		
-					this.position.y= (focusPoint.y + lead.y)/2;
-					break;
-			case TRANSLATE:
-					if(stillPan())
-					{
-						position.add(velocityUnit.getX() * speed,velocityUnit.getY() * speed,0);
-					}
-					else
-					{
-						state = State.IDLE;
-						position.set(waypoint.x,waypoint.y,0);
-					}
-					break;
-		}
-		
-		
-	}
+
 	public PrecisePoint unproject(PrecisePoint point){
-		Vector3 truePoint = super.unproject(new Vector3(point.x,point.y,0));
+		Vector3 truePoint = camera.unproject(new Vector3(point.x,point.y,0));
 		point.set(truePoint.x, truePoint.y);
 		return point;
 	}
-	public void focus(CameraHoggable ch)
-	{
-		cameraHog = ch;
-		state = State.FOCUSED;
-	}
-	public void focusOnLead(PrecisePoint lead)
-	{
-		this.lead = lead;
-	}
-	public void unfocus()
-	{
-		state = State.IDLE;
-	}
-	public void snapTo(int x,int y)
-	{
-		position.set(x,y,0);
-	}
-	public void panTo(int x,int y,byte speed)
-	{
-		state = State.TRANSLATE;
-		this.speed = speed;
-		waypoint.set(x,y);
-		float angle = (float) Math.atan2((y - position.y),(x - position.x));
-		velocityUnit.set((float)Math.cos(angle),(float)Math.sin(angle));	
+
+
+	public Matrix4 getCombined(){
+		return camera.combined;
 	}
 
-	private enum State
-	{
-		FOCUSED,
-		TRANSLATE,
-		IDLE
-		
-		;
+	void translate(double x,double y){
+		camera.position.x += x;
+		camera.position.y += y;
 	}
-	private boolean stillPan()
-	{
-		double futurex = position.x + (velocityUnit.getX()*speed);
-		double futurey = position.y + (velocityUnit.getY()*speed);
-		
-		return (sameSign(waypoint.x - futurex,waypoint.x - position.x)
-				&& sameSign(waypoint.y - futurey,waypoint.y - position.y));
+
+	void translate(MyVector2 vector){
+		camera.position.x += vector.getX();
+		camera.position.y += vector.getY();
 	}
-	private boolean sameSign(double x1,double x2)// potential problem if either is 0
-	{
-		if(x1 == 0 && x2 == 0)
-		{
-			return true;
-		}
-		else
-		{
-			return x1*x2 > 0;
-		}
+
+	void snapTo(double x,double y){
+		camera.position.x = (float)x;
+		camera.position.y = (float)y;
 	}
+
 	@Override
 	public float getLeftBoundary() {
 		CameraBoundaryProviderHelper.x = 0;

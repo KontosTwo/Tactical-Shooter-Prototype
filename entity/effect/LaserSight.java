@@ -27,7 +27,7 @@ public class LaserSight extends MyShapeRenderer
 	@Override
 	protected void renderProcess() {
 		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.setProjectionMatrix(BatchCoordinator.camera.combined);
+		shapeRenderer.setProjectionMatrix(BatchCoordinator.camera.getCombined());
 		shapeRenderer.line(origin.x,origin.y + origin.z, target.x, target.y);
 		shapeRenderer.end();		
 	}

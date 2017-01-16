@@ -3,7 +3,7 @@ package com.mygdx.physics;
 /**
  * A 2-D point that uses floats instead of doubles
  */
-public class PrecisePoint implements Comparable
+public class PrecisePoint implements Comparable,Locatable
 {
 	/*
 	 * precise coordinates
@@ -91,5 +91,15 @@ public class PrecisePoint implements Comparable
 	@Override
 	public int compareTo(Object o) {
 		return Math.round(((PrecisePoint)o).x - this.x) + Math.round(((PrecisePoint)o).y - this.y);
+	}
+
+	@Override
+	public double getX() {
+		return x;
+	}
+
+	@Override
+	public double getY() {
+		return y;
 	}
 }

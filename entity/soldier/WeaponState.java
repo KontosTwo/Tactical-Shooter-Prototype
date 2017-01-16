@@ -146,7 +146,7 @@ class WeaponState{
 	private enum Weapon
 	{
 		GAUSSRIFLE(2,5,1,1,6,49,10,2,1), // Fed Assault Rifle. Ayane's weapon
-		TSOKOS(7,9,7,2,13,49,10,3,0), // Fed fully automatic shotgun. Chanion's weapon
+		TSOKOS(7,9,7,2,13,49,100,3,0), // Fed fully automatic shotgun. Chanion's weapon
 		;
 
 		private final int pierce;
