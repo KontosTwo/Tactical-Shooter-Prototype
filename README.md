@@ -1,7 +1,7 @@
 # Didymos
 
 Tactical 2-D Shooter under development
-- Developed in Java using the Eclipse IDE
+- Developed in Java
 - Uses the LibGDX game library for more efficient graphics rendering
 - Uses Tiled to create orthogonal maps
 - Uses GraphicsGale to create sprite art
