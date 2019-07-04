@@ -1,5 +1,7 @@
 # Didymos
 
+NOTE: The game was reconceptualized and reimplemented in Unity and Monobehaviors (https://github.com/KontosTwo/Didymos), and then scrapped and reimplemented in Unity and ECS (private repository)
+
 Tactical 2-D Shooter under development
 - Developed in Java
 - Uses the LibGDX game library for more efficient graphics rendering
